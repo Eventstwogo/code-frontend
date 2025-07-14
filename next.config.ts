@@ -1,7 +1,23 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+ images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'encrypted-tbn0.gstatic.com',
+      },
+    ],
+     domains: [
+      'upload.wikimedia.org',
+      'i.guim.co.uk',
+      'cdn.pixabay.com',
+      'wonderla.com',
+      'images.unsplash.com',
+      'plus.unsplash.com',
+      'www.shutterstock.com'
+    ],
+  },
 };
 
 export default nextConfig;
