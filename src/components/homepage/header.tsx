@@ -1,75 +1,11 @@
-// 'use client';
-
-// import React from 'react';
-// import Image from 'next/image';
-// import { Search, User, Menu } from 'lucide-react';
-// import Link from 'next/link';
-// type HeaderProps = {
-//   categories: string[];
-// };
-
-// export default function Header({ categories }: HeaderProps) {
-//   return (
-//     <header className="flex items-center justify-between px-10 py-4 border-b shadow-sm bg-white ">
-      
-//       {/* Left: Logo */}
-//       <div className="flex items-center space-x-2">
-//         <Link href='/'>
-//             <Image
-//               src="/images/logo.png"
-//               alt="EventsNego Logo"
-//               width={70}
-//               height={50}
-//               priority
-//             />
-//           </Link>
-//       </div>
-
-//       {/* Center: Search Box */}
-//       <div className="flex-1 mx-4 max-w-lg">
-//         <div className="flex items-center border rounded-xl px-3 py-1 shadow-sm border-grey-900">
-//           <Search className="h-4 w-4 text-gray-400" />
-//           <input
-//             type="text"
-//             placeholder="Search for Movies, Events, Plays, Sports and Activities"
-//             className="flex-1 outline-none px-2 py-1 text-sm"
-//           />
-//         </div>
-//       </div>
-
-//       {/* Right: Categories and Icons */}
-//       <div className="flex items-center space-x-6">
-//         {categories.map((cat) => (
-//           <a
-//             key={cat.category_id}
-//             href={`/${cat.category_name.toLowerCase()}`}
-//             className="text-sm 2xl:text-xl font-medium hover:text-blue-600"
-//           >
-//             {cat.category_name}
-//           </a>
-//         ))}
-
-      
-//       </div>
-//       <div className='flex gap-6'>
-//        <Link href="/login">
-//             <User className="h-6 w-6 cursor-pointer hover:text-blue-600 transition-colors" />
-//           </Link>
-//         <Menu className="h-6 w-6 cursor-pointer" />
-//       </div>
-//     </header>
-//   );
-// }
-
-
-
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import Image from 'next/image';
 import { Search, User, Menu, X } from 'lucide-react';
 import Link from 'next/link';
-
+import { useProfileStore } from '@/lib/ZustanStore/usermanagement';
+import useStore from '@/lib/Zustand';
 type HeaderProps = {
   categories: { category_id: number; category_name: string }[];
 };
@@ -77,6 +13,14 @@ type HeaderProps = {
 export default function Header({ categories }: HeaderProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
+  const { profile, fetchProfile } = useProfileStore();
+  const {userId}=useStore()
+  console.log(userId)
+    useEffect(() => {
+    if (userId) {
+      fetchProfile(); // Fetch profile only if user is logged in
+    }
+  }, [userId, fetchProfile]);
   return (
     <header className="border-b shadow-sm bg-white w-full">
       {/* Top Row: Logo + Search + Icons/Menu */}
@@ -121,10 +65,8 @@ export default function Header({ categories }: HeaderProps) {
         </div>
 
         {/* Right Side: User + Menu */}
-        <div className="flex items-center space-x-3 flex-shrink-0">
-          <Link href="/login">
-            <User className="h-5 w-5 sm:h-6 sm:w-6 cursor-pointer hover:text-blue-600 transition-colors" />
-          </Link>
+        <div className="flex items-center space-x-8 flex-shrink-0">
+         
 
           {/* Desktop Categories (hidden on mobile) */}
           <div className="hidden lg:flex items-center space-x-6 ml-4">
@@ -138,6 +80,16 @@ export default function Header({ categories }: HeaderProps) {
               </a>
             ))}
           </div>
+        <div className="flex items-center space-x-2">
+  <Link href={userId ? '/Profile' : '/login'} className="flex items-center space-x-1">
+    <User className="h-5 w-5 sm:h-6 sm:w-6 cursor-pointer hover:text-blue-600 transition-colors" />
+    {userId && profile?.first_name && (
+      <span className="text-sm font-medium text-gray-800 hidden sm:inline">
+        {profile.first_name}
+      </span>
+    )}
+  </Link>
+</div>
 
           {/* Mobile Menu Icon (shown on small screens) */}
           <button

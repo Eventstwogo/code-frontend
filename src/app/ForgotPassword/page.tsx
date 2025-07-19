@@ -10,33 +10,42 @@ export default function ForgotPasswordPage() {
   const [loading, setLoading] = useState(false)
   const router = useRouter()
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+ const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
 
-    if (!email) {
-      toast.error('Please enter your email.')
-      return
-    }
-console.log('hello')
- 
-    // try {
-    //   await axiosInstance.post('/api/v1/auth/forgot-password', { email })
-
-    
-    //   setEmail('')
-    // } catch (error: any) {
-    //   console.error(error)
-    //   toast.error(
-    //     error?.response?.data?.message || 'Failed to send reset email.'
-    //   )
-    // } finally {
-    //   setLoading(false)
-    // }
-      toast.success('Email sent successfully! Check your inbox.')
+  if (!email) {
+    toast.error('Please enter your email.');
+    return;
   }
 
+  console.log('hello');
+  setLoading(true);
+
+  try {
+    const formData = new FormData();
+    formData.append('email', email);
+
+    await axiosInstance.post('/api/v1/users/forgot-password', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+
+    toast.success('Email sent successfully! Check your inbox.');
+    setEmail('');
+  } catch (error: any) {
+    console.error(error);
+    toast.error(
+      error?.response?.data?.message || 'Failed to send reset email.'
+    );
+  } finally {
+    setLoading(false);
+  }
+};
+
+
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen px-4 py-12 bg-gradient-to-br from-purple-500 to-indigo-600">
+    <div className="flex flex-col items-center justify-center min-h-screen px-4 py-12 ">
       <div className="bg-white shadow-xl rounded-2xl p-8 max-w-md w-full">
         <h1 className="text-3xl font-bold text-center mb-6 text-purple-700">
           Forgot Your Password?
@@ -67,3 +76,60 @@ console.log('hello')
     </div>
   )
 }
+
+
+// import { cn } from "@/lib/utils";
+// import { Button } from "@/components/ui/button";
+// import {
+//   Card,
+//   CardContent,
+//   CardDescription,
+//   CardHeader,
+//   CardTitle,
+// } from "@/components/ui/card";
+// import { Input } from "@/components/ui/input";
+// import { Label } from "@/components/ui/label";
+ 
+// export default function forget({
+//   className,
+//   ...props
+// }: React.ComponentProps<"div">) {
+//   return (
+//     <div className={cn("flex flex-col gap-6", className)} {...props}>
+//       <Card>
+//         <CardHeader>
+//           <CardTitle>Forgot Password</CardTitle>
+//           <CardDescription>
+//             Enter your email address and we’ll send you a link to reset your password.
+//           </CardDescription>
+//         </CardHeader>
+//         <CardContent>
+//           <form>
+//             <div className="flex flex-col gap-6">
+//               <div className="grid gap-3">
+//                 <Label htmlFor="email">Email</Label>
+//                 <Input
+//                   id="email"
+//                   type="email"
+//                   placeholder="you@example.com"
+//                   required
+//                 />
+//               </div>
+//               <Button type="submit" className="w-full">
+//                 Send Reset Link
+//               </Button>
+//             </div>
+//             <div className="mt-4 text-center text-sm">
+//               Remember your password?{" "}
+//               <a href="#" className="underline underline-offset-4">
+//                 Back to login
+//               </a>
+//             </div>
+//           </form>
+//         </CardContent>
+//       </Card>
+//     </div>
+//   );
+// }
+ 
+ 

@@ -15,7 +15,9 @@ const nextConfig: NextConfig = {
       'wonderla.com',
       'images.unsplash.com',
       'plus.unsplash.com',
-      'www.shutterstock.com'
+      'www.shutterstock.com',
+       "assets.monica.im"
+
     ],
   },
 };
