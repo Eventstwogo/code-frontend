@@ -15,6 +15,7 @@ export default function HeroSection({ movies }) {
     <div className="w-full h-[60vh] mx-auto">
       <Swiper
         centeredSlides
+        
         autoplay={{
           delay: 2500,
           disableOnInteraction: false,
@@ -22,13 +23,13 @@ export default function HeroSection({ movies }) {
  modules={[Autoplay,Pagination]}
         className="mySwiper rounded-lg overflow-hidden h-full"
       >
-        {movies.map((movie, index) => (
+        {movies?.map((movie, index) => (
           <SwiperSlide key={index}>
             <div className="relative w-full h-full mx-auto rounded-lg overflow-hidden shadow-lg">
               {/* Background Image */}
               <Image
-                src={movie.imageUrl}
-                alt={movie.title}
+                src={movie.banner_image}
+                alt={movie.event_title}
                 fill // full container fit
                 className="object-fit h-full bg-black"
               />
@@ -43,7 +44,7 @@ export default function HeroSection({ movies }) {
                     Tickets on sale
                   </span>
                 )}
-                <h2 className="text-2xl font-bold mb-1 text-start">{movie.title}</h2>
+                <h2 className="text-2xl font-bold mb-1 text-start">{movie.event_title}</h2>
                 <p className="text-sm mb-4">{movie.description}</p> 
                 <button className="bg-red-600 hover:bg-red-700 text-xs font-bold px-4 py-2 rounded">
                   BOOK NOW

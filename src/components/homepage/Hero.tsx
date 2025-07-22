@@ -1,5 +1,7 @@
-import React from 'react'
+'use client'
+import React, { useEffect } from 'react'
 import HeroSection from '../Herosection';
+import axiosInstance from '@/lib/axiosInstance';
 export const movieCards = [
   {
     title: "X-Men: Apocalypse",
@@ -22,9 +24,22 @@ export const movieCards = [
 ];
 
 const Hero = () => {
+const [movies,setMovies]=React.useState([])
+  useEffect(()=>{
+    const fetchcategoryevents=async()=>{
+        try {
+            const response=await axiosInstance.get('api/v1/events/by-category/latest')
+            setMovies(response.data.data.events)
+        }
+        catch(error){
+         console.log("error")}
+    }
+    fetchcategoryevents()
+  },[])
+
   return (
     <div>
-      <HeroSection  movies={movieCards}/>
+      <HeroSection  movies={movies}/>
     </div>
   )
 }

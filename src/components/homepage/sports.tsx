@@ -5,33 +5,7 @@ import MovieCard from "../movies";
 
 export default function MovieGridPage() {
   // ✅ The data lives here with the parent
-const sportsEvents = [
-  {
-    title: "Premier League Match",
-    image: "/images/sport3.jpg",
-    duration: 90,
-  },
-  {
-    title: "NBA Finals",
-    image: "/images/sport1.jfif",
-    duration: 48,
-  },
-  {
-    title: "Cricket World Cup",
-    image: "/images/sport2.jpg",
-    duration: 300,
-  },
-  {
-    title: "Grand Slam Tennis",
-    image: "/images/sport3.jpg",
-    duration: 180,
-  },
-  {
-    title: "Formula 1 Race",
-    image: "/images/sport4.jpg",
-    duration: 120,
-  },
-];
+
 
 
   return (

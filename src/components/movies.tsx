@@ -1,23 +1,72 @@
 'use client';
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { FaClock, FaHeart } from "react-icons/fa";
 
-export default function MovieCard({ title, image, duration }) {
+interface MovieCardProps {
+  event_title?: string;
+  card_image?: string;
+  event_slug?: string;
+  // Legacy props for backward compatibility
+  title?: string;
+  image?: string;
+  duration?: number;
+}
+
+export default function MovieCard({ 
+  event_title, 
+  card_image, 
+  event_slug,
+  title,
+  image,
+  duration
+}: MovieCardProps) {
+  // Use new props if available, otherwise fall back to legacy props
+  const displayTitle = event_title || title || "Unknown Event";
+  const displayImage = card_image || image || "/images/default.jpg";
+  const displaySlug = event_slug || (title ? title.toLowerCase().replace(/\s+/g, '-') : "unknown-event");
   const [isLiked, setIsLiked] = useState(false);
+  const router = useRouter();
+
+  const handleCardClick = () => {
+    router.push(`/event/${displaySlug}`);
+  };
+
+  const handleLikeClick = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent card click when clicking heart
+    setIsLiked(!isLiked);
+  };
+
+  const handleAddToListClick = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent card click when clicking button
+    // Add your add to list logic here
+
+  };
+
+  const handleBookNowClick = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent card click when clicking button
+    // Navigate to booking page or handle booking logic
+    router.push(`/BookNow?event=${displaySlug}`);
+  };
 
   return (
-    <div className="bg-white rounded-xl shadow-md overflow-hidden border">
+    <div 
+      className="bg-white rounded-xl shadow-md overflow-hidden border cursor-pointer hover:shadow-lg hover:scale-105 transition-all duration-300"
+      onClick={handleCardClick}
+    >
       <img
-        src={image}
-        alt={title}
-        className="w-full h-auto object-cover rounded-t-xl"
+        src={displayImage}
+        alt={displayTitle}
+        className="w-full h-72 object-cover rounded-t-xl"
       />
       <div className="p-4 space-y-2">
         <div className="flex justify-between items-start">
-          <h3 className="text-sm font-bold">{title}</h3>
+          <h3 className="text-sm font-bold hover:text-purple-600 transition-colors">
+            {displayTitle}
+          </h3>
           <button
-            onClick={() => setIsLiked(!isLiked)}
+            onClick={handleLikeClick}
             className={`text-lg hover:scale-110 transition ${
               isLiked ? "text-purple-600" : "text-gray-400"
             }`}
@@ -26,16 +75,17 @@ export default function MovieCard({ title, image, duration }) {
           </button>
         </div>
 
-        <div className="flex items-center text-xs text-gray-600 gap-1">
-          <FaClock className="text-sm" />
-          <span>{duration} MIN</span>
-        </div>
-
         <div className="flex justify-between items-center text-xs">
-          <button className="text-purple-600 font-semibold hover:underline">
+          <button 
+            onClick={handleAddToListClick}
+            className="text-purple-600 font-semibold hover:underline"
+          >
             ADD TO LIST
           </button>
-          <button className="bg-purple-500 text-white px-3 py-1 rounded text-xs hover:bg-purple-600 transition">
+          <button 
+            onClick={handleBookNowClick}
+            className="bg-purple-500 text-white px-3 py-1 rounded text-xs hover:bg-purple-600 transition"
+          >
             BOOK NOW
           </button>
         </div>

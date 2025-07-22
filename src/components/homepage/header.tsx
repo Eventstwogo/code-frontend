@@ -7,7 +7,7 @@ import Link from 'next/link';
 import { useProfileStore } from '@/lib/ZustanStore/usermanagement';
 import useStore from '@/lib/Zustand';
 type HeaderProps = {
-  categories: { category_id: number; category_name: string }[];
+  categories: { category_id: number; category_name: string;category_slug: string }[];
 };
 
 export default function Header({ categories }: HeaderProps) {
@@ -15,7 +15,7 @@ export default function Header({ categories }: HeaderProps) {
 
   const { profile, fetchProfile } = useProfileStore();
   const {userId}=useStore()
-  console.log(userId)
+
     useEffect(() => {
     if (userId) {
       fetchProfile(); // Fetch profile only if user is logged in
@@ -71,13 +71,13 @@ export default function Header({ categories }: HeaderProps) {
           {/* Desktop Categories (hidden on mobile) */}
           <div className="hidden lg:flex items-center space-x-6 ml-4">
             {categories.map((cat) => (
-              <a
+              <Link
                 key={cat.category_id}
-                href={`/${cat.category_name.toLowerCase()}`}
+                href={`/${cat.category_slug}`}
                 className="text-sm 2xl:text-xl font-medium hover:text-blue-600"
               >
                 {cat.category_name}
-              </a>
+              </Link>
             ))}
           </div>
         <div className="flex items-center space-x-2">
@@ -118,14 +118,14 @@ export default function Header({ categories }: HeaderProps) {
 
             <nav className="flex flex-col space-y-3">
               {categories.map((cat) => (
-                <a
+                <Link
                   key={cat.category_id}
                   href={`/${cat.category_name.toLowerCase()}`}
                   className="text-base font-medium text-gray-700 hover:text-blue-600"
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   {cat.category_name}
-                </a>
+                </Link>
               ))}
             </nav>
           </div>

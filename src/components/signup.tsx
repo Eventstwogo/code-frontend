@@ -181,7 +181,7 @@ export function SignupForm({ className, ...props }: React.ComponentProps<"div">)
       reset();
     } catch (err: any) {
       const message = err?.response?.data?.message || "Something went wrong";
-      console.log(message)
+   
       toast.error(message);
     }
   };

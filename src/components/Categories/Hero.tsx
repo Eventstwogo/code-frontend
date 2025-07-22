@@ -214,7 +214,8 @@ export const movies = [
   },
 ];
 
-export default function TitanicHero() {
+export default function TitanicHero({event}) {
+  console.log(event)
   return (
     <Swiper
       centeredSlides
@@ -227,13 +228,15 @@ export default function TitanicHero() {
       modules={[Autoplay, Pagination]}
       className="rounded-lg overflow-hidden h-[60vh] w-full"
     >
-      {movies.map((movie, index) => (
+      {event?.map((movie, index) => {
+       
+        return(
         <SwiperSlide key={index}>
           <section className="relative w-full h-[60vh] text-white overflow-hidden">
             {/* Background Image */}
             <Image
-              src={movie.imageUrl}
-              alt={movie.title}
+              src={movie.card_image}
+              alt={movie.event_title}
               fill
               className="inset-0 w-full h-full object-cover z-0"
             />
@@ -243,8 +246,8 @@ export default function TitanicHero() {
 
             {/* Content */}
             <div className="relative z-20 mx-auto h-full flex flex-col justify-end items-start p-8 px-6">
-              <h1 className="text-5xl font-bold mb-4">{movie.title}</h1>
-              <p className="text-lg max-w-2xl mb-6 text-left">{movie.description}</p>
+              <h1 className="text-5xl font-bold mb-4">{movie.event_title}</h1>
+              <p className="text-lg max-w-2xl mb-6 text-left">{movie.extra_data.description}</p>
 
               {/* CTA Button */}
               <button className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-md w-fit">
@@ -256,20 +259,15 @@ export default function TitanicHero() {
             
                
                 <span>{movie.year}</span>
-                <span>{movie.ageRating}</span>
+                <span>{movie.extra_data.ageRestriction}</span>
                 <span>{movie.duration}</span>
-                <span>{movie.genre}</span>
-                <span>
-                  Cast:{" "}
-                  <span className="text-white font-medium">
-                    {movie.cast.join(", ")}
-                  </span>
-                </span>
+                <span>{movie.hash_tags}</span>
+              
               </div>
             </div>
           </section>
-        </SwiperSlide>
-      ))}
+        </SwiperSlide>)
+})}
     </Swiper>
   );
 }

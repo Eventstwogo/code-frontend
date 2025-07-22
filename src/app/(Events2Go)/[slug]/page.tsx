@@ -69,33 +69,41 @@ import Link from 'next/link'
   
   ];
   import { useCategoryStore } from '@/lib/ZustanStore/categoriesStore'
+import axiosInstance from '@/lib/axiosInstance'
 const Page = ({ params }: { params: { slug: string } }) => {
-const { slug } = React.use(params);
-const router = useRouter()
+ const { slug } = params;
+
 const fetchSubCategoriesBySlug = useCategoryStore(state => state.fetchSubCategoriesBySlug);
 const subCategories = useCategoryStore(state => state.subCategories);
-const loading = useCategoryStore(state => state.loading);
-const error = useCategoryStore(state => state.error);
+
 const notFound = useCategoryStore(state => state.notFound)
+ const [events,setEvents] = useState([])
 
-
+const fetchevents= async () =>{
+try {
+  const response = await axiosInstance(`/api/v1/events/category-or-subcategory/${slug}?page=1&per_page=10`)
+ console.log(response.data.data.subcategories_with_events)
+setEvents(response.data.data.subcategories_with_events)
+ console.log(events)
+} catch (error) {
+  console.error(error)
+}
+}
 useEffect(() => {
   fetchSubCategoriesBySlug(slug);
+  fetchevents()
 }, [slug]);
 useEffect(() => {
 
-    if (notFound) {
-console.log('hello')
-      router.push('/404')
-    }
+  
   }, [notFound])
-console.log(subCategories)
 
+console.log(events)
   
 
   return (
     <div>
-        <HeroSection/>
+        <HeroSection event={events}/>
       <CategoryCards subcategories={subCategories} category={slug}/>
 
       <section className='w-full px-10 py-20 '>

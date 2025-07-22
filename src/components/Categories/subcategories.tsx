@@ -12,7 +12,7 @@ export default function CategoryCards({subcategories,category}) {
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
         {subcategories?.map((cat, idx) => (
           <Link
-          href={`/${category}/${cat.subcategory_name}`}
+          href={`/${category}/${cat.subcategory_slug}`}
             key={idx}
             className="relative rounded-lg overflow-hidden group cursor-pointer shadow-lg hover:shadow-xl transition-shadow duration-300"
           >

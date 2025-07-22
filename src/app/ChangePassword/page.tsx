@@ -1,4 +1,3 @@
-import { LoginForm } from "@/components/login-form"
 import { ResetPasswordForm } from "@/components/ResetPasswordForm"
            
 export default function LoginPage() {

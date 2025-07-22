@@ -40,22 +40,17 @@ const movies = [
   },
 ];
 
-export default function MovieTrailerSection() {
+export default function MovieTrailerSection({images}) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [activeTrailer, setActiveTrailer] = useState<string | null>(null);
 
-  const scroll = (dir: "left" | "right") => {
-    if (scrollRef.current) {
-      const scrollAmount = dir === "left" ? -320 : 320;
-      scrollRef.current.scrollBy({ left: scrollAmount, behavior: "smooth" });
-    }
-  };
+ 
 
   return (
     <section className=" text-purple-500 py-10 px-6 md:px-12">
       {/* Header & Arrows */}
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-3xl md:text-4xl font-extrabold">ICONIC SCENES</h2>
+        <h2 className="text-3xl md:text-4xl font-extrabold">Related Images</h2>
         <div className="flex gap-2">
           
           
@@ -67,7 +62,7 @@ export default function MovieTrailerSection() {
         ref={scrollRef}
         className="flex overflow-x-auto gap-6 scroll-smooth pb-6"
       >
-        {movies.map((movie, index) => (
+        {images?.map((movie, index) => (
           <div
             key={index}
             className="relative flex-shrink-0 w-[250px] h-[360px] rounded-xl overflow-hidden shadow-xl group"

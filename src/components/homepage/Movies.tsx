@@ -1,103 +1,10 @@
-// 'use client';
-
-// import Link from "next/link";
-// import MovieCard from "../movies";
-
-// export default function MovieGridPage() {
-//   // ✅ The data lives here with the parent
-//   const movies = [
-//     {
-//       title: "The Dark Knight",
-//       image: "/images/movie1.jfif",
-//       duration: 120,
-//     },
-//     {
-//       title: "Inception",
-//       image: "/images/movie2.jfif",
-//       duration: 152,
-//     },
-//     {
-//       title: "Interstellar",
-//       image: "/images/movie3.jfif",
-//       duration: 148,
-//     },
-//     {
-//       title: "Tenet",
-//       image: "/images/movie4.jfif",
-//       duration: 169,
-//     },
-//     {
-//       title: "oppenhiemer",
-//       image: "/images/movie5.jfif",
-//       duration: 150,
-//     },
-//   ];
-
-//   return (
-//     <section className="max-w-6xl mx-auto py-20 mt-10 mb-10 px-4">
-//       <div className="flex items-center justify-between mb-4">
-//         <h2 className="text-2xl font-bold text-gray-900">Movies</h2>
-//         <Link
-//           href="/trending"
-//           className="text-base text-purple-600 hover:underline"
-//         >
-//           View All
-//         </Link>
-//       </div>
-
-//      <div
-//   className="
-//     flex gap-4 overflow-x-auto
-//     sm:flex-nowrap
-//     md:flex-nowrap
-//     lg:grid lg:grid-cols-4 xl:grid-cols-5
-//     scrollbar-hide px-1 pb-6
-//  "
-//    style={{
-//     scrollbarColor: '#a855f7 #e5e7eb', // Optional: custom scrollbar color
-//     scrollbarWidth: 'auto',            // Optional: for Firefox
-//   }}
-// >
-//   {movies.map((movie, index) => (
-//     <div
-//       key={index}
-//      className="
-//     flex-shrink-0
-//     min-w-[220px]
-//     h-[320px]
-//     lg:min-w-0 lg:h-auto
-//     rounded-lg
-//     overflow-hidden
-//   "
-//     >
-//       <MovieCard
-//         title={movie.title}
-//         image={movie.image}
-//         duration={movie.duration}
-//       />
-//     </div>
-//   ))}
-// </div>
-
-
-//     </section>
-//   );
-// }
-
-
 'use client';
 
 import { useRef, useEffect, useState } from 'react';
 import MovieCard from "../movies";
+import Link from "next/link";
+export default function MovieGridPage({movies,categoryName}) {
 
-export default function MovieGridPage() {
-  const movies = [
-    { title: "The Dark Knight", image: "/images/movie1.jfif", duration: 120 },
-    { title: "Inception", image: "/images/movie2.jfif", duration: 152 },
-    { title: "Interstellar", image: "/images/movie3.jfif", duration: 148 },
-    { title: "Tenet", image: "/images/movie4.jfif", duration: 169 },
-    { title: "Oppenheimer", image: "/images/movie5.jfif", duration: 150 },
-  ];
 
   const scrollRef = useRef(null);
   const [scrollProgress, setScrollProgress] = useState(0);
@@ -138,10 +45,10 @@ export default function MovieGridPage() {
   return (
     <section className="max-w-6xl mx-auto py-20 mt-10 mb-10 px-4">
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-2xl font-bold text-gray-900">Movies</h2>
-        <a href="/trending" className="text-base text-purple-600 hover:underline">
+        <h2 className="text-2xl font-bold text-gray-900">{categoryName}</h2>
+        <Link href="/trending" className="text-base text-purple-600 hover:underline">
           View All
-        </a>
+        </Link>
       </div>
 
       <div
