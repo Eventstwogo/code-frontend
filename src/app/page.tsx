@@ -83,9 +83,8 @@ const Page = () => {
   },
 ];
   const [categories, setCategories] = useState<Category[]>([]);
-
-  useEffect(() => {
-    const fetchCategories = async () => {
+const [heroEvents,setHeroEvents]=useState<any>([])
+const fetchCategories = async () => {
       try {
         const res = await axiosInstance.get('/api/v1/category-events/categories-with-events');
        
@@ -94,10 +93,19 @@ const Page = () => {
         console.error('Failed to fetch categories:', error);
       }
     };
-
+  useEffect(() => {
+    
+fetchSpecialevents()
     fetchCategories();
   }, []);
-  console.log(categories)
+  const fetchSpecialevents = async () => {
+    try {
+      const response = await axiosInstance(`/api/v1/events/latest/category-or-subcategory/events`)
+      setHeroEvents(response.data.data.events)
+    } catch (error) {
+      console.error(error)
+    }
+  }
 return (
     <div>
 
@@ -105,11 +113,11 @@ return (
 <Carousel/>
 <Trending/>
 <Horizantalcard image={image}/>
-<EventCard/>
+<EventCard event={heroEvents}/>
  {categories.map((category) => (
         <div key={category.category_id}>
           <Horizantalcard image={image} />
-          <MovieGrid movies={category.events} categoryName={category.category_name} />
+          <MovieGrid movies={category.events} categoryName={category.category_name} slug={category.category_slug}/>
         </div>
       ))}
       <Horizantalcard image={image}/>

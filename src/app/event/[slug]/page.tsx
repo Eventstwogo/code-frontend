@@ -74,14 +74,60 @@ interface EventDetailPageProps {
   };
 }
 
+type DateItem = {
+  day: string;
+  date: string;
+};
+
 const EventDetailPage = ({ params }: EventDetailPageProps) => {
   const { slug } = params; // ✅ use directly from props (not useParams)
   const [event, setEvent] = useState<any>(null);
+  const [eventDates, setEventDates] = useState<DateItem[]>([]);
+  const [selectedDate, setSelectedDate] = useState<DateItem | null>(null);
+
+  const generateEventDates = (startDate: string, endDate: string): DateItem[] => {
+    const dates: DateItem[] = [];
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    
+    // If start and end dates are the same, show only that single date
+    if (start.getTime() === end.getTime()) {
+      const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+      const day = dayNames[start.getDay()];
+      const date = start.getDate().toString();
+      
+      dates.push({ day, date });
+    } else {
+      // If different dates, generate dates between start and end
+      const currentDate = new Date(start);
+      while (currentDate <= end) {
+        const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+        const day = dayNames[currentDate.getDay()];
+        const date = currentDate.getDate().toString();
+        
+        dates.push({ day, date });
+        currentDate.setDate(currentDate.getDate() + 1);
+      }
+    }
+    
+    return dates;
+  };
 
   const fetchEvent = async () => {
     try {
       const response = await axiosInstance.get(`/api/v1/events/slug/${slug}`);
-      setEvent(response.data.data);
+      const eventData = response.data.data;
+      setEvent(eventData);
+      
+      // Generate dates from the event data
+      if (eventData.start_date && eventData.end_date) {
+        const dates = generateEventDates(eventData.start_date, eventData.end_date);
+        setEventDates(dates);
+        // Set first date as default selected
+        if (dates.length > 0) {
+          setSelectedDate(dates[0]);
+        }
+      }
     } catch (error) {
       console.error('Error fetching event:', error);
     }
@@ -94,35 +140,30 @@ const EventDetailPage = ({ params }: EventDetailPageProps) => {
   }, [slug]);
 
   if (!event) return <p>Loading...</p>;
-
+console.log(event);
+console.log(eventDates);
   return (
     <div>
       <Moviesection
         title={event.event_title}
         runtime="170 min"
-        releaseDate="17 May 2025"
+        releaseDate={event.start_date || ''}
         description={event?.extra_data?.description}
         poster={event.card_image}
         backgroundImage={event.banner_image}
       />
 
       <Filter
-        dates={[
-          { day: "Thu", date: "19" },
-          { day: "Fri", date: "20" },
-          { day: "Sat", date: "21" },
-          { day: "Sun", date: "22" },
-          { day: "Mon", date: "23" },
-          { day: "Tue", date: "24" },
-          { day: "Wed", date: "25" },
-          { day: "Thu", date: "26" },
-        ]}
+        dates={eventDates}
         filters={["After 5 PM", "Recliners", "3D"]}
-        onDateSelect={(date, index) => console.log("Selected Date:", date)}
+        onDateSelect={(date, index) => {
+          console.log("Selected Date:", date);
+          setSelectedDate(date);
+        }}
         onWatchNow={() => alert("Start Watching!")}
       />
 
-      <Details event={event} />
+      <Details event={event} selectedDate={selectedDate} />
       <Trailer  images={event.event_extra_images}/>
     </div>
   );

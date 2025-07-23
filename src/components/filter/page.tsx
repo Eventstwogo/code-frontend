@@ -55,7 +55,7 @@ export default function MovieDateSelector({
         </div>
 
         {/* Filter Buttons */}
-        <div className="flex items-center gap-2 ml-4 flex-wrap">
+        {/* <div className="flex items-center gap-2 ml-4 flex-wrap">
           <button className="flex items-center gap-1 px-3 py-1 border border-2 border-purple-500 rounded-md text-sm">
             <FaFilter className="text-xs" />
             Filters
@@ -68,18 +68,11 @@ export default function MovieDateSelector({
               {filter}
             </button>
           ))}
-        </div>
+        </div> */}
       </div>
 
-      {/* Right Side - Watch Now Button */}
-      <div>
-        <button
-          onClick={onWatchNow}
-          className="bg-purple-500 text-white px-5 py-2 rounded-md text-sm font-semibold"
-        >
-          WATCH NOW
-        </button>
-      </div>
+ 
+      
     </div>
   );
 }

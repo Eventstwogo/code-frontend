@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { FaHeart } from 'react-icons/fa';
 import Link from 'next/link';
-export default function Page() {
+export default function Page({event}) {
   // 1️⃣ Events Data
   const events = [
     {
@@ -39,13 +39,13 @@ export default function Page() {
   };
 
   // 3️⃣ Inline EventCard Component
-  const EventCard = ({ name, image, location, price, isLiked, onLike }) => (
+  const EventCard = ({ event_title, card_image, extra_data, price, isLiked, onLike }) => (
     <div className=" rounded-xl shadow-lg overflow-hidden border border-gray-200 flex-shrink-0">
       {/* Banner Image */}
       <div className="relative">
         <img
-          src={image}
-          alt={name}
+          src={card_image}
+          alt={event_title}
           className="w-full h-48 object-cover"
         />
       </div>
@@ -53,7 +53,7 @@ export default function Page() {
       {/* Event Details */}
       <div className="p-4 text-sm font-bold">
         <p className="font-semibold flex items-center justify-between">
-          <span className="text-black">{name}</span>
+          <span className="text-black">{event_title}</span>
           <button
             onClick={onLike}
             className={`text-lg hover:scale-110 transition ${isLiked ? 'text-purple-600' : 'text-gray-400'}`}
@@ -64,13 +64,9 @@ export default function Page() {
 
         <p className="text-sm font-semibold mt-1">
           <span className="text-black">LOCATION:</span>{' '}
-          <span className="text-gray-800">{location}</span>
+          <span className="text-gray-800">{extra_data.address}</span>
         </p>
 
-        <p className="text-sm font-semibold mt-1">
-          <span className="text-black">PRICE:</span>{' '}
-          <span className="text-gray-800">{price}</span>
-        </p>
 
         <div className="flex gap-2 mt-4">
           <button className="flex-1 text-purple-600 font-semibold py-2 rounded-lg hover:bg-purple-100 transition">
@@ -89,12 +85,12 @@ export default function Page() {
     <div className="pt-16 max-w-6xl mx-auto my-20 py-20 px-4">
     <div className="flex items-center justify-between mb-4">
         <h1 className="text-2xl font-bold text-gray-900">Events&Festival</h1>
-        <Link href="/trending" className="text-base text-purple-600 hover:underline">
+        <Link href="/events" className="text-base text-purple-600 hover:underline">
           View All
         </Link>
       </div>
       <div className="grid md:grid-cols-3  grid-cols-1 gap-6 snap-x snap-mandatory scroll-smooth">
-        {events.map((event, index) => (
+        {event.map((event, index) => (
           <EventCard
             key={index}
             {...event}

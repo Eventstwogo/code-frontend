@@ -3,7 +3,7 @@
 import { useRef, useEffect, useState } from 'react';
 import MovieCard from "../movies";
 import Link from "next/link";
-export default function MovieGridPage({movies,categoryName}) {
+export default function MovieGridPage({movies,categoryName,slug}) {
 
 
   const scrollRef = useRef(null);
@@ -46,7 +46,7 @@ export default function MovieGridPage({movies,categoryName}) {
     <section className="max-w-6xl mx-auto py-20 mt-10 mb-10 px-4">
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-2xl font-bold text-gray-900">{categoryName}</h2>
-        <Link href="/trending" className="text-base text-purple-600 hover:underline">
+        <Link href={`/${slug}`} className="text-base text-purple-600 hover:underline">
           View All
         </Link>
       </div>

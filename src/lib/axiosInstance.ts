@@ -17,7 +17,7 @@
 
 // axiosInstance.interceptors.request.use(
 //   config => {
-//     const token = localStorage.getItem('token');
+//     const token = sessionStorage.getItem('token');
 //     if (token) {
 //       config.headers['Authorization'] = `Bearer ${token}`;
 //     }
@@ -40,11 +40,11 @@
 // //           withCredentials: true
 // //         });
 // //         const newToken = refreshResponse.data.token;
-// //         localStorage.setItem('token', newToken);
+// //         sessionStorage.setItem('token', newToken);
 // //         error.config.headers['Authorization'] = `Bearer ${newToken}`;
 // //         return axiosInstance(error.config);
 // //       } catch (refreshError) {
-// //         localStorage.removeItem('token');
+// //         sessionStorage.removeItem('token');
 // //         //  window.location.href = '/'; // Redirect to login
 // //         return Promise.reject(refreshError);
 // //       }
@@ -70,11 +70,11 @@
 //           withCredentials: true,
 //         });
 //         const newToken = refreshResponse.data.token;
-//         localStorage.setItem('token', newToken);
+//         sessionStorage.setItem('token', newToken);
 //         originalRequest.headers['Authorization'] = `Bearer ${newToken}`;
 //         return axiosInstance(originalRequest);
 //       } catch (refreshError) {
-//         localStorage.removeItem('token');
+//         sessionStorage.removeItem('token');
 //         return Promise.reject(refreshError);
 //       }
 //     }
@@ -143,20 +143,20 @@ axiosInstance.interceptors.response.use(
 
         const { access_token, refresh_token: newRefreshToken, session_id } = refreshResponse.data.data;
         
-        // Update tokens in localStorage
-        localStorage.setItem('token', access_token);
-        localStorage.setItem('refreshToken', newRefreshToken);
-        localStorage.setItem('sessionId', session_id.toString());
+        // Update tokens in sessionStorage
+        sessionStorage.setItem('token', access_token);
+        sessionStorage.setItem('refreshToken', newRefreshToken);
+        sessionStorage.setItem('sessionId', session_id.toString());
 
         // Retry the original request with new token
         error.config.headers['Authorization'] = `Bearer ${access_token}`;
         return axiosInstance(error.config);
       } catch (refreshError) {
         // Clear all tokens and redirect to login
-        localStorage.removeItem('token');
-        localStorage.removeItem('refreshToken');
-        localStorage.removeItem('sessionId');
-        localStorage.removeItem('id');
+        sessionStorage.removeItem('token');
+        sessionStorage.removeItem('refreshToken');
+        sessionStorage.removeItem('sessionId');
+        sessionStorage.removeItem('id');
         // window.location.href = '/'; // Redirect to login
         return Promise.reject(refreshError);
       }

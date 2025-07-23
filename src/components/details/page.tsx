@@ -4,12 +4,42 @@ import Image from "next/image";
 import { useState } from "react";
 import { FaMapMarkerAlt } from "react-icons/fa";
 import { BsCalendar2EventFill } from "react-icons/bs";
+import { useRouter } from "next/navigation";
+import useStore from "@/lib/Zustand";
 
-export default function MovieDetails({event}) {
+export default function MovieDetails({event, selectedDate}) {
+  console.log(selectedDate);
   console.log(event)
   const [activeTab, setActiveTab] = useState("Synopsis");
+  const router = useRouter();
+  const { userId } = useStore();
 
   const tabs = ["Synopsis"];
+
+  const handleBookTickets = () => {
+    if (userId) {
+      // User is authenticated, navigate to book now page with selected date
+      const dateParam = selectedDate ? `?date=${getFormattedDate(selectedDate)}&&slug_id=${event.slot_id}` : '';
+      router.push(`/book/${event.event_slug}${dateParam}`);
+    } else {
+      // User is not authenticated, navigate to login page
+      router.push('/login');
+    }
+  };
+
+  const getFormattedDate = (dateItem) => {
+    if (!dateItem || !event) return '';
+    
+    // Get the current year and month from event start date
+    const eventDate = new Date(event.start_date);
+    const year = eventDate.getFullYear();
+    const month = eventDate.getMonth();
+    
+    // Create date with selected day
+    const selectedDateObj = new Date(year, month, parseInt(dateItem.date));
+    selectedDateObj.setDate(selectedDateObj.getDate() + 1)
+    return selectedDateObj.toISOString().split('T')[0]; // YYYY-MM-DD format
+  };
 
 
   return (
@@ -66,15 +96,13 @@ export default function MovieDetails({event}) {
             <p className="text-xl text-gray-600 mb-3"></p>
             <p className="text-lg text-gray-600 flex items-center gap-2 mb-1">
               <BsCalendar2EventFill className="text-gray-500" />
-              21 Jun – 29 Jun | 1 PM onwards
+             {event.start_date} to {event.end_date}
             </p>
             <p className="text-lg text-gray-600 flex items-center gap-2 mb-4">
               <FaMapMarkerAlt className="text-gray-500" />
              {event.extra_data.address}
             </p>
-            <div className="text-base font-medium mb-4">
-              Starts from <span className="text-black font-bold">₹899</span>
-            </div>
+           
 
             {/* Additional Description */}
             <p className="text-sm text-gray-700 mb-4">
@@ -83,7 +111,10 @@ export default function MovieDetails({event}) {
           </div>
 
           {/* CTA Button */}
-          <button className="w-full bg-purple-500 text-white py-3 rounded-md text-sm font-semibold mt-auto">
+          <button 
+            onClick={handleBookTickets}
+            className="w-full bg-purple-500 text-white py-3 rounded-md text-sm font-semibold mt-auto hover:bg-purple-600 transition-colors"
+          >
             BOOK TICKETS
           </button>
         </div>

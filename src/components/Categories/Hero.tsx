@@ -151,68 +151,6 @@ import "swiper/css/pagination";
 import { Autoplay, Pagination } from "swiper/modules";
 
 // Dummy movie data
-export const movies = [
-  {
-    title: "Titanic",
-    description: `A 17-year-old aristocrat falls in love with a kind but poor artist aboard the unsinkable Titanic. When the ship collides with an iceberg, the young lovers' journey is transformed into a breathtaking race for survival. Winner of 11 Academy Awards.`,
-    imageUrl: "/images/hero.jfif",
-    subtitles: true,
-    watched: true,
-    year: 1997,
-    ageRating: "14+",
-    duration: "195 mins",
-    genre: "Romance Movie",
-    cast: ["Kate Winslet", "Leonardo DiCaprio", "Billy Zane"],
-  },
-  {
-    title: "Inception",
-    description: `A skilled thief is given a chance at redemption if he can successfully perform an impossible heist: planting an idea into a target's subconscious.`,
-    imageUrl: "/images/inception.jpg",
-    subtitles: true,
-    watched: false,
-    year: 2010,
-    ageRating: "13+",
-    duration: "148 mins",
-    genre: "Action / Sci-Fi",
-    cast: ["Leonardo DiCaprio", "Joseph Gordon-Levitt", "Elliot Page"],
-  },
-  {
-    title: "The Lion King",
-    description: `After the murder of his father, a young lion prince flees his kingdom only to learn the true meaning of responsibility and bravery.`,
-    imageUrl: "/images/lion-king.jpg",
-    subtitles: true,
-    watched: true,
-    year: 1994,
-    ageRating: "PG",
-    duration: "88 mins",
-    genre: "Animation / Drama",
-    cast: ["Matthew Broderick", "Jeremy Irons", "James Earl Jones"],
-  },
-  {
-    title: "Interstellar",
-    description: `A team of explorers travel through a wormhole in space in an attempt to ensure humanity's survival on another planet.`,
-    imageUrl: "/images/interstellar.jpg",
-    subtitles: true,
-    watched: false,
-    year: 2014,
-    ageRating: "13+",
-    duration: "169 mins",
-    genre: "Sci-Fi / Adventure",
-    cast: ["Matthew McConaughey", "Anne Hathaway", "Jessica Chastain"],
-  },
-  {
-    title: "Avengers: Endgame",
-    description: `After the devastating events of Infinity War, the Avengers assemble once more to reverse Thanos' actions and restore balance to the universe.`,
-    imageUrl: "/images/endgame.jpg",
-    subtitles: true,
-    watched: true,
-    year: 2019,
-    ageRating: "13+",
-    duration: "181 mins",
-    genre: "Action / Superhero",
-    cast: ["Robert Downey Jr.", "Chris Evans", "Scarlett Johansson"],
-  },
-];
 
 export default function TitanicHero({event}) {
   console.log(event)
@@ -223,7 +161,7 @@ export default function TitanicHero({event}) {
         delay: 3000,
         disableOnInteraction: false,
       }}
-      loop={true}
+
       pagination={{ clickable: true }}
       modules={[Autoplay, Pagination]}
       className="rounded-lg overflow-hidden h-[60vh] w-full"
