@@ -124,6 +124,8 @@ axiosInstance.interceptors.response.use(
   response => response,
   async error => {
     if (error.response?.status === 401) { // Unauthorized
+
+      console.log(sessionStorage.getItem('refreshToken'))
       try {
         const refreshToken = sessionStorage.getItem('refreshToken');
         if (!refreshToken) {

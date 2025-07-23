@@ -44,7 +44,7 @@ export default function MovieTrailerSection({images}) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [activeTrailer, setActiveTrailer] = useState<string | null>(null);
 
- 
+
 
   return (
     <section className=" text-purple-500 py-10 px-6 md:px-12">
@@ -68,18 +68,11 @@ export default function MovieTrailerSection({images}) {
             className="relative flex-shrink-0 w-[250px] h-[360px] rounded-xl overflow-hidden shadow-xl group"
           >
             <img
-              src={movie.image}
+              src={movie}
               alt={movie.title}
               className="w-full h-full object-cover rounded-xl"
             />
-            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition duration-300 rounded-xl flex items-center justify-center">
-              <button
-                onClick={() => setActiveTrailer(movie.trailer)}
-                className="flex items-center gap-2 bg-purple-600 text-white text-sm px-4 py-2 rounded-full hover:bg-yellow-500 transition"
-              >
-                <FaPlay className="text-xs" /> Play Trailer
-              </button>
-            </div>
+            
           </div>
         ))}
       </div>
@@ -110,7 +103,7 @@ export default function MovieTrailerSection({images}) {
       {/* Bottom CTA */}
       <div className="mt-8 text-center">
         <button className="bg-purple-500 px-6 py-2 text-black font-semibold rounded-full hover:bg-yellow-500 transition">
-          Explore All Movies!
+          Explore All
         </button>
       </div>
     </section>

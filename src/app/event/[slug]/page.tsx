@@ -140,7 +140,7 @@ const EventDetailPage = ({ params }: EventDetailPageProps) => {
   }, [slug]);
 
   if (!event) return <p>Loading...</p>;
-console.log(event);
+
 console.log(eventDates);
   return (
     <div>

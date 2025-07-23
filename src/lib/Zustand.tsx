@@ -188,7 +188,8 @@ interface AuthState {
   sessionId: string | null;
   login: (accessToken: string, refreshToken: string, sessionId: string) => void;
   logout: () => void;
-  checkAuth: () => void;
+  checkAuth: () => Promise<void>;
+  refreshTokenIfNeeded: () => Promise<boolean>;
 }
 
 // 🔁 Combined store
@@ -242,18 +243,24 @@ const useStore = create<StoreState>()(
         sessionStorage.removeItem("sessionId");
       },
 
-      checkAuth: () => {
+      checkAuth: async () => {
         if (typeof window === "undefined") return;
 
+        console.log("🔍 Checking authentication...");
         const token = sessionStorage.getItem("token");
         const sessionId = sessionStorage.getItem("sessionId");
+        const refreshToken = sessionStorage.getItem("refreshToken");
 
         if (token) {
           try {
             const decoded: any = jwt.decode(token);
+            console.log("🔓 Decoded token:", decoded);
+            
             if (decoded?.uid) {
               const currentTime = Date.now() / 1000;
+              
               if (decoded.exp > currentTime) {
+                console.log("✅ Token is valid, setting auth state");
                 set({
                   userId: decoded.uid,
                   role: decoded.rid,
@@ -261,20 +268,33 @@ const useStore = create<StoreState>()(
                   isAuthenticated: true,
                   sessionId,
                 });
-                console.log("User authenticated");
+                console.log("User authenticated successfully");
+                
+                // Check if token needs refresh (expires in next 5 minutes)
+                const timeUntilExpiry = decoded.exp - currentTime;
+                if (timeUntilExpiry < 300) {
+                  console.log("🔄 Token expires soon, refreshing...");
+                  await get().refreshTokenIfNeeded();
+                }
+                return;
               } else {
-                console.log("Token expired");
-                set({
-                  userId: null,
-                  role: null,
-                  exp: null,
-                  isAuthenticated: false,
-                  sessionId: null,
-                });
-                sessionStorage.clear();
+                console.log("⏰ Token expired, attempting to refresh...");
+                // Try to refresh the token
+                const refreshSuccess = await get().refreshTokenIfNeeded();
+                if (!refreshSuccess) {
+                  console.log("❌ Token refresh failed, clearing session");
+                  set({
+                    userId: null,
+                    role: null,
+                    exp: null,
+                    isAuthenticated: false,
+                    sessionId: null,
+                  });
+                  sessionStorage.clear();
+                }
               }
             } else {
-              console.log("Invalid token structure");
+              console.log("❌ Invalid token structure");
               set({
                 userId: null,
                 role: null,
@@ -284,8 +304,22 @@ const useStore = create<StoreState>()(
               });
               sessionStorage.clear();
             }
-          } catch {
-            console.log("JWT decode error");
+          } catch (error) {
+            console.log("❌ JWT decode error:", error);
+            set({
+              userId: null,
+              role: null,
+              exp: null,
+              isAuthenticated: false,
+              sessionId: null,
+            });
+            sessionStorage.clear();
+          }
+        } else if (refreshToken) {
+          console.log("❌ No access token found, but refresh token exists. Attempting refresh...");
+          const refreshSuccess = await get().refreshTokenIfNeeded();
+          if (!refreshSuccess) {
+            console.log("❌ Refresh failed, clearing session");
             set({
               userId: null,
               role: null,
@@ -296,7 +330,7 @@ const useStore = create<StoreState>()(
             sessionStorage.clear();
           }
         } else {
-          console.log("No token found");
+          console.log("❌ No tokens found");
           set({
             userId: null,
             role: null,
@@ -304,6 +338,86 @@ const useStore = create<StoreState>()(
             isAuthenticated: false,
             sessionId: null,
           });
+        }
+      },
+
+      refreshTokenIfNeeded: async () => {
+        if (typeof window === "undefined") return false;
+
+        const token = sessionStorage.getItem("token");
+        const refreshToken = sessionStorage.getItem("refreshToken");
+        
+        if (!refreshToken) {
+          console.log("❌ No refresh token found");
+          return false;
+        }
+
+        try {
+          console.log("🔄 Attempting to refresh access token...");
+          
+          // If we have a token, check if it needs refreshing
+          if (token) {
+            const decoded: any = jwt.decode(token);
+            if (decoded?.exp) {
+              const currentTime = Date.now() / 1000;
+              const timeUntilExpiry = decoded.exp - currentTime;
+              
+              // Only refresh if token expires in the next 5 minutes or is already expired
+              if (timeUntilExpiry >= 300) {
+                console.log("✅ Token is still valid, no refresh needed");
+                return true;
+              }
+            }
+          }
+          
+          const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/v1/admin/token/refresh`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'api-key': process.env.NEXT_PUBLIC_API_GATEWAY_KEY || '',
+            },
+            body: JSON.stringify({
+              refresh_token: refreshToken,
+            }),
+          });
+
+          if (response.ok) {
+            const data = await response.json();
+            
+            if (data.data) {
+              console.log("✅ Access token refreshed successfully");
+              
+              const { access_token, refresh_token: newRefreshToken, session_id } = data.data;
+              
+              // Update tokens in sessionStorage
+              sessionStorage.setItem('token', access_token);
+              sessionStorage.setItem('refreshToken', newRefreshToken);
+              sessionStorage.setItem('sessionId', session_id.toString());
+              
+              // Update the store with new token data
+              const newDecoded: any = jwt.decode(access_token);
+              if (newDecoded?.uid && newDecoded?.rid) {
+                set({
+                  userId: newDecoded.uid,
+                  role: newDecoded.rid,
+                  exp: newDecoded.exp,
+                  isAuthenticated: true,
+                  sessionId: session_id.toString(),
+                });
+              }
+              
+              return true;
+            } else {
+              console.log("❌ Refresh token response not successful:", data);
+              return false;
+            }
+          } else {
+            console.log("❌ Refresh token request failed:", response.status);
+            return false;
+          }
+        } catch (error) {
+          console.error("❌ Error refreshing token:", error);
+          return false;
         }
       },
 
