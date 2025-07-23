@@ -30,7 +30,8 @@ export default function MovieCard({
   const router = useRouter();
 
   const handleCardClick = () => {
-    router.push(`/event/${displaySlug}`);
+    console.log('hello')
+    router.push(`/event/${encodeURIComponent(displaySlug)}`);
   };
 
   const handleLikeClick = (e: React.MouseEvent) => {
@@ -47,7 +48,7 @@ export default function MovieCard({
   const handleBookNowClick = (e: React.MouseEvent) => {
     e.stopPropagation(); // Prevent card click when clicking button
     // Navigate to booking page or handle booking logic
-    router.push(`/BookNow?event=${displaySlug}`);
+    router.push(`/event/${displaySlug}?event=${displaySlug}`);
   };
 
   return (

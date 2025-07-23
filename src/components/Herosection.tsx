@@ -9,8 +9,20 @@ import 'swiper/css';
 import 'swiper/css/pagination';
 import 'swiper/css/navigation';
 import { Autoplay, Pagination } from 'swiper/modules'; // removed Navigation since you want no arrows
-
+import { useRouter } from 'next/navigation';
 export default function HeroSection({ movies }) {
+  const router=useRouter()
+
+ const handleBookNowClick = (movie, e) => {
+  e.stopPropagation();
+
+  const displaySlug = movie.event_slug || (
+    movie.event_title ? movie.event_title.toLowerCase().replace(/\s+/g, '-') : "unknown-event"
+  );
+
+  router.push(`/event/${displaySlug}?event=${displaySlug}`);
+};
+
   return (
     <div className="w-full h-[60vh] mx-auto">
       <Swiper
@@ -46,7 +58,8 @@ export default function HeroSection({ movies }) {
                 )}
                 <h2 className="text-2xl font-bold mb-1 text-start">{movie.event_title}</h2>
                 <p className="text-sm mb-4">{movie.description}</p> 
-                <button className="bg-red-600 hover:bg-red-700 text-xs font-bold px-4 py-2 rounded">
+                <button className="bg-red-600 hover:bg-red-700 text-xs font-bold px-4 py-2 rounded" onClick={(e) => handleBookNowClick(movie,e)}
+>
                   BOOK NOW
                 </button>
               </div>

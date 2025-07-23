@@ -21,7 +21,7 @@ export default function CategoryCards({subcategories,category}) {
               alt={cat.name}
               width={400}
               height={300}
-              className="object-cover w-full h-48 group-hover:scale-105 transition-transform duration-300"
+              className="object-fill w-full h-80 group-hover:scale-105 transition-transform duration-300"
             />
 
             <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-transparent"></div>

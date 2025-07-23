@@ -233,6 +233,7 @@ const Page = ({ params }: { params: { slug: string } }) => {
                       title={event.event_title}
                       image={event.card_image}
                       duration={event.duration || 120}
+                      event_slug={event.event_slug}
                     />
                   ))
                 ) : (
@@ -273,6 +274,7 @@ const Page = ({ params }: { params: { slug: string } }) => {
                   title={event.event_title}
                   image={event.card_image}
                   duration={event.duration || 120}
+                  event_slug={event.event_slug}
                 />
               ))
             ) : (

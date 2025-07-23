@@ -157,6 +157,7 @@ console.log('hero events are',heroEvents)
                   key={index}
                   title={movie.event_title}
                   image={movie.card_image}
+                  event_slug={movie.event_slug}
                 />
               ))
             ) : (

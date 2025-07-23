@@ -164,20 +164,13 @@ export default function MovieHero({
 
           {/* Details */}
           <p className="text-2xl text-gray-200 mb-2">
-            {runtime} <span className="items">|</span> {releaseDate}
+          {releaseDate}
           </p>
 
           <p className="text-m text-gray-300 mb-4">{description}</p>
 
           {/* Buttons */}
-          <div className="flex gap-4 text-sm">
-            <button className="flex items-center gap-2 px-8 py-1 border border-purple-500 rounded hover:bg-white hover:text-black transition">
-              ▶ Trailer
-            </button>
-            <button className="flex items-center gap-2 px-8 py-1 border border-purple-500 rounded hover:bg-white hover:text-black transition">
-              ♥ Watchlist
-            </button>
-          </div>
+          
         </div>
       </div>
 

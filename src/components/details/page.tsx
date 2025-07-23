@@ -69,14 +69,14 @@ export default function MovieDetails({event, selectedDate}) {
         {activeTab === "Synopsis" && (
           <>
             <p className="text-2xl text-gray-700 mb-4 max-w-3xl">
-             {event.extra_data.description}
+             {event?.extra_data?.description}
             </p>
 
             {/* Info */}
             <ul className="text-xl text-gray-600 mb-6 space-y-2">
-              <li>{event.extra_data.ageRestriction}</li>
-              <li>{event.extra_data.language}</li>
-              <li>{event.hash_tags}</li>
+              <li>{event?.extra_data?.ageRestriction}</li>
+              <li>{event?.extra_data?.language}</li>
+              <li>{event?.hash_tags}</li>
             </ul>
 
             {/* Cast Grid */}
@@ -100,13 +100,13 @@ export default function MovieDetails({event, selectedDate}) {
             </p>
             <p className="text-lg text-gray-600 flex items-center gap-2 mb-4">
               <FaMapMarkerAlt className="text-gray-500" />
-             {event.extra_data.address}
+             {event?.extra_data?.address}
             </p>
            
 
             {/* Additional Description */}
             <p className="text-sm text-gray-700 mb-4">
-             {event.extra_data.description}
+             {event?.extra_data?.description}
             </p>
           </div>
 

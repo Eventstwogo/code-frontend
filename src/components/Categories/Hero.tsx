@@ -149,11 +149,13 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/pagination";
 import { Autoplay, Pagination } from "swiper/modules";
-
+import Link from "next/link";
 // Dummy movie data
 
 export default function TitanicHero({event}) {
-  console.log(event)
+
+
+
   return (
     <Swiper
       centeredSlides
@@ -168,12 +170,17 @@ export default function TitanicHero({event}) {
     >
       {event?.map((movie, index) => {
        
+        const displaySlug =
+          movie.event_slug ||
+          (movie.event_title
+            ? movie.event_title.toLowerCase().replace(/\s+/g, "-")
+            : "unknown-event");
         return(
         <SwiperSlide key={index}>
-          <section className="relative w-full h-[60vh] text-white overflow-hidden">
+          <section className="relative w-full h-[70vh] text-white overflow-hidden">
             {/* Background Image */}
             <Image
-              src={movie.card_image}
+              src={movie.banner_image}
               alt={movie.event_title}
               fill
               className="inset-0 w-full h-full object-cover z-0"
@@ -188,9 +195,15 @@ export default function TitanicHero({event}) {
               <p className="text-lg max-w-2xl mb-6 text-left">{movie.extra_data.description}</p>
 
               {/* CTA Button */}
-              <button className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-md w-fit">
+              {/* <button className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-md w-fit" onClick={(e)=>{handleBookNowClick(movie,e)}}>
             Book Now
-              </button>
+              </button> */}
+      <Link
+                  href={`/event/${displaySlug}?event=${displaySlug}`}
+                  className="bg-red-600 hover:bg-red-700 text-xs font-bold px-4 py-2 rounded pointer-events-auto w-fit"
+                >
+                  BOOK NOW
+                </Link>
 
               {/* Movie Info */}
               <div className="flex items-center gap-4 text-sm text-gray-300 mt-6 flex-wrap">
