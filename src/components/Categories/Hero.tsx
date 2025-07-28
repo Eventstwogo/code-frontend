@@ -177,7 +177,7 @@ export default function TitanicHero({event}) {
             : "unknown-event");
         return(
         <SwiperSlide key={index}>
-          <section className="relative w-full h-[70vh] text-white overflow-hidden">
+          <section className="relative w-full h-[60vh] text-white overflow-hidden">
             {/* Background Image */}
             <Image
               src={movie.banner_image}

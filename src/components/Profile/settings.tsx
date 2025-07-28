@@ -430,7 +430,7 @@ const ProfileSettings = () => {
                 <Image src={newAvatar} alt="Preview" width={100} height={100} className="rounded-full border shadow-md" />
               ) : (
                 <Image
-                  src={profile?.profile_picture || '/images/avatar-placeholder.png'}
+                  src={profile?.profile_picture || 'placeholder.svg'}
                   alt={profile?.username || ''}
                   width={100}
                   height={100}
@@ -476,17 +476,17 @@ const ProfileSettings = () => {
 
       <Card className="shadow-md border-yellow-100">
         <CardContent className="p-8 space-y-4">
-          <h3 className="text-xl font-semibold text-yellow-600">Reset Password</h3>
+          <h3 className="text-xl font-semibold text-yellow-600">Update Password</h3>
           <p className="text-sm text-muted-foreground">
             For security, you must confirm before resetting your password.
           </p>
           <AlertDialog>
             <AlertDialogTrigger asChild>
-              <Button variant="secondary">Reset Password</Button>
+              <Button variant="secondary">Update Password</Button>
             </AlertDialogTrigger>
             <AlertDialogContent>
               <AlertDialogHeader>
-                <AlertDialogTitle>Reset your password?</AlertDialogTitle>
+                <AlertDialogTitle>Update your password?</AlertDialogTitle>
                 <AlertDialogDescription>
                   A reset link will be sent to your registered email address. This action is safe and cannot be undone.
                 </AlertDialogDescription>
@@ -528,31 +528,7 @@ const ProfileSettings = () => {
         </CardContent>
       </Card>
 
-      <Card className="shadow-md border-gray-200">
-        <CardContent className="p-8 space-y-4">
-          <h3 className="text-xl font-semibold text-gray-700">Logout</h3>
-          <p className="text-sm text-muted-foreground">
-            Click below to securely log out of your account.
-          </p>
-          <AlertDialog>
-            <AlertDialogTrigger asChild>
-              <Button variant="outline">Logout</Button>
-            </AlertDialogTrigger>
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>Are you sure you want to log out?</AlertDialogTitle>
-                <AlertDialogDescription>
-                  You’ll be redirected to the login page and your session will end.
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <AlertDialogAction onClick={handleLogout}>Confirm Logout</AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
-        </CardContent>
-      </Card>
+     
     </form>
   );
 };

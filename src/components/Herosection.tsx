@@ -43,7 +43,7 @@ export default function HeroSection({ movies }) {
                 src={movie.banner_image}
                 alt={movie.event_title}
                 fill // full container fit
-                className="object-fit h-full bg-black"
+                className="object-cover h-full bg-black"
               />
 
               {/* Gradient Overlay */}
