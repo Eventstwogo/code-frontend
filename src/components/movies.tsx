@@ -80,7 +80,7 @@ export default function MovieCard({
          
           <button 
             onClick={handleBookNowClick}
-            className="bg-purple-500 text-white px-3 py-1 rounded text-xs hover:bg-purple-600 transition"
+            className="bg-purple-500 text-white px-3 py-3 rounded  hover:bg-purple-600 transition w-full font-semibold text-sm"
           >
             BOOK NOW
           </button>

@@ -673,6 +673,7 @@ const BookingPageContent = ({ params }: BookingPageProps) => {
     }
  
     const slotData = event.slots[0].slot_data;
+    console.log(slotData)
     return Object.keys(slotData).sort();
   };
  

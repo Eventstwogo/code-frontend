@@ -301,7 +301,7 @@ const ContactPage = () => {
     {
       icon: Phone,
       title: 'Call Us',
-      details: ['+61430194569']
+      details: ['+61430194565']
     },
     {
       icon: Mail,

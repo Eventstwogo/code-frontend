@@ -140,6 +140,7 @@ import Link from "next/link";
 import { toast } from "sonner";
 import axiosInstance from "@/lib/axiosInstance";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 const signupSchema = z.object({
   first_name: z.string()
     .min(2, "First Name must be at least 2 characters")
@@ -149,10 +150,7 @@ const signupSchema = z.object({
     .min(2, "Last Name must be at least 2 characters")
     .max(30, "Last Name must be at most 30 characters")
     .regex(/^[a-zA-Z\s]+$/, "Last Name can only contain letters and spaces"),
-  username: z.string()
-    .min(3, "Username must be at least 3 characters")
-    .max(20, "Username must be at most 20 characters")
-    .regex(/^[a-zA-Z\s]+$/, "Username can only contain letters and spaces"),
+
   email: z.string().email("Invalid email address"),
   password: z.string()
     .min(8, "Password must be at least 8 characters")
@@ -163,7 +161,10 @@ const signupSchema = z.object({
 });
 
 type SignupFormData = z.infer<typeof signupSchema>;
-
+const extractUsername = (email: string): string => {
+  return email.split('@')[0]
+    .replace(/[.\-_]/g, ' '); // Replace dots, hyphens, and underscores with spaces
+};
 export function SignupForm({ className, ...props }: React.ComponentProps<"div">) {
   const {
     register,
@@ -173,10 +174,26 @@ export function SignupForm({ className, ...props }: React.ComponentProps<"div">)
   } = useForm<SignupFormData>({
     resolver: zodResolver(signupSchema),
   });
+  const [passwordValue, setPasswordValue] = useState("");
+  const passwordChecks = [
+  { label: "At least 8 characters", test: /.{8,}/.test(passwordValue) },
+  { label: "At least one lowercase letter", test: /[a-z]/.test(passwordValue) },
+  { label: "At least one uppercase letter", test: /[A-Z]/.test(passwordValue) },
+  { label: "At least one number", test: /\d/.test(passwordValue) },
+  { label: "At least one special character", test: /[^a-zA-Z0-9]/.test(passwordValue) },
+];
 const router=useRouter()
   const onSubmit = async (data: SignupFormData) => {
+     const username = extractUsername(data.email);
+    const payload = {
+      username,
+      email:data.email,
+      password:data.password,
+      first_name:data.first_name,
+      last_name:data.last_name,
+    }
     try {
-      const res = await axiosInstance.post("/api/v1/users/register", data);
+      const res = await axiosInstance.post("/api/v1/users/register", payload);
       toast.success(res.data.message);
       router.push('/login')
       reset();
@@ -219,13 +236,7 @@ const router=useRouter()
               </div>
 
               {/* Username */}
-              <div className="grid gap-2">
-                <Label htmlFor="username">Username</Label>
-                <Input id="username" {...register("username")} placeholder="janedoe" />
-                {errors.username && (
-                  <p className="text-red-500 text-sm">{errors.username.message}</p>
-                )}
-              </div>
+            
 
               {/* Email */}
               <div className="grid gap-2">
@@ -242,18 +253,31 @@ const router=useRouter()
               </div>
 
               {/* Password */}
-              <div className="grid gap-2">
-                <Label htmlFor="password">Password</Label>
-                <Input
-                  id="password"
-                  type="password"
-                  {...register("password")}
-                  placeholder="••••••••"
-                />
-                {errors.password && (
-                  <p className="text-red-500 text-sm">{errors.password.message}</p>
-                )}
-              </div>
+        <Input
+  id="password"
+  type="password"
+  {...register("password")}
+  value={passwordValue}
+  onChange={(e) => {
+    setPasswordValue(e.target.value);
+    // Also let react-hook-form update
+    register("password").onChange(e);
+  }}
+  placeholder="••••••••"
+/>
+
+<ul className="text-sm mt-1 space-y-1">
+  {passwordChecks.map((rule, index) => (
+    <li
+      key={index}
+      className={`flex items-center gap-2 ${
+        rule.test ? "text-green-600" : "text-gray-500"
+      }`}
+    >
+      {rule.test ? " ✔" : "❌"} {rule.label}
+    </li>
+  ))}
+</ul>
 
               <Button type="submit" className="w-full bg-purple-500 hover:bg-yellow-500">
                 Create Account

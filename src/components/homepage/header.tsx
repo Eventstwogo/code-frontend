@@ -102,8 +102,8 @@ export default function Header({ categories }: HeaderProps) {
             <Image
               src="/images/logo.png"
               alt="EventsNego Logo"
-              width={50}
-              height={40}
+              width={100}
+              height={100}
               priority
             />
           </Link>
