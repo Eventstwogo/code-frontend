@@ -174,10 +174,7 @@ export default function MovieHero({
         </div>
 
         {/* Bottom Bar - positioned within the section */}
-        <div className="absolute bottom-0 left-0 right-0 bg-black/80 backdrop-blur-sm text-white px-4 sm:px-6 lg:px-8 py-2 sm:py-3 text-xs sm:text-sm border-t border-gray-700">
-          <strong>Times & Tickets</strong>{" "}
-          <span className="text-red-400 ml-2">+ Add cinemas</span>
-        </div>
+        
       </div>
     </section>
   );

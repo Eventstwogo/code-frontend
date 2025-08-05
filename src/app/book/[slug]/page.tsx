@@ -534,7 +534,7 @@ import axiosInstance from '@/lib/axiosInstance';
 import useStore from '@/lib/Zustand';
 import { FaMapMarkerAlt, FaClock, FaCalendarAlt } from 'react-icons/fa';
 import { BsCalendar2EventFill } from 'react-icons/bs';
- 
+import { useProfileStore } from '@/lib/ZustanStore/usermanagement';
 interface BookingPageProps {
   params: {
     slug: string;
@@ -578,6 +578,7 @@ const BookingPageContent = ({ params }: BookingPageProps) => {
   const [authChecked, setAuthChecked] = useState(false);
   const [bookingDetails, setBookingDetails] = useState<any>(null);
   const [showBookingDetails, setShowBookingDetails] = useState(false);
+   const { profile, fetchProfile } = useProfileStore();
  
   // Get selected date and slot_id from URL params if available
   useEffect(() => {
@@ -679,6 +680,7 @@ const BookingPageContent = ({ params }: BookingPageProps) => {
   useEffect(() => {
     if (slug && urlParamsProcessed && authChecked && isAuthenticated) {
       fetchEvent();
+      fetchProfile()
     }
   }, [slug, urlParamsProcessed, authChecked, isAuthenticated]);
  
@@ -693,7 +695,7 @@ const BookingPageContent = ({ params }: BookingPageProps) => {
     }
   }, [event, selectedDate]);
    useEffect(() => {
-    setSeatsCount(0);
+    setSeatsCount(1);
   }, [selectedSlot]);
   useEffect(() => {
     if (event && selectedDate) {
@@ -734,6 +736,7 @@ const BookingPageContent = ({ params }: BookingPageProps) => {
     const detailedBookingInfo = {
       bookingData: bookingData,
       userDetails: {
+        username:profile?.username,
         userId: userId,
         isAuthenticated: isAuthenticated
       },
@@ -911,7 +914,7 @@ console.log(slots)
                   <div className="flex items-center justify-between mb-2">
                     <h3 className="font-semibold">{slot.slot_name}</h3>
                     <span className="text-lg font-bold text-purple-600">
-                      ₹{slot.price}
+                      ${slot.price}
                     </span>
                   </div>
                  
@@ -947,9 +950,7 @@ console.log(slots)
            <button
   onClick={() => {
   const selectedSlotData = slots.find(s => s.slot_name === selectedSlot);
-  console.log(slots)
-  console.log('Selected Slot:', selectedSlot);
-  console.log('Matched Slot Data:', selectedSlotData);
+
   if (selectedSlotData && seatsCount < selectedSlotData.capacity) {
     setSeatsCount(seatsCount + 1);
   }
@@ -991,7 +992,7 @@ console.log(slots)
                   </div>
                   <div className="flex justify-between text-lg font-bold border-t pt-2">
                     <span>Total:</span>
-                    <span className="text-purple-600">₹{totalPrice}</span>
+                    <span className="text-purple-600">${totalPrice}</span>
                   </div>
                 </div>
               );
@@ -1049,8 +1050,8 @@ console.log(slots)
              
                   <p><span className="font-medium">Available Seats:</span> {bookingDetails.slotDetails.availableSeats} / {bookingDetails.slotDetails.totalSeats}</p>
                   <p><span className="font-medium">Number of Tickets:</span> {bookingDetails.bookingSummary.numberOfTickets}</p>
-                  <p><span className="font-medium">Price per Ticket:</span> ₹{bookingDetails.bookingSummary.pricePerTicket}</p>
-                  <p className="text-lg"><span className="font-bold">Total Amount:</span> <span className="text-green-600 font-bold">₹{bookingDetails.bookingSummary.totalAmount}</span></p>
+                  <p><span className="font-medium">Price per Ticket:</span> ${bookingDetails.bookingSummary.pricePerTicket}</p>
+                  <p className="text-lg"><span className="font-bold">Total Amount:</span> <span className="text-green-600 font-bold">${bookingDetails.bookingSummary.totalAmount}</span></p>
                 </div>
               </div>
             </div>

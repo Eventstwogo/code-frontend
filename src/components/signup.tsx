@@ -139,7 +139,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import { toast } from "sonner";
 import axiosInstance from "@/lib/axiosInstance";
-
+import useRouter from 'next/navigation'
 const signupSchema = z.object({
   first_name: z.string()
     .min(2, "First Name must be at least 2 characters")
@@ -173,11 +173,12 @@ export function SignupForm({ className, ...props }: React.ComponentProps<"div">)
   } = useForm<SignupFormData>({
     resolver: zodResolver(signupSchema),
   });
-
+const router=useRouter()
   const onSubmit = async (data: SignupFormData) => {
     try {
       const res = await axiosInstance.post("/api/v1/users/register", data);
       toast.success(res.data.message);
+      router.push('/login')
       reset();
     } catch (err: any) {
       const message = err?.response?.data?.message || "Something went wrong";

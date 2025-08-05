@@ -25,7 +25,7 @@ export const useProfileStore = create<ProfileStore>((set) => ({
   fetchProfile: async () => {
     set({ loading: true, error: null });
     try {
-      const response = await axiosInstance.get('/api/v1/users/profile/');
+      const response = await axiosInstance.get('/api/v1/users/profile');
       const profileData = response.data?.data;
 
       set({ profile: profileData, loading: false });

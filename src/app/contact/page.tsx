@@ -296,7 +296,7 @@ const ContactPage = () => {
     {
       icon: MapPin,
       title: 'Visit Us',
-      details: ['123 Event Street', 'Entertainment District', 'City, State 12345']
+      details: ['Australia']
     },
     {
       icon: Phone,
@@ -306,7 +306,7 @@ const ContactPage = () => {
     {
       icon: Mail,
       title: 'Email Us',
-      details: ['info@events2go.com', 'support@events2go.com']
+      details: ['info@events2go.com']
     }
   ]
 

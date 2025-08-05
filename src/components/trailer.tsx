@@ -50,7 +50,7 @@ export default function MovieTrailerSection({images}) {
     <section className="text-purple-500 py-6 sm:py-10 px-4 sm:px-6 lg:px-8">
       {/* Header */}
       <div className="flex justify-between items-center mb-4 sm:mb-6">
-        <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold">Related Images</h2>
+        <h2 className="text-2xl sm:text-2xl lg:text-2xl font-bold">Related Images</h2>
       </div>
 
       {/* Cards */}

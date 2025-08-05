@@ -120,14 +120,28 @@ const EventDetailPage = ({ params }: EventDetailPageProps) => {
       setEvent(eventData);
       
       // Generate dates from the event data
-      if (eventData.start_date && eventData.end_date) {
-        const dates = generateEventDates(eventData.start_date, eventData.end_date);
-        setEventDates(dates);
-        // Set first date as default selected
-        if (dates.length > 0) {
-          setSelectedDate(dates[0]);
-        }
-      }
+    if (eventData.start_date && eventData.end_date) {
+  const dates = generateEventDates(eventData.start_date, eventData.end_date);
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0); // ignore time
+
+  const futureDates = dates.filter(d => {
+    // Create a date for the event date using the same month/year from start_date
+    const eventDate = new Date(eventData.start_date);
+    eventDate.setDate(d.date);
+    eventDate.setHours(0, 0, 0, 0);
+
+    return eventDate >= today;
+  });
+
+  setEventDates(futureDates);
+
+  if (futureDates.length > 0) {
+    setSelectedDate(futureDates[0]);
+  }
+}
+
     } catch (error) {
       console.error('Error fetching event:', error);
     }

@@ -72,17 +72,12 @@ export default function MovieCard({
               isLiked ? "text-purple-600" : "text-gray-400"
             }`}
           >
-            <FaHeart />
+          
           </button>
         </div>
 
         <div className="flex justify-between items-center text-xs">
-          <button 
-            onClick={handleAddToListClick}
-            className="text-purple-600 font-semibold hover:underline"
-          >
-            ADD TO LIST
-          </button>
+         
           <button 
             onClick={handleBookNowClick}
             className="bg-purple-500 text-white px-3 py-1 rounded text-xs hover:bg-purple-600 transition"
