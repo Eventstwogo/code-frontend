@@ -528,7 +528,7 @@
 // export default BookingPage;
 
 'use client'
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import axiosInstance from '@/lib/axiosInstance';
 import useStore from '@/lib/Zustand';
@@ -560,7 +560,7 @@ interface BookingData {
   seats_count: number;
 }
  
-const BookingPage = ({ params }: BookingPageProps) => {
+const BookingPageContent = ({ params }: BookingPageProps) => {
   const { slug } = params;
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -1087,5 +1087,20 @@ console.log(slots)
   );
 };
  
+const BookingPage = ({ params }: BookingPageProps) => {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading booking page...</p>
+        </div>
+      </div>
+    }>
+      <BookingPageContent params={params} />
+    </Suspense>
+  );
+};
+
 export default BookingPage;
  

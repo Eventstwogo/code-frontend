@@ -19,8 +19,8 @@ export default function MovieDetails({event, selectedDate}) {
   const handleBookTickets = () => {
     if (userId) {
       // User is authenticated, navigate to book now page with selected date
-      const dateParam = selectedDate ? `?date=${getFormattedDate(selectedDate)}&&slug_id=${event.slot_id}` : '';
-      router.push(`/book/${event.event_slug}${dateParam}`);
+      const dateParam = selectedDate ? `?date=${getFormattedDate(selectedDate)}&&slug_id=${event?.slot_id || ''}` : '';
+      router.push(`/book/${event?.event_slug || ''}${dateParam}`);
     } else {
       // User is not authenticated, navigate to login page
       router.push('/login');
@@ -31,7 +31,7 @@ export default function MovieDetails({event, selectedDate}) {
     if (!dateItem || !event) return '';
     
     // Get the current year and month from event start date
-    const eventDate = new Date(event.start_date);
+    const eventDate = new Date(event?.start_date || new Date());
     const year = eventDate.getFullYear();
     const month = eventDate.getMonth();
     
@@ -107,14 +107,14 @@ export default function MovieDetails({event, selectedDate}) {
       <aside className="w-full lg:w-[350px] xl:w-[400px] lg:self-start">
         <div className="bg-white shadow-lg border rounded-lg p-4 sm:p-6 sticky top-4">
           <div className="mb-6">
-            <h4 className="font-bold text-xl sm:text-2xl mb-2 text-gray-900">{event.event_title}</h4>
+            <h4 className="font-bold text-xl sm:text-2xl mb-2 text-gray-900">{event?.event_title || 'Event Title'}</h4>
             
             <div className="space-y-3">
               <div className="flex items-start gap-3">
                 <BsCalendar2EventFill className="text-purple-500 mt-1 flex-shrink-0" />
                 <div>
                   <p className="text-sm font-medium text-gray-800">Event Dates</p>
-                  <p className="text-sm text-gray-600">{event.start_date} to {event.end_date}</p>
+                  <p className="text-sm text-gray-600">{event?.start_date || 'TBD'} to {event?.end_date || 'TBD'}</p>
                 </div>
               </div>
               

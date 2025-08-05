@@ -1,26 +1,89 @@
 'use client';
 
-import React, { useState,useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import { Search, User, Menu, X } from 'lucide-react';
 import Link from 'next/link';
 import { useProfileStore } from '@/lib/ZustanStore/usermanagement';
 import useStore from '@/lib/Zustand';
+import { useSearch } from '@/hooks/useSearch';
+import SearchDropdown from '@/components/SearchDropdown';
 type HeaderProps = {
   categories: { category_id: number; category_name: string;category_slug: string }[];
 };
 
 export default function Header({ categories }: HeaderProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [selectedIndex, setSelectedIndex] = useState(-1);
+  const searchRef = useRef<HTMLDivElement>(null);
 
   const { profile, fetchProfile } = useProfileStore();
-  const {userId}=useStore()
+  const { userId } = useStore();
+  const { 
+    searchQuery, 
+    setSearchQuery, 
+    searchResults, 
+    isLoading, 
+    isOpen, 
+    setIsOpen, 
+    error, 
+    clearSearch 
+  } = useSearch();
 
-    useEffect(() => {
+  useEffect(() => {
     if (userId) {
       fetchProfile(); // Fetch profile only if user is logged in
     }
   }, [userId, fetchProfile]);
+
+  // Close search dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+        setSelectedIndex(-1);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [setIsOpen]);
+
+  // Reset selected index when search results change
+  useEffect(() => {
+    setSelectedIndex(-1);
+  }, [searchResults]);
+
+  // Handle keyboard navigation
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (!isOpen || searchResults.length === 0) return;
+
+    switch (e.key) {
+      case 'ArrowDown':
+        e.preventDefault();
+        setSelectedIndex(prev => 
+          prev < searchResults.length - 1 ? prev + 1 : prev
+        );
+        break;
+      case 'ArrowUp':
+        e.preventDefault();
+        setSelectedIndex(prev => prev > 0 ? prev - 1 : -1);
+        break;
+      case 'Enter':
+        e.preventDefault();
+        if (selectedIndex >= 0 && selectedIndex < searchResults.length) {
+          const selectedEvent = searchResults[selectedIndex];
+          window.location.href = `/event/${selectedEvent.event_slug}`;
+        }
+        break;
+      case 'Escape':
+        setIsOpen(false);
+        setSelectedIndex(-1);
+        break;
+    }
+  };
   return (
     <header className="border-b shadow-sm bg-white w-full">
       {/* Top Row: Logo + Search + Icons/Menu */}
@@ -47,20 +110,53 @@ export default function Header({ categories }: HeaderProps) {
         </div>
 
         {/* Search Bar */}
-        <div className="
-          flex items-center
-          border rounded-xl
-          px-2 py-1
-          shadow-sm border-gray-300
-          flex-1
-          mx-2
-          max-w-[140px] sm:max-w-[200px] md:max-w-md lg:max-w-lg
-        ">
+        <div 
+          ref={searchRef}
+          className="
+            relative
+            flex items-center
+            border rounded-xl
+            px-2 py-1
+            shadow-sm border-gray-300
+            flex-1
+            mx-2
+            max-w-[140px] sm:max-w-[200px] md:max-w-md lg:max-w-lg
+          "
+        >
           <Search className="h-4 w-4 text-gray-400" />
           <input
             type="text"
-            placeholder="Search..."
+            placeholder="Search events, categories, locations..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            onFocus={() => searchQuery && setIsOpen(true)}
+            onKeyDown={handleKeyDown}
             className="flex-1 outline-none px-2 py-1 text-xs sm:text-sm"
+          />
+          {searchQuery && (
+            <button
+              onClick={() => {
+                clearSearch();
+                setSelectedIndex(-1);
+              }}
+              className="ml-1 p-1 hover:bg-gray-100 rounded-full transition-colors"
+              aria-label="Clear search"
+            >
+              <X className="h-3 w-3 text-gray-400" />
+            </button>
+          )}
+          
+          {/* Search Results Dropdown */}
+          <SearchDropdown
+            results={searchResults}
+            isLoading={isLoading}
+            isOpen={isOpen}
+            onClose={() => {
+              setIsOpen(false);
+              setSelectedIndex(-1);
+            }}
+            error={error}
+            selectedIndex={selectedIndex}
           />
         </div>
 
