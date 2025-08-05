@@ -139,7 +139,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import { toast } from "sonner";
 import axiosInstance from "@/lib/axiosInstance";
-import useRouter from 'next/navigation'
+import { useRouter } from "next/navigation";
 const signupSchema = z.object({
   first_name: z.string()
     .min(2, "First Name must be at least 2 characters")
