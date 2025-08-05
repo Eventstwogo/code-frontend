@@ -200,7 +200,7 @@ export default function TitanicHero({event}) {
               </button> */}
       <Link
                   href={`/event/${displaySlug}?event=${displaySlug}`}
-                  className="bg-red-600 hover:bg-red-700 text-xs font-bold px-4 py-2 rounded pointer-events-auto w-fit"
+                  className="bg-purple-600 hover:bg-purple-700 text-xs font-bold px-4 py-2 rounded pointer-events-auto w-fit"
                 >
                   BOOK NOW
                 </Link>

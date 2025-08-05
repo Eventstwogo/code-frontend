@@ -429,13 +429,14 @@ const ProfileSettings = () => {
               {newAvatar ? (
                 <Image src={newAvatar} alt="Preview" width={100} height={100} className="rounded-full border shadow-md" />
               ) : (
+                <div className="w-[100px] h-[100px] relative">
                 <Image
                   src={profile?.profile_picture || 'placeholder.svg'}
                   alt={profile?.username || ''}
-                  width={100}
-                  height={100}
-                  className="rounded-full border shadow-md"
+                fill
+                  className="rounded-full border shadow-md object-cover"
                 />
+                </div>
               )}
               <Input type="file" accept="image/*" onChange={handleAvatarUpload} className="w-full max-w-xs" />
             </div>

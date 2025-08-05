@@ -133,6 +133,8 @@ import useStore from "@/lib/Zustand";
 import axiosInstance from "@/lib/axiosInstance";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { Eye, EyeOff } from "lucide-react";
+import { useState } from "react";
 const schema = z.object({
  
   currentPassword: z.string().min(1, "Current password is required"),
@@ -158,7 +160,8 @@ export function ResetPasswordForm({ className, ...props }: React.ComponentProps<
   });
 const {userId}=useStore()
 const router=useRouter()
-
+const [showCurrent, setShowCurrent] = useState(false);
+const [showNew, setShowNew] = useState(false);
   const onSubmit = async (data: ResetPasswordFormData) => {
     if (!userId) {
       toast.error("User ID missing in query parameters.");
@@ -191,7 +194,7 @@ const router=useRouter()
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className="flex flex-col gap-5">
               <div className="text-center space-y-2">
-                <h1 className="text-2xl font-bold">Reset your password</h1>
+                <h1 className="text-2xl font-bold">Change Your Password</h1>
                 <p className="text-muted-foreground text-sm">
                   Enter your current and new password.
                 </p>
@@ -199,31 +202,54 @@ const router=useRouter()
 
             
 
-              <div className="grid gap-2">
-                <Label htmlFor="currentPassword">Current Password</Label>
-                <Input
-                  id="currentPassword"
-                  type="password"
-                  placeholder="********"
-                  {...register("currentPassword")}
-                />
-                {errors.currentPassword && (
-                  <p className="text-red-500 text-sm">{errors.currentPassword.message}</p>
-                )}
-              </div>
+            <div className="grid gap-2">
+  <Label htmlFor="currentPassword">Current Password</Label>
+  <div className="relative">
+    <Input
+      id="currentPassword"
+      type={showCurrent ? "text" : "password"}
+      placeholder="********"
+      {...register("currentPassword")}
+      className="pr-10"
+    />
+    <button
+      type="button"
+      onClick={() => setShowCurrent(!showCurrent)}
+      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
+      tabIndex={-1}
+    >
+      {showCurrent ? <EyeOff size={18} /> : <Eye size={18} />}
+    </button>
+  </div>
+  {errors.currentPassword && (
+    <p className="text-red-500 text-sm">{errors.currentPassword.message}</p>
+  )}
+</div>
 
-              <div className="grid gap-2">
-                <Label htmlFor="newPassword">New Password</Label>
-                <Input
-                  id="newPassword"
-                  type="password"
-                  placeholder="********"
-                  {...register("newPassword")}
-                />
-                {errors.newPassword && (
-                  <p className="text-red-500 text-sm">{errors.newPassword.message}</p>
-                )}
-              </div>
+
+         <div className="grid gap-2">
+  <Label htmlFor="newPassword">New Password</Label>
+  <div className="relative">
+    <Input
+      id="newPassword"
+      type={showNew ? "text" : "password"}
+      placeholder="********"
+      {...register("newPassword")}
+      className="pr-10"
+    />
+    <button
+      type="button"
+      onClick={() => setShowNew(!showNew)}
+      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
+      tabIndex={-1}
+    >
+      {showNew ? <EyeOff size={18} /> : <Eye size={18} />}
+    </button>
+  </div>
+  {errors.newPassword && (
+    <p className="text-red-500 text-sm">{errors.newPassword.message}</p>
+  )}
+</div>
 
               <Button
                 type="submit"

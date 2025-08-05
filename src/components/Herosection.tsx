@@ -58,7 +58,7 @@ export default function HeroSection({ movies }) {
                 )}
                 <h2 className="text-2xl font-bold mb-1 text-start">{movie.event_title}</h2>
                 <p className="text-sm mb-4">{movie.description}</p> 
-                <button className="bg-red-600 hover:bg-red-700 text-xs font-bold px-4 py-2 rounded" onClick={(e) => handleBookNowClick(movie,e)}
+                <button className="bg-purple-600 hover:bg-purple-700 text-xs font-bold px-4 py-2 rounded" onClick={(e) => handleBookNowClick(movie,e)}
 >
                   BOOK NOW
                 </button>

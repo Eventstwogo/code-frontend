@@ -111,7 +111,7 @@ return (
 
 <Hero/>
 <Carousel/>
-<Trending/>
+{/* <Trending/> */}
 {/* <Horizantalcard image={image}/> */}
 {/* <EventCard event={heroEvents}/> */}
  {categories.map((category) => (

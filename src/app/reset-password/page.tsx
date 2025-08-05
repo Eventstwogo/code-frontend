@@ -329,11 +329,11 @@ export default function ResetPasswordWithTokenPage() {
         className="relative z-40 backdrop-blur-lg bg-white/80 dark:bg-gray-800/80 dark:text-gray-100 rounded-3xl p-10 w-full max-w-md shadow-2xl border border-gray-200 dark:border-gray-700 flex flex-col gap-6"
       >
         <div className="flex flex-col items-center mb-4 gap-2">
-          <Image src="/logo.png" alt="Logo" width={60} height={60} className="object-contain drop-shadow-lg" />
+          <Image src="/images/logo.png" alt="Logo" width={60} height={60} className="object-contain drop-shadow-lg" />
           <span className="text-lg font-semibold text-gray-700 dark:text-gray-200">Reset your password</span>
           <span className="text-sm text-gray-500 dark:text-gray-400">Create a strong new password</span>
         </div>
-        <h2 className="text-2xl font-bold mb-2 text-center text-indigo-700 dark:text-indigo-300">Reset Password</h2>
+      
         <div className="mb-2">
           <Label htmlFor="new_password" className="text-sm mb-1 block">
             New Password
@@ -382,9 +382,7 @@ export default function ResetPasswordWithTokenPage() {
               {showConfirmPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
             </button>
           </div>
-          {confirmPassword && !passwordsMatch && (
-            <p className="text-red-500 text-xs mt-1">Passwords do not match</p>
-          )}
+       
           {confirmPassword && passwordsMatch && (
             <p className="text-green-600 dark:text-green-400 text-xs mt-1">Passwords match</p>
           )}

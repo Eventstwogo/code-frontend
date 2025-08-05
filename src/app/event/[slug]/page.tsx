@@ -143,7 +143,7 @@ const EventDetailPage = ({ params }: EventDetailPageProps) => {
 
 console.log(eventDates);
   return (
-    <div>
+    <div className="min-h-screen bg-gray-50">
       <Moviesection
         title={event.event_title}
         runtime="170 min"
@@ -153,18 +153,25 @@ console.log(eventDates);
         backgroundImage={event.banner_image}
       />
 
-      <Filter
-        dates={eventDates}
-        filters={["After 5 PM", "Recliners", "3D"]}
-        onDateSelect={(date, index) => {
-          console.log("Selected Date:", date);
-          setSelectedDate(date);
-        }}
-        onWatchNow={() => alert("Start Watching!")}
-      />
+      <div className="bg-white">
+        <Filter
+          dates={eventDates}
+          filters={["After 5 PM", "Recliners", "3D"]}
+          onDateSelect={(date, index) => {
+            console.log("Selected Date:", date);
+            setSelectedDate(date);
+          }}
+          onWatchNow={() => alert("Start Watching!")}
+        />
+      </div>
 
-      <Details event={event} selectedDate={selectedDate} />
-      <Trailer  images={event.event_extra_images}/>
+      <div className="bg-gray-50">
+        <Details event={event} selectedDate={selectedDate} />
+      </div>
+      
+      <div className="bg-white">
+        <Trailer images={event.event_extra_images}/>
+      </div>
     </div>
   );
 };

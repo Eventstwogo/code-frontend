@@ -47,52 +47,65 @@ export default function MovieTrailerSection({images}) {
 
 
   return (
-    <section className=" text-purple-500 py-10 px-6 md:px-12">
-      {/* Header & Arrows */}
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-3xl md:text-4xl font-extrabold">Related Images</h2>
-        <div className="flex gap-2">
-          
-          
-        </div>
+    <section className="text-purple-500 py-6 sm:py-10 px-4 sm:px-6 lg:px-8">
+      {/* Header */}
+      <div className="flex justify-between items-center mb-4 sm:mb-6">
+        <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold">Related Images</h2>
       </div>
 
       {/* Cards */}
-      <div
-        ref={scrollRef}
-        className="flex overflow-x-auto gap-6 scroll-smooth pb-6"
-      >
-        {images?.map((movie, index) => (
+      {images && images.length > 0 ? (
+        <>
           <div
-            key={index}
-            className="relative flex-shrink-0 w-[250px] h-[360px] rounded-xl overflow-hidden shadow-xl group"
+            ref={scrollRef}
+            className="flex overflow-x-auto gap-3 sm:gap-4 lg:gap-6 scroll-smooth pb-4 sm:pb-6 scrollbar-thin scrollbar-thumb-purple-300 scrollbar-track-gray-100"
           >
-            <img
-              src={movie}
-              alt={movie.title}
-              className="w-full h-full object-cover rounded-xl"
-            />
-            
+            {images?.map((imageUrl, index) => (
+              <div
+                key={index}
+                className="relative flex-shrink-0 w-[180px] sm:w-[220px] lg:w-[250px] h-[240px] sm:h-[300px] lg:h-[360px] rounded-lg lg:rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow group"
+              >
+                <img
+                  src={imageUrl}
+                  alt={`Event image ${index + 1}`}
+                  className="w-full h-full object-cover transition-transform group-hover:scale-105"
+                />
+                
+                {/* Overlay on hover */}
+                <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity" />
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
+          
+          {/* Scroll indicator for mobile */}
+          {images.length > 2 && (
+            <p className="text-xs text-gray-500 mt-2 sm:hidden text-center">
+              ← Scroll to see more images →
+            </p>
+          )}
+        </>
+      ) : (
+        <div className="text-center py-8 sm:py-12">
+          <p className="text-gray-500 text-base sm:text-lg">No images available for this event</p>
+        </div>
+      )}
 
       {/* Modal */}
       {activeTrailer && (
-        <div className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center">
+        <div className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4">
           <div className="w-full max-w-4xl aspect-video relative">
             <iframe
               width="100%"
               height="100%"
               src={activeTrailer}
               title="Movie Trailer"
-              className="rounded-xl"
+              className="rounded-lg lg:rounded-xl"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen
             />
             <button
               onClick={() => setActiveTrailer(null)}
-              className="absolute -top-4 -right-4 text-white bg-red-600 px-3 py-1 rounded-full"
+              className="absolute -top-2 -right-2 sm:-top-4 sm:-right-4 text-white bg-red-600 w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center text-sm sm:text-base hover:bg-red-700 transition-colors"
             >
               ✕
             </button>
@@ -101,11 +114,7 @@ export default function MovieTrailerSection({images}) {
       )}
 
       {/* Bottom CTA */}
-      <div className="mt-8 text-center">
-        <button className="bg-purple-500 px-6 py-2 text-black font-semibold rounded-full hover:bg-yellow-500 transition">
-          Explore All
-        </button>
-      </div>
+      
     </section>
   );
 }

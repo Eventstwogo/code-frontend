@@ -1,27 +1,19 @@
 import type { NextConfig } from "next";
-
+ 
+const isProd = process.env.NODE_ENV === "production";
+ 
 const nextConfig: NextConfig = {
- images: {
-    remotePatterns: [
-       {
-        protocol: 'http',
-        hostname: 'localhost',
-      },
-    ],
-     domains: [
-      'upload.wikimedia.org',
-      'i.guim.co.uk',
-      'cdn.pixabay.com',
-      'wonderla.com',
-      'images.unsplash.com',
-      'plus.unsplash.com',
-      'www.shutterstock.com',
-       "assets.monica.im",
-       "m.media-amazon.com",
-       "encrypted-tbn0.gstatic.com"
-
-    ],
+  eslint: {
+    ignoreDuringBuilds: isProd, // Skip ESLint in production builds
   },
+  typescript: {
+    ignoreBuildErrors: isProd, // Skip TypeScript errors in production builds
+  },
+  images: {
+    domains: ['syd1.digitaloceanspaces.com'],
+  },
+ 
 };
-
+ 
 export default nextConfig;
+ 

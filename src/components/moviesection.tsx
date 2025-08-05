@@ -125,7 +125,7 @@ export default function MovieHero({
   }, [releaseDate]);
 
   return (
-    <section className="relative w-full h-[500px] text-white">
+    <section className="relative w-full h-[50vh] sm:h-[60vh] lg:h-[70vh] text-white overflow-hidden">
       {/* Background Image */}
       <Image
         src={backgroundImage}
@@ -137,47 +137,47 @@ export default function MovieHero({
       {/* Bottom Gradient Overlay */}
       <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent z-10" />
 
-      {/* Content */}
-      <div className="relative z-20 flex items-end h-full px-8 pb-6 gap-6">
-        {/* Movie Poster */}
-        <div className="flex-shrink-0">
-          <Image
-            src={poster}
-            alt={`${title} Poster`}
-            width={220}
-            height={280}
-            className="rounded-md shadow-lg"
-          />
-        </div>
-
-        {/* Info */}
-        <div>
-          {/* Badge */}
-          <div className="mb-1">
-            <span className="bg-purple-500 text-white text-xs font-semibold px-2 py-1 rounded">
-              {statusTag}
-            </span>
+      {/* Content Container - ensures everything stays within bounds */}
+      <div className="absolute inset-0 z-20 flex flex-col justify-between h-full">
+        {/* Main Content */}
+        <div className="flex flex-col sm:flex-row items-end justify-between h-full px-4 sm:px-6 lg:px-8 pt-4 pb-16 sm:pb-20 gap-4 sm:gap-6">
+          {/* Movie Poster */}
+          <div className="flex-shrink-0 self-center sm:self-end">
+            <Image
+              src={poster}
+              alt={`${title} Poster`}
+              width={120}
+              height={150}
+              className="rounded-md shadow-lg sm:w-[140px] sm:h-[180px] lg:w-[160px] lg:h-[200px] xl:w-[180px] xl:h-[230px]"
+            />
           </div>
 
-          {/* Title */}
-          <h1 className="text-2xl md:text-8xl font-bold mb-1">{title}</h1>
+          {/* Info */}
+          <div className="text-center sm:text-left flex-1 max-w-full">
+            {/* Badge */}
+            <div className="mb-1 sm:mb-2">
+              <span className="bg-purple-500 text-white text-xs font-semibold px-2 py-1 rounded">
+                {statusTag}
+              </span>
+            </div>
 
-          {/* Details */}
-          <p className="text-2xl text-gray-200 mb-2">
-          {releaseDate}
-          </p>
+            {/* Title */}
+            <h1 className="text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl font-bold mb-1 sm:mb-2 leading-tight">{title}</h1>
 
-          <p className="text-m text-gray-300 mb-4">{description}</p>
+            {/* Details */}
+            <p className="text-xs sm:text-sm lg:text-base text-gray-200 mb-1 sm:mb-2">
+              {releaseDate}
+            </p>
 
-          {/* Buttons */}
-          
+            <p className="text-xs sm:text-sm lg:text-base text-gray-300 mb-2 line-clamp-2 sm:line-clamp-3 max-w-2xl">{description}</p>
+          </div>
         </div>
-      </div>
 
-      {/* Bottom Bar */}
-      <div className="absolute bottom-0 left-0 w-full bg-black text-white px-8 py-3 text-sm border-t border-gray-700">
-        <strong>Times & Tickets</strong>{" "}
-        <span className="text-red-400 ml-2">+ Add cinemas</span>
+        {/* Bottom Bar - positioned within the section */}
+        <div className="absolute bottom-0 left-0 right-0 bg-black/80 backdrop-blur-sm text-white px-4 sm:px-6 lg:px-8 py-2 sm:py-3 text-xs sm:text-sm border-t border-gray-700">
+          <strong>Times & Tickets</strong>{" "}
+          <span className="text-red-400 ml-2">+ Add cinemas</span>
+        </div>
       </div>
     </section>
   );

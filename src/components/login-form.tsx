@@ -134,6 +134,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import axiosInstance from "@/lib/axiosInstance";
 import useStore from "@/lib/Zustand";
+import { Eye, EyeOff } from "lucide-react";
 // ✅ Schema
 const schema = z.object({
   email: z.string().email("Please enter a valid email address"),
@@ -158,6 +159,7 @@ export function LoginForm({
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const {login}=useStore()
+  const [showPassword, setShowPassword] = useState(false);
   const onSubmit = async (data: LoginFormData) => {
 
 
@@ -228,7 +230,22 @@ export function LoginForm({
                     Forgot your password?
                   </Link>
                 </div>
-                <Input id="password" type="password" {...register("password")} />
+             <div className="relative">
+      <Input
+        id="password"
+        type={showPassword ? "text" : "password"}
+        {...register("password")}
+        className="pr-10" // add padding for icon space
+      />
+      <button
+        type="button"
+        onClick={() => setShowPassword((prev) => !prev)}
+        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+        tabIndex={-1} // prevents it from focusing on tab
+      >
+        {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+      </button>
+    </div>
                 {errors.password && (
                   <p className="text-red-500 text-sm">{errors.password.message}</p>
                 )}

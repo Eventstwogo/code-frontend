@@ -1044,9 +1044,9 @@ console.log(slots)
               <div className="space-y-4">
                 <h3 className="text-lg font-semibold text-gray-800 border-b pb-2">Booking Summary</h3>
                 <div className="space-y-2">
-                  <p><span className="font-medium">User ID:</span> {bookingDetails.userDetails.userId}</p>
+                  <p><span className="font-medium">User name:</span> {bookingDetails.userDetails.username}</p>
                   <p><span className="font-medium">Slot Name:</span> {bookingDetails.slotDetails.slotName}</p>
-                  <p><span className="font-medium">Slot ID:</span> {bookingDetails.slotDetails.slotId}</p>
+             
                   <p><span className="font-medium">Available Seats:</span> {bookingDetails.slotDetails.availableSeats} / {bookingDetails.slotDetails.totalSeats}</p>
                   <p><span className="font-medium">Number of Tickets:</span> {bookingDetails.bookingSummary.numberOfTickets}</p>
                   <p><span className="font-medium">Price per Ticket:</span> ₹{bookingDetails.bookingSummary.pricePerTicket}</p>

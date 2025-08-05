@@ -228,7 +228,7 @@ export default function ProfileDashboard() {
 
   const handleLogout = async () => {
     try {
-      await axiosInstance.post('/api/v1/users/logout');
+      // await axiosInstance.post('/api/v1/users/logout');
       logout();
       localStorage.removeItem('auth_token');
       toast.success('Logged out successfully!');
@@ -239,14 +239,16 @@ export default function ProfileDashboard() {
   };
   const renderSidebarContent = () => (
     <div className="flex flex-col h-full p-4">
-      <div className="flex items-center space-x-4">
-        <Image
+      <div className="flex items-center space-x-4 ">
+        <div className='relative w-[50px] h-[50px]'>
+ <Image
           src={profile?.profile_picture || 'placeholder.svg'}
           alt={profile?.username || 'User'}
-          width={50}
-          height={50}
-          className="rounded-full border"
+        fill
+          className="rounded-full border object-cover"
         />
+        </div>
+       
         <div>
           <p className="font-bold text-lg">{profile?.username}</p>
         </div>
@@ -301,13 +303,15 @@ export default function ProfileDashboard() {
         {/* Mobile Topbar */}
         <header className="md:hidden fixed top-0 left-0 right-0 bg-white h-16 flex items-center justify-between px-4 shadow z-10">
           <div className="flex items-center gap-3">
-            <Image
+            <div className='relative w-[50px] h-[50px]'>
+  <Image
               src={profile?.profile_picture || 'placeholder.svg'}
               alt={profile?.username || 'User'}
-              width={36}
-              height={36}
+        fill
               className="rounded-full"
             />
+            </div>
+          
             <span className="font-medium text-sm">{profile?.username}</span>
           </div>
           <Menu className="w-6 h-6 cursor-pointer" onClick={() => setMobileMenuOpen(true)} />
@@ -330,13 +334,15 @@ export default function ProfileDashboard() {
             {activeSection === 'profile' && (
               <Card>
                 <CardContent className="p-6 flex flex-col md:flex-row gap-6 items-center">
-                  <Image
+                  <div className='relative w-[120px] h-[120px]'>
+ <Image
                     src={profile?.profile_picture || 'placeholder.svg'}
                     alt={profile?.username || 'User'}
-                    width={120}
-                    height={120}
-                    className="rounded-full border"
+                   fill
+                    className="rounded-full border object-cover "
                   />
+                  </div>
+                 
                   <div className="text-center md:text-left">
                     <h2 className="text-2xl font-bold">{profile?.username}</h2>
                     <p className="text-sm text-gray-500">{profile?.email}</p>

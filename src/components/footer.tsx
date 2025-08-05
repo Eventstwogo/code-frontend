@@ -1,5 +1,5 @@
 import { FaInstagram, FaFacebookF, FaXTwitter } from "react-icons/fa6";
- 
+import Link from 'next/link'
 export default function Footer() {
   return (
     <footer className="bg-white text-gray-700 py-10 px-6 md:px-20 border-t">
@@ -29,10 +29,10 @@ export default function Footer() {
         <div>
           <h4 className="font-bold mb-2">Help & Support</h4>
           <ul className="space-y-1">
-            <li>Customer Support</li>
+          <Link href='/contact'>  <li>Contact Us</li></Link>
             <li>FAQs</li>
-            <li>Terms of Use</li>
-            <li>Privacy Policy</li>
+        <Link href='/terms'>  <li>Terms</li></Link>
+           <Link href='/privacy'>    <li>Privacy Policy</li></Link>
             <li>Refund Policy</li>
           </ul>
         </div>
