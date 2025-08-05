@@ -252,32 +252,40 @@ const router=useRouter()
                 )}
               </div>
 
-              {/* Password */}
-        <Input
-  id="password"
-  type="password"
-  {...register("password")}
-  value={passwordValue}
-  onChange={(e) => {
-    setPasswordValue(e.target.value);
-    // Also let react-hook-form update
-    register("password").onChange(e);
-  }}
-  placeholder="••••••••"
-/>
+{/* Password */}
+<div className="grid gap-2">
+  <Label htmlFor="password">Password</Label>
+  <Input
+    id="password"
+    type="password"
+    {...register("password")}
+    value={passwordValue}
+    onChange={(e) => {
+      setPasswordValue(e.target.value);
+      register("password").onChange(e);
+    }}
+    placeholder="••••••••"
+  />
+  {/* {errors.password && (
+    <p className="text-red-500 text-sm">{errors.password.message}</p>
+  )} */}
 
-<ul className="text-sm mt-1 space-y-1">
-  {passwordChecks.map((rule, index) => (
-    <li
-      key={index}
-      className={`flex items-center gap-2 ${
-        rule.test ? "text-green-600" : "text-gray-500"
-      }`}
-    >
-      {rule.test ? " ✔" : "❌"} {rule.label}
-    </li>
-  ))}
-</ul>
+{passwordValue && (
+  <ul className="text-sm mt-1 space-y-1">
+    {passwordChecks.map((rule, index) => (
+      <li
+        key={index}
+        className={`flex items-center gap-2 ${
+          rule.test ? "text-green-600" : "text-gray-500"
+        }`}
+      >
+        {rule.test ? "✔" : "❌"} {rule.label}
+      </li>
+    ))}
+  </ul>
+)}
+</div>
+
 
               <Button type="submit" className="w-full bg-purple-500 hover:bg-yellow-500">
                 Create Account
