@@ -141,6 +141,8 @@ import { toast } from "sonner";
 import axiosInstance from "@/lib/axiosInstance";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { Eye, EyeOff } from "lucide-react";
+
 const signupSchema = z.object({
   first_name: z.string()
     .min(2, "First Name must be at least 2 characters")
@@ -175,6 +177,8 @@ export function SignupForm({ className, ...props }: React.ComponentProps<"div">)
     resolver: zodResolver(signupSchema),
   });
   const [passwordValue, setPasswordValue] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+
   const passwordChecks = [
   { label: "At least 8 characters", test: /.{8,}/.test(passwordValue) },
   { label: "At least one lowercase letter", test: /[a-z]/.test(passwordValue) },
@@ -255,9 +259,10 @@ const router=useRouter()
 {/* Password */}
 <div className="grid gap-2">
   <Label htmlFor="password">Password</Label>
+  <div className="relative">
   <Input
     id="password"
-    type="password"
+    type={showPassword ? "text" : "password"}
     {...register("password")}
     value={passwordValue}
     onChange={(e) => {
@@ -265,7 +270,17 @@ const router=useRouter()
       register("password").onChange(e);
     }}
     placeholder="••••••••"
+    className="pr-10" // space for icon
   />
+  <button
+    type="button"
+    onClick={() => setShowPassword((prev) => !prev)}
+    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+  >
+    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+  </button>
+</div>
+
   {/* {errors.password && (
     <p className="text-red-500 text-sm">{errors.password.message}</p>
   )} */}
