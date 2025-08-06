@@ -92,7 +92,7 @@ function VerifyEmailContent() {
   const [message, setMessage] = useState('');
 
   useEffect(() => {
-    const email = searchParams.get('email');
+    const email = decodeURIComponent(searchParams.get("email") || "");
     const token = searchParams.get('token');
 
     if (!email || !token) {

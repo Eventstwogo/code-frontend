@@ -261,7 +261,7 @@ const resetPasswordSchema = z.object({
 function ResetPasswordContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const email = searchParams.get("email") || "";
+  const email = decodeURIComponent(searchParams.get("email") || "");
   const token = searchParams.get("token") || "";
   const [submitting, setSubmitting] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
