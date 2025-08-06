@@ -205,7 +205,7 @@ export default function Header({ categories }: HeaderProps) {
             <Link href="/about" className="text-sm 2xl:text-base font-medium hover:text-purple-600 transition-colors whitespace-nowrap">
               About Us
             </Link>
-            <Link href="/become-organizer" className="text-sm 2xl:text-base font-medium hover:text-purple-600 transition-colors whitespace-nowrap">
+            <Link href="https://organizer.events2go.com.au/" className="text-sm 2xl:text-base font-medium hover:text-purple-600 transition-colors whitespace-nowrap">
               Become an Organizer
             </Link>
           </nav>
@@ -330,7 +330,7 @@ export default function Header({ categories }: HeaderProps) {
                   </Link>
                   
                   <Link
-                    href="/become-organizer"
+                    href="https://organizer.events2go.com.au/"
                     className="flex items-center gap-3 px-3 py-3 text-base font-medium text-gray-700 hover:text-purple-600 hover:bg-purple-50 rounded-lg transition-colors"
                     onClick={() => setMobileMenuOpen(false)}
                   >

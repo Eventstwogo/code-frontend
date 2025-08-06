@@ -249,7 +249,8 @@ const Page = ({ params }: { params: { slug: string } }) => {
     fetchHeroEvents();
     fetchEvents();
   }, [slug]);
-
+console.log(presentEvents)
+console.log(futureEvents)
   const renderEventSection = (title: string, eventGroups: any[]) => (
     <section className="w-full px-4 sm:px-6 md:px-8 lg:px-10 py-10 sm:py-16 md:py-20">
       <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-6 sm:mb-8 md:mb-10 text-gray-900">{title}</h1>
@@ -270,17 +271,28 @@ const Page = ({ params }: { params: { slug: string } }) => {
                 </Link>
               )}
             </div>
-
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-6 gap-3 sm:gap-4 md:gap-6">
+<div
+  className="
+    flex md:grid 
+    md:grid-cols-3 lg:grid-cols-5 2xl:grid-cols-6
+    gap-3 md:gap-6
+    overflow-x-auto md:overflow-visible
+    scrollbar-hide
+  "
+>
               {subcategory.events && subcategory.events.length > 0 ? (
                 subcategory.events.map((event: any) => (
-                  <MovieCard
-                    key={event.event_id}
-                    title={event.event_title}
-                    image={event.card_image}
-                    duration={event.duration || 120}
-                    event_slug={event.event_slug}
-                  />
+                 <div
+        key={event.event_id}
+        className="flex-shrink-0 w-[80%] max-w-[240px] sm:w-[200px] md:w-auto"
+      >
+        <MovieCard
+          title={event.event_title}
+          image={event.card_image}
+          duration={event.duration || 120}
+          event_slug={event.event_slug}
+        />
+      </div>
                 ))
               ) : (
                 <div className="col-span-full text-center text-gray-500 text-sm sm:text-base md:text-lg">

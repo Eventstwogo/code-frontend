@@ -293,96 +293,242 @@ export default function ProfileDashboard() {
   );
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gray-50 p-10">
-      <div className="flex w-full max-w-7xl min-h-screen bg-white shadow rounded-lg overflow-hidden ">
-        {/* Sidebar for desktop */}
-        <aside className="hidden md:block w-64 border-r">
-          {renderSidebarContent()}
-        </aside>
-
-        {/* Mobile Topbar */}
-        <header className="md:hidden fixed top-0 left-0 right-0 bg-white h-16 flex items-center justify-between px-4 shadow z-10">
-          <div className="flex items-center gap-3">
-            <div className='relative w-[50px] h-[50px]'>
-  <Image
-              src={profile?.profile_picture || 'placeholder.svg'}
-              alt={profile?.username || 'User'}
-        fill
-              className="rounded-full"
-            />
+    <div className="min-h-screen bg-gray-50">
+      {/* Mobile Layout (< 768px) */}
+      <div className="md:hidden">
+        {/* Mobile Header */}
+        <header className="sticky top-0 z-40 bg-white border-b shadow-sm">
+          <div className="flex items-center justify-between px-4 py-3">
+            <div className="flex items-center gap-3">
+              <div className="relative w-8 h-8 sm:w-10 sm:h-10">
+                <Image
+                  src={profile?.profile_picture || '/placeholder.svg'}
+                  alt={profile?.username || 'User'}
+                  fill
+                  className="rounded-full object-cover"
+                />
+              </div>
+              <div>
+                <p className="font-medium text-sm sm:text-base truncate max-w-32 sm:max-w-none">
+                  {profile?.username}
+                </p>
+                <p className="text-xs text-gray-500 truncate max-w-32 sm:max-w-none">
+                  {profile?.email}
+                </p>
+              </div>
             </div>
-          
-            <span className="font-medium text-sm">{profile?.username}</span>
+            <Menu 
+              className="w-6 h-6 cursor-pointer text-gray-600" 
+              onClick={() => setMobileMenuOpen(true)} 
+            />
           </div>
-          <Menu className="w-6 h-6 cursor-pointer" onClick={() => setMobileMenuOpen(true)} />
         </header>
+
+        {/* Mobile Content */}
+        <main className="px-4 py-6 space-y-6">
+          {activeSection === 'profile' && (
+            <Card>
+              <CardContent className="p-4 sm:p-6">
+                <div className="flex flex-col items-center text-center space-y-4">
+                  <div className="relative w-20 h-20 sm:w-24 sm:h-24">
+                    <Image
+                      src={profile?.profile_picture || '/placeholder.svg'}
+                      alt={profile?.username || 'User'}
+                      fill
+                      className="rounded-full border-2 object-cover"
+                    />
+                  </div>
+                  <div>
+                    <h2 className="text-xl sm:text-2xl font-bold">{profile?.username}</h2>
+                    <p className="text-sm text-gray-500">{profile?.email}</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {activeSection === 'bookings' && (
+            <Card>
+              <CardContent className="p-4 sm:p-6 space-y-4">
+                <h3 className="text-lg sm:text-xl font-semibold">My Bookings</h3>
+                <p className="text-gray-500 text-sm sm:text-base">You have no bookings yet.</p>
+              </CardContent>
+            </Card>
+          )}
+
+          {activeSection === 'payments' && (
+            <Card>
+              <CardContent className="p-4 sm:p-6 space-y-4">
+                <h3 className="text-lg sm:text-xl font-semibold">Payment Methods</h3>
+                <p className="text-gray-500 text-sm sm:text-base">No saved payment methods.</p>
+              </CardContent>
+            </Card>
+          )}
+
+          {activeSection === 'addresses' && (
+            <Card>
+              <CardContent className="p-4 sm:p-6 space-y-4">
+                <h3 className="text-lg sm:text-xl font-semibold">My Addresses</h3>
+                <p className="text-gray-500 text-sm sm:text-base">No saved addresses.</p>
+              </CardContent>
+            </Card>
+          )}
+
+          {activeSection === 'settings' && <ProfileSettings />}
+        </main>
+
+        {/* Mobile Bottom Navigation */}
+        <nav className="fixed bottom-0 left-0 right-0 bg-white border-t shadow-lg z-40">
+          <div className="grid grid-cols-5 gap-1 px-2 py-2">
+            {['profile', 'bookings', 'payments', 'addresses', 'settings'].map((section) => (
+              <button
+                key={section}
+                onClick={() => setActiveSection(section as any)}
+                className={`flex flex-col items-center justify-center py-2 px-1 rounded-lg transition-colors ${
+                  activeSection === section
+                    ? 'bg-purple-100 text-purple-700'
+                    : 'text-gray-600 hover:bg-gray-100'
+                }`}
+              >
+                <span className="text-xs font-medium capitalize truncate">
+                  {section === 'payments' ? 'Pay' : section === 'addresses' ? 'Addr' : section}
+                </span>
+              </button>
+            ))}
+          </div>
+        </nav>
 
         {/* Mobile Drawer */}
         {mobileMenuOpen && (
-          <div className="fixed inset-0 bg-white z-50 overflow-auto">
-            <div className="flex justify-between items-center p-4 border-b">
-              <span className="text-lg font-semibold">Menu</span>
-              <button onClick={() => setMobileMenuOpen(false)} className="text-sm text-gray-500">Close</button>
+          <div className="fixed inset-0 bg-black bg-opacity-50 z-50">
+            <div className="bg-white w-4/5 max-w-sm h-full shadow-xl">
+              <div className="flex justify-between items-center p-4 border-b">
+                <span className="text-lg font-semibold">Menu</span>
+                <button 
+                  onClick={() => setMobileMenuOpen(false)} 
+                  className="text-gray-500 hover:text-gray-700"
+                >
+                  ✕
+                </button>
+              </div>
+              {renderSidebarContent()}
             </div>
-            {renderSidebarContent()}
+            <div 
+              className="flex-1" 
+              onClick={() => setMobileMenuOpen(false)}
+            />
           </div>
         )}
+      </div>
+
+      {/* Tablet & Desktop Layout (≥ 768px) */}
+      <div className="hidden md:flex min-h-screen">
+        {/* Sidebar */}
+        <aside className="w-64 lg:w-72 xl:w-80 bg-white border-r shadow-sm">
+          <div className="sticky top-0 h-screen overflow-y-auto">
+            {renderSidebarContent()}
+          </div>
+        </aside>
 
         {/* Main Content */}
-        <main className="flex-1 p-6">
-          <section className="max-w-4xl mx-auto space-y-6">
-            {activeSection === 'profile' && (
-              <Card>
-                <CardContent className="p-6 flex flex-col md:flex-row gap-6 items-center">
-                  <div className='relative w-[120px] h-[120px]'>
- <Image
-                    src={profile?.profile_picture || 'placeholder.svg'}
-                    alt={profile?.username || 'User'}
-                   fill
-                    className="rounded-full border object-cover "
-                  />
-                  </div>
-                 
-                  <div className="text-center md:text-left">
-                    <h2 className="text-2xl font-bold">{profile?.username}</h2>
-                    <p className="text-sm text-gray-500">{profile?.email}</p>
-                  </div>
-                </CardContent>
-              </Card>
-            )}
+        <main className="flex-1 overflow-y-auto">
+          <div className="max-w-none lg:max-w-4xl xl:max-w-5xl 2xl:max-w-6xl mx-auto p-6 lg:p-8 xl:p-10">
+            <div className="space-y-6 lg:space-y-8">
+              {activeSection === 'profile' && (
+                <Card>
+                  <CardContent className="p-6 lg:p-8 xl:p-10">
+                    <div className="flex flex-col lg:flex-row gap-6 lg:gap-8 items-center lg:items-start">
+                      <div className="relative w-24 h-24 lg:w-32 lg:h-32 xl:w-40 xl:h-40 flex-shrink-0">
+                        <Image
+                          src={profile?.profile_picture || '/placeholder.svg'}
+                          alt={profile?.username || 'User'}
+                          fill
+                          className="rounded-full border-2 object-cover"
+                        />
+                      </div>
+                      <div className="text-center lg:text-left space-y-2">
+                        <h2 className="text-2xl lg:text-3xl xl:text-4xl font-bold">
+                          {profile?.username}
+                        </h2>
+                        <p className="text-base lg:text-lg text-gray-500">
+                          {profile?.email}
+                        </p>
+                        <div className="pt-4 space-y-2">
+                          <div className="flex flex-col lg:flex-row gap-2 lg:gap-4 text-sm lg:text-base text-gray-600">
+                            <span>Member since: January 2024</span>
+                            <span className="hidden lg:inline">•</span>
+                            <span>Total bookings: 0</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
 
-            {activeSection === 'bookings' && (
-              <Card>
-                <CardContent className="p-6 space-y-4">
-                  <h3 className="text-xl font-semibold">My Bookings</h3>
-                  {/* Add booking details here */}
-                  <p className="text-gray-500">You have no bookings yet.</p>
-                </CardContent>
-              </Card>
-            )}
+              {activeSection === 'bookings' && (
+                <Card>
+                  <CardContent className="p-6 lg:p-8 xl:p-10 space-y-6">
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                      <h3 className="text-xl lg:text-2xl xl:text-3xl font-semibold">My Bookings</h3>
+                      <Button className="w-full sm:w-auto">View All Bookings</Button>
+                    </div>
+                    <div className="text-center py-12 lg:py-16">
+                      <div className="w-16 h-16 lg:w-20 lg:h-20 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
+                        <span className="text-2xl lg:text-3xl">🎫</span>
+                      </div>
+                      <h4 className="text-lg lg:text-xl font-medium mb-2">No bookings yet</h4>
+                      <p className="text-gray-500 text-sm lg:text-base max-w-md mx-auto">
+                        When you book events, they'll appear here. Start exploring events to make your first booking!
+                      </p>
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
 
-            {activeSection === 'payments' && (
-              <Card>
-                <CardContent className="p-6 space-y-4">
-                  <h3 className="text-xl font-semibold">Payment Methods</h3>
-                  {/* Add payment details here */}
-                  <p className="text-gray-500">No saved payment methods.</p>
-                </CardContent>
-              </Card>
-            )}
+              {activeSection === 'payments' && (
+                <Card>
+                  <CardContent className="p-6 lg:p-8 xl:p-10 space-y-6">
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                      <h3 className="text-xl lg:text-2xl xl:text-3xl font-semibold">Payment Methods</h3>
+                      <Button className="w-full sm:w-auto">Add Payment Method</Button>
+                    </div>
+                    <div className="text-center py-12 lg:py-16">
+                      <div className="w-16 h-16 lg:w-20 lg:h-20 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
+                        <span className="text-2xl lg:text-3xl">💳</span>
+                      </div>
+                      <h4 className="text-lg lg:text-xl font-medium mb-2">No payment methods</h4>
+                      <p className="text-gray-500 text-sm lg:text-base max-w-md mx-auto">
+                        Add a payment method to make booking events quick and easy.
+                      </p>
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
 
-            {activeSection === 'addresses' && (
-              <Card>
-                <CardContent className="p-6 space-y-4">
-                  <h3 className="text-xl font-semibold">My Addresses</h3>
-                  {/* Add address details here */}
-                  <p className="text-gray-500">No saved addresses.</p>
-                </CardContent>
-              </Card>
-            )}
+              {activeSection === 'addresses' && (
+                <Card>
+                  <CardContent className="p-6 lg:p-8 xl:p-10 space-y-6">
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                      <h3 className="text-xl lg:text-2xl xl:text-3xl font-semibold">My Addresses</h3>
+                      <Button className="w-full sm:w-auto">Add Address</Button>
+                    </div>
+                    <div className="text-center py-12 lg:py-16">
+                      <div className="w-16 h-16 lg:w-20 lg:h-20 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
+                        <span className="text-2xl lg:text-3xl">📍</span>
+                      </div>
+                      <h4 className="text-lg lg:text-xl font-medium mb-2">No saved addresses</h4>
+                      <p className="text-gray-500 text-sm lg:text-base max-w-md mx-auto">
+                        Save your addresses to make event booking faster and more convenient.
+                      </p>
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
 
-            {activeSection === 'settings' && <ProfileSettings />}
-          </section>
+              {activeSection === 'settings' && <ProfileSettings />}
+            </div>
+          </div>
         </main>
       </div>
     </div>

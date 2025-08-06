@@ -463,7 +463,7 @@ const ProfileSettings = () => {
                 {errors.username && <p className="text-sm text-red-500 mt-1">{errors.username.message}</p>}
               </div>
               <div>
-                <label className="block text-sm font-medium mb-1">Email</label>
+                <label className="block text-xs font-medium mb-1">Email</label>
                 <Input {...register('email')} placeholder="Email" type="email" />
                 {errors.email && <p className="text-sm text-red-500 mt-1">{errors.email.message}</p>}
               </div>

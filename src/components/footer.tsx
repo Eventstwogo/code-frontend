@@ -37,28 +37,15 @@ export default function Footer() {
           </ul>
         </div>
  
-        {/* Subscribe */}
-        <div className="md:col-span-1">
-          <h4 className="font-bold mb-2">Stay Updated</h4>
-          <div className="flex items-center gap-2">
-            <input
-              type="email"
-              placeholder="enter your mail"
-              className="border rounded px-2 py-1 text-xs w-full"
-            />
-            <button className="bg-purple-500 text-white px-3 py-1 text-xs rounded">
-              SUBSCRIBE
-            </button>
-          </div>
-        </div>
+       
  
         {/* Social Media */}
         <div className="flex flex-col gap-2 flex align-center ">
           <h4 className="font-bold">Social media</h4>
           <div className="flex gap-6 text-xl">
-            <FaInstagram />
-            <FaFacebookF />
-            <FaXTwitter />
+           
+      <Link href='https://www.facebook.com/profile.php?id=61578893052150'>      <FaFacebookF /></Link>
+      
           </div>
         </div>
       </div>

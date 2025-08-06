@@ -10,19 +10,19 @@ export const trendingItems = [
   },
   {
    
-    imageUrl:"/images/reward2.png",
+    imageUrl:"/images/ad2.png",
   },
   {
     
-    imageUrl: "/images/reward3.png",
+    imageUrl: "/images/reward4.png",
   },
   {
   
-    imageUrl:"/images/reward4.png",
+    imageUrl:"/images/reward1.png",
   },
   {
    
-    imageUrl: "/images/reward1.png",
+    imageUrl: "/images/reward3.png",
   }
 ];
 

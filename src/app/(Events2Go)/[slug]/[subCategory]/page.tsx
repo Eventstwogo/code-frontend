@@ -181,14 +181,27 @@ const Page = () => {
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-2xl font-bold text-gray-900 capitalize">{slug}</h2>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 2xl:grid-cols-6 gap-6">
-              {nowStreamingEvents.map((movie, index) => (
-                <MovieCard
-                  key={index}
-                  title={movie.event_title}
-                  image={movie.card_image}
-                  event_slug={movie.event_slug}
-                />
+           <div
+  className="
+    flex md:grid 
+    md:grid-cols-3 lg:grid-cols-5 2xl:grid-cols-6
+    gap-3 md:gap-6
+    overflow-x-auto md:overflow-visible
+    scrollbar-hide
+  "
+>
+              {nowStreamingEvents.map((event, index) => (
+                         <div
+                      key={event.event_id}
+                      className="flex-shrink-0 w-[80%] max-w-[240px] sm:w-[200px] md:w-auto"
+                    >
+                      <MovieCard
+                        title={event.event_title}
+                        image={event.card_image}
+                        duration={event.duration || 120}
+                        event_slug={event.event_slug}
+                      />
+                    </div>
               ))}
             </div>
           </section>
@@ -203,14 +216,27 @@ const Page = () => {
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-2xl font-bold text-gray-900 capitalize">{slug}</h2>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 2xl:grid-cols-6 gap-6">
-              {comingSoonEvents.map((movie, index) => (
-                <MovieCard
-                  key={index}
-                  title={movie.event_title}
-                  image={movie.card_image}
-                  event_slug={movie.event_slug}
-                />
+           <div
+  className="
+    flex md:grid 
+    md:grid-cols-3 lg:grid-cols-5 2xl:grid-cols-6
+    gap-3 md:gap-6
+    overflow-x-auto md:overflow-visible
+    scrollbar-hide
+  "
+>
+              {comingSoonEvents.map((event, index) => (
+                          <div
+                       key={event.event_id}
+                       className="flex-shrink-0 w-[90%] max-w-[240px] sm:w-[200px] md:w-auto"
+                     >
+                       <MovieCard
+                         title={event.event_title}
+                         image={event.card_image}
+                         duration={event.duration || 120}
+                         event_slug={event.event_slug}
+                       />
+                     </div>
               ))}
             </div>
           </section>

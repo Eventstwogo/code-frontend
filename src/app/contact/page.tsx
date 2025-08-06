@@ -306,7 +306,7 @@ const ContactPage = () => {
     {
       icon: Mail,
       title: 'Email Us',
-      details: ['info@events2go.com']
+      details: ['info@events2go.com.au']
     }
   ]
 
