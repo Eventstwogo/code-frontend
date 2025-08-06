@@ -195,12 +195,12 @@ export default function TitanicHero({event}) {
               <p className="text-sm sm:text-base md:text-lg max-w-xl md:max-w-2xl mb-4 sm:mb-5 md:mb-6 text-left line-clamp-3 sm:line-clamp-none">{movie.extra_data.description}</p>
 
               {/* CTA Button */}
-              <Link
-                  href={`/event/${displaySlug}?event=${displaySlug}`}
-                  className="bg-purple-600 hover:bg-purple-700 text-xs sm:text-sm font-bold px-3 sm:px-4 py-2 rounded pointer-events-auto w-fit"
-                >
-                  BOOK NOW
-                </Link>
+             <Link
+  href={`/event/${displaySlug}?event=${displaySlug}`}
+  className="bg-purple-600 hover:bg-purple-700 text-xs sm:text-sm font-bold px-3 sm:px-4 py-2 rounded pointer-events-auto w-fit flex items-center justify-center h-8"
+>
+  BOOK NOW
+</Link>
 
               {/* Movie Info */}
               <div className="flex items-center gap-2 sm:gap-3 md:gap-4 text-xs sm:text-sm text-gray-300 mt-3 sm:mt-4 md:mt-6 flex-wrap">

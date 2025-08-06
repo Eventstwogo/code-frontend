@@ -41,7 +41,7 @@ import Carousel from '@/components/categoriesScroll'
 
 import MovieGrid from '@/components/homepage/Movies'
 
-
+import CookiesPolicy from '@/components/cookie-polocy';
 import Horizantalcard from '@/components/Ads'
 import Offers from '@/components/Rewards'
 import image1 from '../../public/images/ad1.png'
@@ -49,6 +49,7 @@ import image2 from '../../public/images/ad2.png'
 import image3 from '../../public/images/ad3.png'
 import { useState,useEffect } from 'react'
 import axiosInstance from '@/lib/axiosInstance'
+import { Cookie } from 'next/font/google'
 const Page = () => {
 
   const [categories, setCategories] = useState<Category[]>([]);
@@ -105,6 +106,7 @@ return (
       <div className="mt-16">
         <Offers/>
       </div>
+      <CookiesPolicy />
     </div>
   )
 }

@@ -32,7 +32,7 @@ export default function CategoriesDropdown({
   return ReactDOM.createPortal(
     <div
       data-categories-dropdown
-      className="fixed bg-white border border-gray-200 rounded-lg shadow-xl"
+      className="absolute  bg-white border border-gray-200 rounded-lg shadow-xl"
       style={{
         top: position.top,
         left: position.left,
