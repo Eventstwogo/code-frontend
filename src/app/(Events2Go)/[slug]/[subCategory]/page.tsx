@@ -120,6 +120,7 @@ import MovieCard from '@/components/movies'
 import Link from 'next/link'
 import axiosInstance from '@/lib/axiosInstance'
 import { useParams } from 'next/navigation'
+import { all } from 'axios'
 
 const Page = () => {
   const params = useParams()
@@ -138,11 +139,23 @@ const Page = () => {
       )
       const allEvents = response.data.data.events || []
 
-     const today = new Date().toISOString().split('T')[0]; 
+  const todayDate = new Date().toISOString().split("T")[0]; // "YYYY-MM-DD"
 
-        const present = allEvents.filter((event: any) => event.start_date === today);
- 
-    const future =allEvents.filter((event: any) => event.start_date > today);
+const present = allEvents.events.filter((event: any) => {
+  const start = new Date(event.start_date);
+  const end = new Date(event.end_date);
+  const today = new Date(todayDate);
+
+  return start <= today && end >= today; // ongoing or starting today
+});
+
+const future = allEvents.events.filter((event: any) => {
+  const start = new Date(event.start_date);
+  const today = new Date(todayDate);
+
+  return start > today; // strictly in the future
+});
+
 
       setEvents(allEvents)
       setNowStreamingEvents(present)

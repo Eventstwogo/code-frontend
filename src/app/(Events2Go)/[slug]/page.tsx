@@ -168,14 +168,26 @@ import { useCategoryStore } from '@/lib/ZustanStore/categoriesStore';
 import axiosInstance from '@/lib/axiosInstance';
 
 const categorizeEventsByDate = (eventsBySubcategory: any[]) => {
-  const today = new Date().toISOString().split('T')[0]; // Format: YYYY-MM-DD
+  const todayDate = new Date().toISOString().split('T')[0]; // Format: YYYY-MM-DD
 
   const presentEvents: any[] = [];
   const futureEvents: any[] = [];
 
   for (const subcategory of eventsBySubcategory) {
-    const present = subcategory.events.filter((event: any) => event.start_date === today);
-    const future = subcategory.events.filter((event: any) => event.start_date > today);
+const present = subcategory.events.filter((event: any) => {
+  const start = new Date(event.start_date);
+  const end = new Date(event.end_date);
+  const today = new Date(todayDate);
+
+  return start <= today && end >= today; // ongoing or starting today
+});
+
+const future = subcategory.events.filter((event: any) => {
+  const start = new Date(event.start_date);
+  const today = new Date(todayDate);
+
+  return start > today; // strictly in the future
+});
 
     if (present.length > 0) {
       presentEvents.push({
