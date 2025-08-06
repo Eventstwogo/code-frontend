@@ -174,7 +174,7 @@ const categorizeEventsByDate = (eventsBySubcategory: any[]) => {
   const futureEvents: any[] = [];
 
   for (const subcategory of eventsBySubcategory) {
-    console.log(subcategory);
+
 const present = subcategory.events.filter((event: any) => {
   const start = new Date(event.start_date);
   const end = new Date(event.end_date);
@@ -191,8 +191,7 @@ const future = subcategory.events.filter((event: any) => {
 });
 
 
-console.log("present", present);
-console.log("future", future);
+
     if (present.length > 0) {
       presentEvents.push({
         ...subcategory,

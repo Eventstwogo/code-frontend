@@ -141,7 +141,7 @@ const Page = () => {
 
   const todayDate = new Date().toISOString().split("T")[0]; // "YYYY-MM-DD"
 
-const present = allEvents.events.filter((event: any) => {
+const present = allEvents.filter((event: any) => {
   const start = new Date(event.start_date);
   const end = new Date(event.end_date);
   const today = new Date(todayDate);
@@ -149,7 +149,7 @@ const present = allEvents.events.filter((event: any) => {
   return start <= today && end >= today; // ongoing or starting today
 });
 
-const future = allEvents.events.filter((event: any) => {
+const future = allEvents.filter((event: any) => {
   const start = new Date(event.start_date);
   const today = new Date(todayDate);
 
