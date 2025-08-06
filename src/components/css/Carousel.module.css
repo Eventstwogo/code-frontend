@@ -1,9 +1,16 @@
 .carouselContainer {
   width: 100%;
-  min-height: 400px;
-  padding: 40px 15px;
+  min-height: 320px;
+  padding: 20px 10px;
   position: relative;
   overflow: hidden;
+}
+
+@media (min-width: 480px) {
+  .carouselContainer {
+    min-height: 360px;
+    padding: 30px 15px;
+  }
 }
 
 @media (min-width: 768px) {
@@ -54,10 +61,16 @@
   align-items: center;
   position: relative;
   perspective: 1200px;
-  height: 320px;
+  height: 260px;
   width: 100%;
   max-width: 1800px;
   margin: 0 auto;
+}
+
+@media (min-width: 480px) {
+  .carousel {
+    height: 300px;
+  }
 }
 
 @media (min-width: 768px) {

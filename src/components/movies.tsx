@@ -53,34 +53,30 @@ export default function MovieCard({
 
   return (
     <div 
-      className="bg-white rounded-xl shadow-md overflow-hidden border cursor-pointer hover:shadow-lg hover:scale-105 transition-all duration-300"
+      className="bg-white rounded-xl shadow-md overflow-hidden border cursor-pointer hover:shadow-lg hover:scale-105 transition-all duration-300 flex flex-col"
+      style={{ width: '230px', height: '370px' }}
       onClick={handleCardClick}
     >
-      <img
-        src={displayImage}
-        alt={displayTitle}
-        className="w-full h-72 object-cover rounded-t-xl"
-      />
-      <div className="p-4 space-y-2">
-        <div className="flex justify-between items-start">
-          <h3 className="text-sm font-bold hover:text-purple-600 transition-colors">
+      <div className="relative" style={{ height: '250px' }}>
+        <img
+          src={displayImage}
+          alt={displayTitle}
+          className="w-full h-full object-cover"
+          style={{ objectFit: 'cover' }}
+        />
+      </div>
+      <div className="p-4 flex-1 flex flex-col justify-between" style={{ height: '100px' }}>
+        <div className="flex justify-between items-start mb-2">
+          <h3 className="text-sm font-bold hover:text-purple-600 transition-colors line-clamp-2 leading-tight flex-1 pr-2">
             {displayTitle}
           </h3>
-          <button
-            onClick={handleLikeClick}
-            className={`text-lg hover:scale-110 transition ${
-              isLiked ? "text-purple-600" : "text-gray-400"
-            }`}
-          >
-          
-          </button>
+      
         </div>
 
-        <div className="flex justify-between items-center text-xs">
-         
+        <div className="mt-auto">
           <button 
             onClick={handleBookNowClick}
-            className="bg-purple-500 text-white px-3 py-3 rounded  hover:bg-purple-600 transition w-full font-semibold text-sm"
+            className="bg-purple-500 text-white px-4 py-2 rounded hover:bg-purple-600 transition w-full font-semibold text-sm"
           >
             BOOK NOW
           </button>

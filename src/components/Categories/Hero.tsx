@@ -166,7 +166,7 @@ export default function TitanicHero({event}) {
 
       pagination={{ clickable: true }}
       modules={[Autoplay, Pagination]}
-      className="rounded-lg overflow-hidden h-[60vh] w-full"
+      className="rounded-lg overflow-hidden h-[40vh] sm:h-[50vh] md:h-[60vh] lg:h-[70vh] w-full"
     >
       {event?.map((movie, index) => {
        
@@ -177,7 +177,7 @@ export default function TitanicHero({event}) {
             : "unknown-event");
         return(
         <SwiperSlide key={index}>
-          <section className="relative w-full h-[60vh] text-white overflow-hidden">
+          <section className="relative w-full h-[40vh] sm:h-[50vh] md:h-[60vh] lg:h-[70vh] text-white overflow-hidden">
             {/* Background Image */}
             <Image
               src={movie.banner_image}
@@ -190,30 +190,24 @@ export default function TitanicHero({event}) {
             <div className="absolute inset-0 z-10 bg-gradient-to-r from-black/60 via-black/40 to-transparent"></div>
 
             {/* Content */}
-            <div className="relative z-20 mx-auto h-full flex flex-col justify-end items-start p-8 px-6">
-              <h1 className="text-5xl font-bold mb-4">{movie.event_title}</h1>
-              <p className="text-lg max-w-2xl mb-6 text-left">{movie.extra_data.description}</p>
+            <div className="relative z-20 mx-auto h-full flex flex-col justify-end items-start p-4 sm:p-6 md:p-8">
+              <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-2 sm:mb-3 md:mb-4">{movie.event_title}</h1>
+              <p className="text-sm sm:text-base md:text-lg max-w-xl md:max-w-2xl mb-4 sm:mb-5 md:mb-6 text-left line-clamp-3 sm:line-clamp-none">{movie.extra_data.description}</p>
 
               {/* CTA Button */}
-              {/* <button className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-md w-fit" onClick={(e)=>{handleBookNowClick(movie,e)}}>
-            Book Now
-              </button> */}
-      <Link
+              <Link
                   href={`/event/${displaySlug}?event=${displaySlug}`}
-                  className="bg-purple-600 hover:bg-purple-700 text-xs font-bold px-4 py-2 rounded pointer-events-auto w-fit"
+                  className="bg-purple-600 hover:bg-purple-700 text-xs sm:text-sm font-bold px-3 sm:px-4 py-2 rounded pointer-events-auto w-fit"
                 >
                   BOOK NOW
                 </Link>
 
               {/* Movie Info */}
-              <div className="flex items-center gap-4 text-sm text-gray-300 mt-6 flex-wrap">
-            
-               
+              <div className="flex items-center gap-2 sm:gap-3 md:gap-4 text-xs sm:text-sm text-gray-300 mt-3 sm:mt-4 md:mt-6 flex-wrap">
                 <span>{movie.year}</span>
                 <span>{movie.extra_data.ageRestriction}</span>
                 <span>{movie.duration}</span>
-                <span>{movie.hash_tags}</span>
-              
+                <span className="hidden sm:inline">{movie.hash_tags}</span>
               </div>
             </div>
           </section>

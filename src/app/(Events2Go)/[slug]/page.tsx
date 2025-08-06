@@ -251,27 +251,27 @@ const Page = ({ params }: { params: { slug: string } }) => {
   }, [slug]);
 
   const renderEventSection = (title: string, eventGroups: any[]) => (
-    <section className="w-full px-10 py-20">
-      <h1 className="text-5xl font-bold mb-10 text-gray-900">{title}</h1>
+    <section className="w-full px-4 sm:px-6 md:px-8 lg:px-10 py-10 sm:py-16 md:py-20">
+      <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-6 sm:mb-8 md:mb-10 text-gray-900">{title}</h1>
 
       {eventGroups.length > 0 ? (
         eventGroups.map((subcategory: any) => (
-          <section key={subcategory.subcategory_id} className="mb-16">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-2xl font-bold text-gray-900 capitalize">
+          <section key={subcategory.subcategory_id} className="mb-8 sm:mb-12 md:mb-16">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 gap-2 sm:gap-0">
+              <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-gray-900 capitalize">
                 {subcategory.subcategory_slug.replace(/-/g, ' ')}
               </h2>
               {subcategory.subcategory_id !== 'default' && (
                 <Link
                   href={`/${slug}/${subcategory.subcategory_slug}`}
-                  className="text-base text-purple-600 hover:underline"
+                  className="text-sm sm:text-base text-purple-600 hover:underline self-start sm:self-auto"
                 >
                   View All
                 </Link>
               )}
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 2xl:grid-cols-6 gap-6">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-6 gap-3 sm:gap-4 md:gap-6">
               {subcategory.events && subcategory.events.length > 0 ? (
                 subcategory.events.map((event: any) => (
                   <MovieCard
@@ -283,7 +283,7 @@ const Page = ({ params }: { params: { slug: string } }) => {
                   />
                 ))
               ) : (
-                <div className="col-span-full text-center text-gray-500 text-lg">
+                <div className="col-span-full text-center text-gray-500 text-sm sm:text-base md:text-lg">
                   No events in this subcategory.
                 </div>
               )}
@@ -291,7 +291,7 @@ const Page = ({ params }: { params: { slug: string } }) => {
           </section>
         ))
       ) : (
-        <div className="text-center text-gray-600 text-lg">No events found.</div>
+        <div className="text-center text-gray-600 text-sm sm:text-base md:text-lg">No events found.</div>
       )}
     </section>
   );

@@ -43,38 +43,32 @@ export default function MovieGridPage({movies,categoryName,slug}) {
   }, []);
 
   return (
-    <section className="max-w-6xl mx-auto py-20 mt-10 mb-10 px-4">
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-2xl font-bold text-gray-900">{categoryName}</h2>
-        <Link href={`/${slug}`} className="text-base text-purple-600 hover:underline">
+    <section className="w-full max-w-7xl mx-auto py-8 px-4">
+      <div className="flex items-center justify-between mb-6">
+        <h2 className="text-2xl md:text-3xl font-bold text-gray-900">
+          {categoryName}
+        </h2>
+        <Link 
+          href={`/${slug}`} 
+          className="text-base text-purple-600 hover:underline whitespace-nowrap"
+        >
           View All
         </Link>
       </div>
 
       <div
         ref={scrollRef}
-        className="
-          flex gap-4 overflow-x-auto
-          px-1 pb-6
-          lg:grid lg:grid-cols-4 xl:grid-cols-5
-          scrollbar-thin  scrollbar-track-gray-200
-        "
+        className="flex gap-6 overflow-x-auto pb-4 movie-grid-scroll"
       >
         {movies.map((movie, index) => (
           <div
             key={index}
-            className="
-              flex-shrink-0 min-w-[220px] h-[320px]
-              lg:min-w-0 lg:h-auto
-              rounded-lg overflow-hidden
-            "
+            className="flex-shrink-0"
           >
             <MovieCard {...movie} />
           </div>
         ))}
       </div>
-
-   
     </section>
   );
 }

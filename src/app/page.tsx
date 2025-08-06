@@ -38,50 +38,19 @@
 import React from 'react'
 import Hero from '@/components/homepage/Hero'
 import Carousel from '@/components/categoriesScroll'
-import Trending from '@/components/Trending'
+
 import MovieGrid from '@/components/homepage/Movies'
 
-import EventCard from '@/components/Events'
+
 import Horizantalcard from '@/components/Ads'
 import Offers from '@/components/Rewards'
-import image from '../../public/images/ads.png'
+import image1 from '../../public/images/ad1.png'
+import image2 from '../../public/images/ad2.png'
+import image3 from '../../public/images/ad3.png'
 import { useState,useEffect } from 'react'
 import axiosInstance from '@/lib/axiosInstance'
 const Page = () => {
-    const movies = [
-      { title: "The Dark Knight", image: "/images/movie1.jfif", duration: 120 },
-      { title: "Inception", image: "/images/movie2.jfif", duration: 152 },
-      { title: "Interstellar", image: "/images/movie3.jfif", duration: 148 },
-      { title: "Tenet", image: "/images/movie4.jfif", duration: 169 },
-      { title: "Oppenheimer", image: "/images/movie5.jfif", duration: 150 },
-    ];
-    const sportsEvents = [
-  {
-    title: "Premier League Match",
-    image: "/images/sport3.jpg",
-    duration: 90,
-  },
-  {
-    title: "NBA Finals",
-    image: "/images/sport1.jfif",
-    duration: 48,
-  },
-  {
-    title: "Cricket World Cup",
-    image: "/images/sport2.jpg",
-    duration: 300,
-  },
-  {
-    title: "Grand Slam Tennis",
-    image: "/images/sport3.jpg",
-    duration: 180,
-  },
-  {
-    title: "Formula 1 Race",
-    image: "/images/sport4.jpg",
-    duration: 120,
-  },
-];
+
   const [categories, setCategories] = useState<Category[]>([]);
 const [heroEvents,setHeroEvents]=useState<any>([])
 const fetchCategories = async () => {
@@ -107,22 +76,35 @@ fetchSpecialevents()
     }
   }
 return (
-    <div>
+    <div className="min-h-screen bg-gray-50">
+      {/* Hero Section */}
+      <div className="mb-8">
+        <Hero/>
+      </div>
 
-<Hero/>
-<Carousel/>
-{/* <Trending/> */}
-{/* <Horizantalcard image={image}/> */}
-{/* <EventCard event={heroEvents}/> */}
- {categories.map((category) => (
-        <div key={category.category_id}>
-          <Horizantalcard image={image} />
-          <MovieGrid movies={category.events} categoryName={category.category_name} slug={category.category_slug}/>
-        </div>
-      ))}
-      <Horizantalcard image={image}/>
-<Offers/>
+      {/* Categories Carousel */}
+      <div className="mb-12">
+        <Carousel/>
+      </div>
 
+      {/* Dynamic Category Sections */}
+      <div className="space-y-12">
+        {categories.map((category) => (
+          <div key={category.category_id} className="space-y-8">
+            <MovieGrid 
+              movies={category.events} 
+              categoryName={category.category_name} 
+              slug={category.category_slug}
+            />
+            <Horizantalcard image={image1} />
+          </div>
+        ))}
+      </div>
+
+      {/* Final Offers Section */}
+      <div className="mt-16">
+        <Offers/>
+      </div>
     </div>
   )
 }

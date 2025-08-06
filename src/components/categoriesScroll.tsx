@@ -690,11 +690,18 @@ const Carousel: React.FC = () => {
         activeImage: { width: 240, height: 340 },
         inactiveImage: { width: 180, height: 260 },
       };
-    } else {
+    } else if (windowWidth >= 480) {
       return {
         spacing: { pos1: 80, pos2: 140, pos3: 200 },
         activeImage: { width: 200, height: 280 },
         inactiveImage: { width: 150, height: 220 },
+      };
+    } else {
+      // Extra small screens (< 480px)
+      return {
+        spacing: { pos1: 60, pos2: 100, pos3: 140 },
+        activeImage: { width: 160, height: 240 },
+        inactiveImage: { width: 120, height: 180 },
       };
     }
   };
@@ -764,8 +771,31 @@ const Carousel: React.FC = () => {
     if (isDragging) handleMouseUp();
   };
 
+  // Touch event handlers for mobile
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setIsDragging(true);
+    setDragStart(e.touches[0].clientX);
+    setDragDistance(0);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (!isDragging) return;
+    setDragDistance(e.touches[0].clientX - dragStart);
+  };
+
+  const handleTouchEnd = () => {
+    if (!isDragging) return;
+    const threshold = 50;
+    if (Math.abs(dragDistance) > threshold) {
+      dragDistance > 0 ? prevSlide() : nextSlide();
+    }
+    setIsDragging(false);
+    setDragStart(0);
+    setDragDistance(0);
+  };
+
   return (
-    <div className={styles.carouselContainer}>
+    <div className={`${styles.carouselContainer} hidden md:block`}>
       {useCarousel ? (
         <div
           className={styles.carousel}
@@ -773,6 +803,9 @@ const Carousel: React.FC = () => {
           onMouseMove={handleMouseMove}
           onMouseUp={handleMouseUp}
           onMouseLeave={handleMouseLeave}
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
           style={{ cursor: isDragging ? "grabbing" : "grab" }}
         >
           {images.map((image, i) => {
