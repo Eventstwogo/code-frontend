@@ -79,7 +79,7 @@ export default function SearchDropdown({
   }, [isOpen, onClose, searchRef]);
 
   if (!isOpen || mobileMenuOpen) return null;
-console.log(searchQuery)
+  console.log(results)
   return (
     <Portal>
       <div 
@@ -103,14 +103,16 @@ console.log(searchQuery)
           <div className="px-4 py-3 text-sm text-red-600">
             {error}
           </div>
-        ) : searchQuery.trim() !== "" && results.length === 0 ? (
-          <div className="px-4 py-6 text-center text-sm text-gray-500">
-            No events found for "{searchQuery.trim()}"
-          </div>
         ) : results.length === 0 ? (
-          <div className="px-4 py-3 text-sm text-gray-500">
-            Start typing to search events...
-          </div>
+          searchQuery.trim() !== "" ? (
+            <div className="px-4 py-6 text-center text-sm text-gray-500">
+              no events found
+            </div>
+          ) : (
+            <div className="px-4 py-3 text-sm text-gray-500">
+              Start typing to search events...
+            </div>
+          )
         ) : (
           <div className="py-2">
             {results.map((event, index) => (

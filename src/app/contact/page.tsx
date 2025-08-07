@@ -38,7 +38,7 @@ const isValidEmail = (email: string) =>
 
 const isValidAustralianNumber = (number: string) => {
   const cleaned = number.replace(/\s+/g, '');
-  return /^(?:\+614|04)\d{8}$/.test(cleaned);
+  return /^(?:\+614\d{8}|\+612\d{8})$/.test(cleaned);
 };
 
 const validateForm = () => {
@@ -96,10 +96,14 @@ if (!validateForm()) return;
         message: ''
       })
     } catch (error) {
-      console.log(error.response)
-      const errorMsg =
-        error?.response?.data?.detail?.message || "please try again";
-      toast.error(errorMsg);
+      const apiError = error?.response?.data;
+
+  if (apiError?.detail && Array.isArray(apiError.detail)) {
+    const firstError = apiError.detail[0];
+    const errorMessage = firstError?.msg || 'An error occurred';
+    
+    toast.error(errorMessage);
+  }
     } finally {
       setIsSubmitting(false)
     }
