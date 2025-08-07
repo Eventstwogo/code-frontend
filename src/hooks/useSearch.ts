@@ -36,21 +36,7 @@ export const useSearch = () => {
     setError(null);
 
     try {
-      // Try dedicated search endpoint first
-      try {
-        const response = await axiosInstance.get(`/api/v1/events/search?q=${encodeURIComponent(query)}&limit=10`);
-        if (response.data && response.data.data && response.data.data.events) {
-          setSearchResults(response.data.data.events);
-          setIsOpen(true);
-          setIsLoading(false);
-          return;
-        }
-      } catch (searchError) {
-        // Search endpoint doesn't exist, continue with fallback
-        console.log('Search endpoint not available, using fallback');
-      }
-
-      // Fallback: search through categories with events
+      // Search through categories with events
       const fallbackResponse = await axiosInstance.get('/api/v1/category-events/categories-with-events');
       const allEvents: SearchResult[] = [];
       
@@ -103,11 +89,13 @@ export const useSearch = () => {
   // Debounced search
   useEffect(() => {
     const timeoutId = setTimeout(() => {
-      if (searchQuery) {
+      if (searchQuery.trim()) {
         searchEvents(searchQuery);
       } else {
         setSearchResults([]);
-        setIsOpen(false);
+        setError(null);
+        // Don't automatically close dropdown when query is empty
+        // Let the component handle when to close it
       }
     }, 300);
 

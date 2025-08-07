@@ -16,6 +16,7 @@ interface SearchDropdownProps {
   selectedIndex?: number;
   searchRef: React.RefObject<HTMLDivElement>;
   mobileMenuOpen?: boolean;
+  searchQuery?: string;
 }
 
 export default function SearchDropdown({ 
@@ -26,7 +27,8 @@ export default function SearchDropdown({
   error,
   selectedIndex = -1,
   searchRef,
-  mobileMenuOpen = false
+  mobileMenuOpen = false,
+  searchQuery = ''
 }: SearchDropdownProps) {
   const [position, setPosition] = useState({ top: 0, left: 0, width: 0 });
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -77,11 +79,12 @@ export default function SearchDropdown({
   }, [isOpen, onClose, searchRef]);
 
   if (!isOpen || mobileMenuOpen) return null;
-
+console.log(searchQuery)
   return (
     <Portal>
       <div 
         ref={dropdownRef}
+        data-search-dropdown
         className="fixed bg-white border border-gray-200 rounded-lg shadow-2xl max-h-96 overflow-y-auto"
         style={{ 
           zIndex: 999999,
@@ -100,9 +103,13 @@ export default function SearchDropdown({
           <div className="px-4 py-3 text-sm text-red-600">
             {error}
           </div>
+        ) : searchQuery.trim() !== "" && results.length === 0 ? (
+          <div className="px-4 py-6 text-center text-sm text-gray-500">
+            No events found for "{searchQuery.trim()}"
+          </div>
         ) : results.length === 0 ? (
           <div className="px-4 py-3 text-sm text-gray-500">
-            No events found
+            Start typing to search events...
           </div>
         ) : (
           <div className="py-2">

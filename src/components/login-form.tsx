@@ -183,7 +183,7 @@ export function LoginForm({
 
       toast.success("Login successful! Redirecting to your profile...");
       reset();
-      router.push("/Profile");
+      router.push("/");
     } catch (err: any) {
       const errorMsg =
         err?.response?.data?.message || "Login failed. Please try again.";

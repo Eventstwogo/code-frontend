@@ -411,7 +411,7 @@ const ProfileSettings = () => {
 
   const onSubmit = async (data: ProfileSchemaType) => {
     try {
-      await axiosInstance.put('/api/v1/users/profile/', data);
+      await axiosInstance.put('/api/v1/users/profile', data);
       toast.success('Profile details updated!');
       fetchProfile();
     } catch (error: any) {

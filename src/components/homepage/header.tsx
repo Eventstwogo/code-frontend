@@ -83,6 +83,28 @@ export default function Header({ categories }: HeaderProps) {
     };
   }, [categoriesDropdownOpen]);
 
+  // Close search dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as Node;
+      const isClickInsideSearch = searchRef.current && searchRef.current.contains(target);
+      const isClickInsideDropdown = (target as Element)?.closest('[data-search-dropdown]');
+      
+      if (!isClickInsideSearch && !isClickInsideDropdown) {
+        setIsOpen(false);
+        setSelectedIndex(-1);
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isOpen, setIsOpen]);
+
   // Reset selected index when search results change
   useEffect(() => {
     setSelectedIndex(-1);
@@ -116,6 +138,7 @@ export default function Header({ categories }: HeaderProps) {
         break;
     }
   };
+
   return (
     <header className="header-container border-b shadow-sm bg-white w-full sticky top-0 z-[9999]">
       <div className="w-full max-w-full overflow-hidden">
@@ -148,7 +171,7 @@ export default function Header({ categories }: HeaderProps) {
               placeholder="Search events..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              onFocus={() => searchQuery && setIsOpen(true)}
+              onFocus={() => setIsOpen(true)}
               onKeyDown={handleKeyDown}
               className="flex-1 outline-none px-1 sm:px-2 py-1 text-xs sm:text-sm min-w-0 placeholder:text-xs sm:placeholder:text-sm"
               autoComplete="off"
@@ -182,6 +205,7 @@ export default function Header({ categories }: HeaderProps) {
               selectedIndex={selectedIndex}
               searchRef={searchRef}
               mobileMenuOpen={mobileMenuOpen}
+              searchQuery={searchQuery}
             />
           </div>
 )}
