@@ -96,8 +96,9 @@ if (!validateForm()) return;
         message: ''
       })
     } catch (error) {
+      console.log(error.response)
       const errorMsg =
-        error?.response?.data?.message || "please try again";
+        error?.response?.data?.detail?.message || "please try again";
       toast.error(errorMsg);
     } finally {
       setIsSubmitting(false)
