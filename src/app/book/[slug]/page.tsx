@@ -535,6 +535,18 @@ import useStore from '@/lib/Zustand';
 import { FaMapMarkerAlt, FaClock, FaCalendarAlt } from 'react-icons/fa';
 import { BsCalendar2EventFill } from 'react-icons/bs';
 import { useProfileStore } from '@/lib/ZustanStore/usermanagement';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
+import { toast } from 'sonner';
+
 interface BookingPageProps {
   params: {
     slug: string;
@@ -578,7 +590,12 @@ const BookingPageContent = ({ params }: BookingPageProps) => {
   const [authChecked, setAuthChecked] = useState(false);
   const [bookingDetails, setBookingDetails] = useState<any>(null);
   const [showBookingDetails, setShowBookingDetails] = useState(false);
-   const { profile, fetchProfile } = useProfileStore();
+  
+  // Alert Dialog states
+  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+  const [bookingId, setBookingId] = useState<string>('');
+  
+  const { profile, fetchProfile } = useProfileStore();
  
   // Get selected date and slot_id from URL params if available
   useEffect(() => {
@@ -721,83 +738,145 @@ const BookingPageContent = ({ params }: BookingPageProps) => {
  
     // Find the selected slot details
     const selectedSlotDetails = slots.find(slot => slot.slot_name === selectedSlot);
- 
-    const bookingData: BookingData = {
-      event_id: event.event_id,
-      slot_id: selectedSlotDetails?.slot_id || event.slot_id,
-      slot_name: selectedSlot,
-      selected_date: selectedDate,
-      seats_count: seatsCount
-    };
- 
+    
     // Calculate total amount
-    const totalAmount = selectedSlotDetails ? selectedSlotDetails.price * seatsCount : 0;
- 
-    // Prepare detailed booking information for display
-    const detailedBookingInfo = {
-      bookingData: bookingData,
-      userDetails: {
-        username:profile?.username,
-        userId: userId,
-        isAuthenticated: isAuthenticated
-      },
-      eventDetails: {
-        eventId: event.event_id,
-        eventTitle: event.event_title,
-        eventImage: event.card_image,
-        address: event.extra_data?.address
-      },
-      slotDetails: {
-        slotId: selectedSlotDetails?.slot_id || event.slot_id,
-        slotName: selectedSlotDetails?.slot_name || 'Unknown Slot',
-        slotNumber: selectedSlot,
-        startTime: selectedSlotDetails?.start_time || '',
-        endTime: selectedSlotDetails?.end_time || '',
-        pricePerTicket: selectedSlotDetails?.price || 0,
-        availableSeats: selectedSlotDetails?.capacity || 0,
-        totalSeats: selectedSlotDetails?.capacity || 0,
-        duration: selectedSlotDetails?.duration || 0
-      },
-      bookingSummary: {
-        selectedDate: selectedDate,
-        numberOfTickets: seatsCount,
-        pricePerTicket: selectedSlotDetails?.price || 0,
-        totalAmount: totalAmount,
-        formattedDate: formatDate(selectedDate),
-        formattedTime: selectedSlotDetails ? `${formatTime(selectedSlotDetails.start_time)} - ${formatTime(selectedSlotDetails.end_time)}` : ''
-      },
-      timestamp: new Date().toISOString()
+    const pricePerSeat = selectedSlotDetails?.price || 0;
+    const totalPrice = pricePerSeat * seatsCount;
+
+    // Prepare API payload according to your specification
+    const apiPayload = {
+      user_id: userId,
+      event_id: event.event_id,
+      num_seats: seatsCount,
+      price_per_seat: pricePerSeat,
+      total_price: totalPrice,
+      slot: selectedSlot, // Using slot name (slot_1, slot_2, etc.)
+      booking_date: selectedDate
     };
  
     try {
       setBookingLoading(true);
-     
-      // Display the booking details immediately
-      setBookingDetails(detailedBookingInfo);
-      setShowBookingDetails(true);
-     
-      // Uncomment the lines below if you want to actually make the API call
-      /*
-      const response = await axiosInstance.post('/api/v1/bookings', bookingData);
-     
+      
+      console.log('Making booking API call with payload:', apiPayload);
+      
+      // Make the API call
+      const response = await axiosInstance.post('/api/v1/bookings', apiPayload);
+      
+      console.log('Booking API response:', response.data);
+      
       if (response.data.statusCode === 200 || response.data.statusCode === 201) {
-        alert('Booking successful!');
-        // You can add the API response to the booking details if needed
-        setBookingDetails({
-          ...detailedBookingInfo,
-          apiResponse: response.data
-        });
+        // Store booking ID and show confirmation dialog
+        const responseBookingId = response.data.data?.booking_id || response.data.booking_id || '';
+        setBookingId(responseBookingId);
+        setShowConfirmDialog(true);
+        
+        // Prepare detailed booking information for display
+        const detailedBookingInfo = {
+          apiResponse: response.data,
+          bookingData: apiPayload,
+          userDetails: {
+            username: profile?.username,
+            userId: userId,
+            isAuthenticated: isAuthenticated
+          },
+          eventDetails: {
+            eventId: event.event_id,
+            eventTitle: event.event_title,
+            eventImage: event.card_image,
+            address: event.extra_data?.address
+          },
+          slotDetails: {
+            slotId: selectedSlotDetails?.slot_id || event.slot_id,
+            slotName: selectedSlotDetails?.slot_name || 'Unknown Slot',
+            slotNumber: selectedSlot,
+            startTime: selectedSlotDetails?.start_time || '',
+            endTime: selectedSlotDetails?.end_time || '',
+            pricePerTicket: pricePerSeat,
+            availableSeats: selectedSlotDetails?.capacity || 0,
+            totalSeats: selectedSlotDetails?.capacity || 0,
+            duration: selectedSlotDetails?.duration || 0
+          },
+          bookingSummary: {
+            selectedDate: selectedDate,
+            numberOfTickets: seatsCount,
+            pricePerTicket: pricePerSeat,
+            totalAmount: totalPrice,
+            formattedDate: formatDate(selectedDate),
+            formattedTime: selectedSlotDetails ? `${formatTime(selectedSlotDetails.start_time)} - ${formatTime(selectedSlotDetails.end_time)}` : ''
+          },
+          timestamp: new Date().toISOString()
+        };
+        
+        // Display the booking details
+        setBookingDetails(detailedBookingInfo);
+        setShowBookingDetails(true);
+        
+      } else {
+        // API returned success status but not 200/201
+        const errorMessage = response.data.message || 'Booking failed. Please try again.';
+        window.alert(`Booking Failed: ${errorMessage}`);
       }
-      */
      
     } catch (error: any) {
       console.error('Booking error:', error);
-      alert(error.response?.data?.message || 'Booking failed. Please try again.');
+      
+      // Error popup
+      const errorMessage = error.response?.data?.message || 'Booking failed. Please try again.';
+      window.alert(`Booking Failed: ${errorMessage}`);
+      
     } finally {
       setBookingLoading(false);
     }
   };
- 
+
+  // Handle Yes response - send booking_status: 1
+  const handleConfirmYes = async () => {
+    setShowConfirmDialog(false);
+    
+    try {
+      const statusPayload = {
+        booking_status: "approved"
+      };
+      
+      console.log(`Calling status API: /api/v1/bookings/${bookingId}/status with payload:`, statusPayload);
+      
+      const response = await axiosInstance.patch(`/api/v1/bookings/${bookingId}/status`, statusPayload);
+      
+      console.log('Status API response:', response.data);
+      
+     toast.success('Booking confirmed successfully!');
+      
+    } catch (error: any) {
+      console.error('Status API error:', error);
+      const errorMessage = error.response?.data?.message || 'Failed to update booking status';
+      toast.error(`Error: ${errorMessage}`);
+    }
+  };
+
+  // Handle No response - send booking_status: -1
+  const handleConfirmNo = async () => {
+    setShowConfirmDialog(false);
+    
+    try {
+      const statusPayload = {
+        booking_status: "failed"
+      };
+      
+      console.log(`Calling status API: /api/v1/bookings/${bookingId}/status with payload:`, statusPayload);
+      
+      const response = await axiosInstance.patch(`/api/v1/bookings/${bookingId}/status`, statusPayload);
+      
+      console.log('Status API response:', response.data);
+      
+      toast.success('Booking cancelled successfully!');
+      
+    } catch (error: any) {
+      console.error('Status API error:', error);
+      const errorMessage = error.response?.data?.message || 'Failed to update booking status';
+      toast.error(`Error: ${errorMessage}`);
+    }
+  };
+
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleDateString('en-US', {
@@ -1084,6 +1163,22 @@ console.log(slots)
             </div>
           </div>
         )}
+
+        {/* Confirmation Dialog - Shows after booking API success */}
+        <AlertDialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Booking Created</AlertDialogTitle>
+              <AlertDialogDescription>
+                Your booking has been created. Do you want to confirm it?
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel onClick={handleConfirmNo}>No</AlertDialogCancel>
+              <AlertDialogAction onClick={handleConfirmYes}>Yes</AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
     </div>
   );

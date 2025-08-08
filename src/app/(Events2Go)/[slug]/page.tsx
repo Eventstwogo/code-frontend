@@ -169,29 +169,55 @@ import axiosInstance from '@/lib/axiosInstance';
 
 const categorizeEventsByDate = (eventsBySubcategory: any[]) => {
   const todayDate = new Date().toISOString().split('T')[0]; // Format: YYYY-MM-DD
+  const today = new Date(todayDate);
 
   const presentEvents: any[] = [];
   const futureEvents: any[] = [];
 
   for (const subcategory of eventsBySubcategory) {
+    // Ensure subcategory has events array
+    if (!subcategory.events || !Array.isArray(subcategory.events)) {
+      console.warn('Subcategory missing events array:', subcategory);
+      continue;
+    }
 
-const present = subcategory.events.filter((event: any) => {
-  const start = new Date(event.start_date);
-  const end = new Date(event.end_date);
-  const today = new Date(todayDate);
+    const present = subcategory.events.filter((event: any) => {
+      // Check if event has required date fields
+      if (!event.start_date) {
+        console.warn('Event missing start_date:', event);
+        return true; // Default to present if no date info
+      }
 
-  return start <= today && end >= today; // ongoing or starting today
-});
+      const start = new Date(event.start_date);
+      const end = event.end_date ? new Date(event.end_date) : start;
 
-const future = subcategory.events.filter((event: any) => {
-  const start = new Date(event.start_date);
-  const today = new Date(todayDate);
+      // Check for invalid dates
+      if (isNaN(start.getTime()) || isNaN(end.getTime())) {
+        console.warn('Invalid date in event:', event);
+        return true; // Default to present if invalid dates
+      }
 
-  return start > today; // strictly in the future
-});
+      return start <= today && end >= today; // ongoing or starting today
+    });
 
+    const future = subcategory.events.filter((event: any) => {
+      // Check if event has required date fields
+      if (!event.start_date) {
+        return false; // Don't include in future if no date info
+      }
 
+      const start = new Date(event.start_date);
 
+      // Check for invalid dates
+      if (isNaN(start.getTime())) {
+        return false; // Don't include in future if invalid dates
+      }
+
+      return start > today; // strictly in the future
+    });
+
+    console.log('Present events:', present);
+    console.log('Future events:', future);
     if (present.length > 0) {
       presentEvents.push({
         ...subcategory,
@@ -237,25 +263,47 @@ const Page = ({ params }: { params: { slug: string } }) => {
       );
       const data = response.data?.data;
 
+      console.log('API Response Data:', data);
+
       let rawEvents = [];
 
-      if (data?.subcategories) {
-        rawEvents = data.subcategories;
-      } else if (data?.events) {
-        rawEvents = [
-          {
-            subcategory_id: 'default',
-            subcategory_slug: slug,
-            events: data.events,
-          },
-        ];
+      // Handle subcategory events
+      if (data?.subcategory_events && data.subcategory_events.events && data.subcategory_events.events.length > 0) {
+        console.log('Found subcategory events:', data.subcategory_events.events.length);
+        rawEvents.push({
+          subcategory_id: data.subcategory_events.subcategory_info?.subcategory_id || 'subcategory',
+          subcategory_slug: data.subcategory_events.subcategory_info?.subcategory_slug || slug,
+          subcategory_name: data.subcategory_events.subcategory_info?.subcategory_name || 'Subcategory Events',
+          events: data.subcategory_events.events,
+        });
       }
 
-      const { presentEvents, futureEvents } = categorizeEventsByDate(rawEvents);
-      setPresentEvents(presentEvents);
-      setFutureEvents(futureEvents);
+      // Handle main category events
+      if (data?.category_events && data.category_events.events && data.category_events.events.length > 0) {
+        console.log('Found main category events:', data.category_events.events.length);
+        rawEvents.push({
+          subcategory_id: 'main-category',
+          subcategory_slug: data.category_events.category_info?.category_slug || slug,
+          subcategory_name: data.category_events.category_info?.category_name || slug.replace(/-/g, ' '),
+          events: data.category_events.events,
+        });
+      }
+
+      console.log('Raw events before categorization:', rawEvents);
+      
+      if (rawEvents.length > 0) {
+        const { presentEvents, futureEvents } = categorizeEventsByDate(rawEvents);
+        setPresentEvents(presentEvents);
+        setFutureEvents(futureEvents);
+      } else {
+        console.log('No events found in API response');
+        setPresentEvents([]);
+        setFutureEvents([]);
+      }
     } catch (error) {
-      console.error(error);
+      console.error('Error fetching events:', error);
+      setPresentEvents([]);
+      setFutureEvents([]);
     }
   };
 
@@ -275,9 +323,12 @@ console.log(futureEvents)
           <section key={subcategory.subcategory_id} className="mb-8 sm:mb-12 md:mb-16">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 gap-2 sm:gap-0">
               <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-gray-900 capitalize">
-                {subcategory.subcategory_slug.replace(/-/g, ' ')}
+                {subcategory.subcategory_id === 'main-category' 
+                  ? (subcategory.subcategory_name || `${subcategory.subcategory_slug.replace(/-/g, ' ')} Events`)
+                  : (subcategory.subcategory_name || subcategory.subcategory_slug.replace(/-/g, ' '))
+                }
               </h2>
-              {subcategory.subcategory_id !== 'default' && (
+              {subcategory.subcategory_id !== 'default' && subcategory.subcategory_id !== 'main-category' && (
                 <Link
                   href={`/${slug}/${subcategory.subcategory_slug}`}
                   className="text-sm sm:text-base text-purple-600 hover:underline self-start sm:self-auto"
