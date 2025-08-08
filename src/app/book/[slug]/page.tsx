@@ -838,9 +838,9 @@ const BookingPageContent = ({ params }: BookingPageProps) => {
         booking_status: "approved"
       };
       
-      console.log(`Calling status API: /api/v1/bookings/${bookingId}/status with payload:`, statusPayload);
+      console.log(`Calling status API: /api/v1/bookings/status/${bookingId} with payload:`, statusPayload);
       
-      const response = await axiosInstance.patch(`/api/v1/bookings/${bookingId}/status`, statusPayload);
+      const response = await axiosInstance.patch(`/api/v1/bookings/status/${bookingId}`, statusPayload);
       
       console.log('Status API response:', response.data);
       
@@ -862,9 +862,9 @@ const BookingPageContent = ({ params }: BookingPageProps) => {
         booking_status: "failed"
       };
       
-      console.log(`Calling status API: /api/v1/bookings/${bookingId}/status with payload:`, statusPayload);
+      console.log(`Calling status API: /api/v1/bookings/status/${bookingId} with payload:`, statusPayload);
       
-      const response = await axiosInstance.patch(`/api/v1/bookings/${bookingId}/status`, statusPayload);
+      const response = await axiosInstance.patch(`/api/v1/bookings/status/${bookingId}`, statusPayload);
       
       console.log('Status API response:', response.data);
       
