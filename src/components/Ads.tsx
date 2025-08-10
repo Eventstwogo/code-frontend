@@ -17,11 +17,7 @@ export default function Horizantalcard({ image }) {
         )}
 
         {/* Text Overlay */}
-        <div className="relative z-10 flex items-center justify-center h-full">
-          <h2 className="text-white text-xl md:text-2xl lg:text-3xl font-bold drop-shadow-lg">
-            Advertisement
-          </h2>
-        </div>
+      
       </div>
     </div>
   );

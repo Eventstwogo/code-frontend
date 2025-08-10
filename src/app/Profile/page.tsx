@@ -250,7 +250,11 @@ export default function ProfileDashboard() {
         </div>
        
         <div>
-          <p className="font-bold text-lg">{profile?.username}</p>
+       <p className="font-bold text-lg">
+  {profile?.username
+    ? profile.username.charAt(0).toUpperCase() + profile.username.slice(1)
+    : ''}
+</p>
         </div>
       </div>
       <Separator className="my-4" />
@@ -309,9 +313,11 @@ export default function ProfileDashboard() {
                 />
               </div>
               <div>
-                <p className="font-medium text-sm sm:text-base truncate max-w-32 sm:max-w-none">
-                  {profile?.username}
-                </p>
+              <p className="font-medium text-sm sm:text-base truncate max-w-32 sm:max-w-none">
+  {profile?.username
+    ? profile.username.charAt(0).toUpperCase() + profile.username.slice(1)
+    : ''}
+</p>
                 <p className="text-xs text-gray-500 truncate max-w-32 sm:max-w-none">
                   {profile?.email}
                 </p>
@@ -339,7 +345,11 @@ export default function ProfileDashboard() {
                     />
                   </div>
                   <div>
-                    <h2 className="text-xl sm:text-2xl font-bold">{profile?.username}</h2>
+                   <h2 className="text-xl sm:text-2xl font-bold">
+  {profile?.username
+    ? profile.username.charAt(0).toUpperCase() + profile.username.slice(1)
+    : ''}
+</h2>
                     <p className="text-sm text-gray-500">{profile?.email}</p>
                   </div>
                 </div>
@@ -447,9 +457,11 @@ export default function ProfileDashboard() {
                         />
                       </div>
                       <div className="text-center lg:text-left space-y-2">
-                        <h2 className="text-2xl lg:text-3xl xl:text-4xl font-bold">
-                          {profile?.username}
-                        </h2>
+                       <h2 className="text-2xl lg:text-3xl xl:text-4xl font-bold">
+  {profile?.username
+    ? profile.username.charAt(0).toUpperCase() + profile.username.slice(1)
+    : ''}
+</h2>
                         <p className="text-base lg:text-lg text-gray-500">
                           {profile?.email}
                         </p>

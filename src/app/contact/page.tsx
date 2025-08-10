@@ -1,5 +1,3 @@
-
-
 'use client'
 
 import React, { useState } from 'react'
@@ -36,9 +34,22 @@ const ContactPage = () => {
 const isValidEmail = (email: string) =>
   /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
-const isValidAustralianNumber = (number: string) => {
-  const cleaned = number.replace(/\s+/g, '');
-  return /^(?:\+614\d{8}|\+612\d{8})$/.test(cleaned);
+// const isValidAustralianNumber = (number: string) => {
+//   const cleaned = number.replace(/\s+/g, '');
+//   return /^(?:\+614|04)\d{8}$/.test(cleaned);
+// };
+
+const isValidAustralianNumber = (number: string): boolean => {
+  // Remove all spaces, dashes, parentheses
+  const cleaned = number.replace(/[\s()-]/g, '');
+
+  // Mobile numbers: local (04...) or international (+614...)
+  const mobilePattern = /^(?:\+614|04)\d{8}$/;
+
+  // Landline numbers: international (+612, +613, +617, +618) or local (02, 03, 07, 08)
+  const landlinePattern = /^(?:\+612|\+613|\+617|\+618|02|03|07|08)\d{8}$/;
+
+  return mobilePattern.test(cleaned) || landlinePattern.test(cleaned);
 };
 
 const validateForm = () => {
@@ -83,7 +94,7 @@ if (!validateForm()) return;
     setIsSubmitting(true)
 
     try {
-      await axiosInstance.post('/api/v1/admin/enquiries', JSON.stringify(formData), {
+      await axiosInstance.post('/api/v1/admin/contact-us', JSON.stringify(formData), {
         headers: { 'Content-Type': 'application/json' }
       })
 
@@ -136,7 +147,7 @@ if (!validateForm()) return;
             Get in Touch
           </h1>
           <p className="text-lg text-white/90">
-            Have questions or need help planning your next event? We're here to bring your vision to life.
+            Have questions or need help planning your next event? We&apos;re here to bring your vision to life.
           </p>
         </div>
       </div>
