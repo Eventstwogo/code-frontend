@@ -525,7 +525,12 @@
 //   );
 // };
 
-// export default BookingPage;
+
+
+
+
+
+// export default BookingPage working redirect;
 
 'use client'
 import React, { useEffect, useState, Suspense } from 'react';
@@ -754,79 +759,98 @@ const BookingPageContent = ({ params }: BookingPageProps) => {
       booking_date: selectedDate
     };
  
-    try {
-      setBookingLoading(true);
+    // try {
+    //   setBookingLoading(true);
       
-      console.log('Making booking API call with payload:', apiPayload);
       
-      // Make the API call
-      const response = await axiosInstance.post('/api/v1/bookings', apiPayload);
+    //   console.log('Making booking API call with payload:', apiPayload);
       
-      console.log('Booking API response:', response.data);
+    //   // Make the API call
+    //   const response = await axiosInstance.post('/api/v1/bookings', apiPayload);
       
-      if (response.data.statusCode === 200 || response.data.statusCode === 201) {
-        // Store booking ID and show confirmation dialog
-        const responseBookingId = response.data.data?.booking_id || response.data.booking_id || '';
-        setBookingId(responseBookingId);
-        setShowConfirmDialog(true);
+    //   console.log('Booking API response:', response.data);
+      
+    //   if (response.data.statusCode === 200 || response.data.statusCode === 201) {
+    //     // Store booking ID and show confirmation dialog
+    //     const responseBookingId = response.data.data?.booking_id || response.data.booking_id || '';
+    //     setBookingId(responseBookingId);
+    //     setShowConfirmDialog(true);
         
-        // Prepare detailed booking information for display
-        const detailedBookingInfo = {
-          apiResponse: response.data,
-          bookingData: apiPayload,
-          userDetails: {
-            username: profile?.username,
-            userId: userId,
-            isAuthenticated: isAuthenticated
-          },
-          eventDetails: {
-            eventId: event.event_id,
-            eventTitle: event.event_title,
-            eventImage: event.card_image,
-            address: event.extra_data?.address
-          },
-          slotDetails: {
-            slotId: selectedSlotDetails?.slot_id || event.slot_id,
-            slotName: selectedSlotDetails?.slot_name || 'Unknown Slot',
-            slotNumber: selectedSlot,
-            startTime: selectedSlotDetails?.start_time || '',
-            endTime: selectedSlotDetails?.end_time || '',
-            pricePerTicket: pricePerSeat,
-            availableSeats: selectedSlotDetails?.capacity || 0,
-            totalSeats: selectedSlotDetails?.capacity || 0,
-            duration: selectedSlotDetails?.duration || 0
-          },
-          bookingSummary: {
-            selectedDate: selectedDate,
-            numberOfTickets: seatsCount,
-            pricePerTicket: pricePerSeat,
-            totalAmount: totalPrice,
-            formattedDate: formatDate(selectedDate),
-            formattedTime: selectedSlotDetails ? `${formatTime(selectedSlotDetails.start_time)} - ${formatTime(selectedSlotDetails.end_time)}` : ''
-          },
-          timestamp: new Date().toISOString()
-        };
+    //     // Prepare detailed booking information for display
+    //     const detailedBookingInfo = {
+    //       apiResponse: response.data,
+    //       bookingData: apiPayload,
+    //       userDetails: {
+    //         username: profile?.username,
+    //         userId: userId,
+    //         isAuthenticated: isAuthenticated
+    //       },
+    //       eventDetails: {
+    //         eventId: event.event_id,
+    //         eventTitle: event.event_title,
+    //         eventImage: event.card_image,
+    //         address: event.extra_data?.address
+    //       },
+    //       slotDetails: {
+    //         slotId: selectedSlotDetails?.slot_id || event.slot_id,
+    //         slotName: selectedSlotDetails?.slot_name || 'Unknown Slot',
+    //         slotNumber: selectedSlot,
+    //         startTime: selectedSlotDetails?.start_time || '',
+    //         endTime: selectedSlotDetails?.end_time || '',
+    //         pricePerTicket: pricePerSeat,
+    //         availableSeats: selectedSlotDetails?.capacity || 0,
+    //         totalSeats: selectedSlotDetails?.capacity || 0,
+    //         duration: selectedSlotDetails?.duration || 0
+    //       },
+    //       bookingSummary: {
+    //         selectedDate: selectedDate,
+    //         numberOfTickets: seatsCount,
+    //         pricePerTicket: pricePerSeat,
+    //         totalAmount: totalPrice,
+    //         formattedDate: formatDate(selectedDate),
+    //         formattedTime: selectedSlotDetails ? `${formatTime(selectedSlotDetails.start_time)} - ${formatTime(selectedSlotDetails.end_time)}` : ''
+    //       },
+    //       timestamp: new Date().toISOString()
+    //     };
         
-        // Display the booking details
-        setBookingDetails(detailedBookingInfo);
-        setShowBookingDetails(true);
+    //     // Display the booking details
+    //     setBookingDetails(detailedBookingInfo);
+    //     setShowBookingDetails(true);
         
-      } else {
-        // API returned success status but not 200/201
-        const errorMessage = response.data.message || 'Booking failed. Please try again.';
-        window.alert(`Booking Failed: ${errorMessage}`);
-      }
+    //   } else {
+    //     // API returned success status but not 200/201
+    //     const errorMessage = response.data.message || 'Booking failed. Please try again.';
+    //     window.alert(`Booking Failed: ${errorMessage}`);
+    //   }
      
-    } catch (error: any) {
-      console.error('Booking error:', error);
+    // } catch (error: any) {
+    //   console.error('Booking error:', error);
       
-      // Error popup
-      const errorMessage = error.response?.data?.message || 'Booking failed. Please try again.';
-      window.alert(`Booking Failed: ${errorMessage}`);
+    //   // Error popup
+    //   const errorMessage = error.response?.data?.message || 'Booking failed. Please try again.';
+    //   window.alert(`Booking Failed: ${errorMessage}`);
       
-    } finally {
-      setBookingLoading(false);
+    // } finally {
+    //   setBookingLoading(false);
+    // }
+
+    try {
+    setBookingLoading(true);
+    const response = await axiosInstance.post('/api/v1/bookings', apiPayload);
+    const approvalUrl = response.data?.data?.approval_url;
+
+    if (approvalUrl) {
+      window.location.href = approvalUrl; // 👈 Redirect to PayPal
+    } else {
+      window.alert('Unable to redirect to payment page.');
     }
+  } catch (error: any) {
+    console.error('Booking error:', error);
+    const errorMessage = error.response?.data?.message || 'Booking failed. Please try again.';
+    window.alert(`Booking Failed: ${errorMessage}`);
+  } finally {
+    setBookingLoading(false);
+  }
   };
 
   // Handle Yes response - send booking_status: 1
