@@ -56,7 +56,7 @@ const Page = () => {
 const [heroEvents,setHeroEvents]=useState<any>([])
 const fetchCategories = async () => {
       try {
-        const res = await axiosInstance.get('/api/v1/category-events/categories-with-events');
+        const res = await axiosInstance.get('/api/v1/category-events/categories-with-events?event_type=upcoming');
        
         setCategories(res.data.data.categories);
       } catch (error) {

@@ -249,7 +249,7 @@ const Page = ({ params }: { params: { slug: string } }) => {
 
   const fetchHeroEvents = async () => {
     try {
-      const response = await axiosInstance(`/api/v1/events/latest/category-or-subcategory/${slug}`);
+      const response = await axiosInstance(`/api/v1/events/latest/category-or-subcategory/${slug}?event_type=upcoming`);
       setHeroEvents(response.data?.data?.events || []);
     } catch (error) {
       console.error(error);

@@ -737,7 +737,7 @@ const BookingPageContent = ({ params }: BookingPageProps) => {
  
   const handleBooking = async () => {
     if (!selectedSlot || !event) {
-      alert('Please select a time slot');
+      toast.error('Please select a time slot');
       return;
     }
  
@@ -842,12 +842,12 @@ const BookingPageContent = ({ params }: BookingPageProps) => {
     if (approvalUrl) {
       window.location.href = approvalUrl; // 👈 Redirect to PayPal
     } else {
-      window.alert('Unable to redirect to payment page.');
+      toast.error('Unable to redirect to payment page.');
     }
   } catch (error: any) {
     console.error('Booking error:', error);
     const errorMessage = error.response?.data?.message || 'Booking failed. Please try again.';
-    window.alert(`Booking Failed: ${errorMessage}`);
+   toast.error(`Booking Failed: ${errorMessage}`);
   } finally {
     setBookingLoading(false);
   }
