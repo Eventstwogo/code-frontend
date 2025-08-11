@@ -10,10 +10,14 @@ import 'swiper/css/pagination';
 import 'swiper/css/navigation';
 import { Autoplay, Pagination } from 'swiper/modules'; // removed Navigation since you want no arrows
 import { useRouter } from 'next/navigation';
-export default function HeroSection({ movies }) {
+interface HeroSectionProps {
+  movies: any[];
+}
+
+export default function HeroSection({ movies }: HeroSectionProps) {
   const router=useRouter()
 
- const handleBookNowClick = (movie, e) => {
+ const handleBookNowClick = (movie: any, e: any) => {
   e.stopPropagation();
 
   const displaySlug = movie.event_slug || (
@@ -36,7 +40,7 @@ slidesPerView='auto'
         modules={[Autoplay,Pagination]}
         className="mySwiper rounded-lg overflow-hidden h-full"
       >
-        {movies?.map((movie, index) => (
+        {movies?.map((movie: any, index: number) => (
           <SwiperSlide key={index}>
             <div className="relative w-full h-full mx-auto rounded-lg overflow-hidden shadow-lg">
               {/* Background Image */}

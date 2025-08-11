@@ -9,7 +9,7 @@ const [movies,setMovies]=React.useState([])
   useEffect(()=>{
     const fetchcategoryevents=async()=>{
         try {
-            const response=await axiosInstance.get('api/v1/events/by-category/latest')
+            const response=await axiosInstance.get('api/v1/events/by-category/latest?event_type=upcoming')
             setMovies(response.data.data.events)
         }
         catch(error){

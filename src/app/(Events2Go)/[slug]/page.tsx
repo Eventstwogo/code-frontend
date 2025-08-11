@@ -166,6 +166,7 @@ import MovieCard from '@/components/movies';
 import Link from 'next/link';
 import { useCategoryStore } from '@/lib/ZustanStore/categoriesStore';
 import axiosInstance from '@/lib/axiosInstance';
+import { useParams } from 'next/navigation';
 
 const categorizeEventsByDate = (eventsBySubcategory: any[]) => {
   const todayDate = new Date().toISOString().split('T')[0]; // Format: YYYY-MM-DD
@@ -236,8 +237,9 @@ const categorizeEventsByDate = (eventsBySubcategory: any[]) => {
   return { presentEvents, futureEvents };
 };
 
-const Page = ({ params }: { params: { slug: string } }) => {
-  const { slug } = params;
+const Page = () => {
+  const params = useParams();
+  const slug = params?.slug as string;
 
   const fetchSubCategoriesBySlug = useCategoryStore(state => state.fetchSubCategoriesBySlug);
   const subCategories = useCategoryStore(state => state.subCategories);
@@ -249,7 +251,7 @@ const Page = ({ params }: { params: { slug: string } }) => {
 
   const fetchHeroEvents = async () => {
     try {
-      const response = await axiosInstance(`/api/v1/events/latest/category-or-subcategory/${slug}`);
+      const response = await axiosInstance(`/api/v1/events/latest/category-or-subcategory/${slug}?event_type=upcoming`);
       setHeroEvents(response.data?.data?.events || []);
     } catch (error) {
       console.error(error);

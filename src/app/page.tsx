@@ -49,14 +49,14 @@ import image2 from '../../public/images/ad2.png'
 import image3 from '../../public/images/ad3.png'
 import { useState,useEffect } from 'react'
 import axiosInstance from '@/lib/axiosInstance'
-import { Cookie } from 'next/font/google'
+import { Category } from '@/types'
 const Page = () => {
 
   const [categories, setCategories] = useState<Category[]>([]);
 const [heroEvents,setHeroEvents]=useState<any>([])
 const fetchCategories = async () => {
       try {
-        const res = await axiosInstance.get('/api/v1/category-events/categories-with-events');
+        const res = await axiosInstance.get('/api/v1/category-events/categories-with-events?event_type=upcoming');
        
         setCategories(res.data.data.categories);
       } catch (error) {
@@ -93,7 +93,7 @@ return (
         {categories.map((category) => (
           <div key={category.category_id} className="space-y-8">
             <MovieGrid 
-              movies={category.events} 
+              movies={category.events || []} 
               categoryName={category.category_name} 
               slug={category.category_slug}
             />

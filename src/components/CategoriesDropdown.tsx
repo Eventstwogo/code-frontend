@@ -4,7 +4,7 @@ import ReactDOM from "react-dom";
 
 type CategoriesDropdownProps = {
   categories: { category_id: number; category_name: string; category_slug: string }[];
-  categoriesRef: React.RefObject<HTMLDivElement>;
+  categoriesRef: React.RefObject<HTMLDivElement | null>;
   categoriesDropdownOpen: boolean;
   setCategoriesDropdownOpen: (open: boolean) => void;
 };

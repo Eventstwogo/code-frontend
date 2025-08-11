@@ -126,16 +126,16 @@ const Page = () => {
   const params = useParams()
   const slug = params?.subCategory
 
-  const [events, setEvents] = useState([])
-  const [heroEvents, setHeroEvents] = useState([])
+  const [events, setEvents] = useState<any[]>([])
+  const [heroEvents, setHeroEvents] = useState<any[]>([])
 
-  const [nowStreamingEvents, setNowStreamingEvents] = useState([])
-  const [comingSoonEvents, setComingSoonEvents] = useState([])
+  const [nowStreamingEvents, setNowStreamingEvents] = useState<any[]>([])
+  const [comingSoonEvents, setComingSoonEvents] = useState<any[]>([])
 
   const fetchEvents = async () => {
     try {
       const response = await axiosInstance.get(
-        `/api/v1/category-events/events-by-slug/${slug}?page=1&limit=100`
+        `/api/v1/category-events/events-by-slug/${slug}?page=1&limit=100&event_type=upcoming`
       )
       const allEvents = response.data.data.events || []
 
@@ -168,7 +168,7 @@ const future = allEvents.filter((event: any) => {
   const fetchHeroEvents = async () => {
     try {
       const response = await axiosInstance(
-        `/api/v1/events/latest/category-or-subcategory/${slug}`
+        `/api/v1/events/latest/category-or-subcategory/${slug}?event_type=upcoming`
       )
       setHeroEvents(response.data.data.events || [])
     } catch (error) {

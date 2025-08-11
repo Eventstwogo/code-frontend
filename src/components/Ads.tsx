@@ -2,7 +2,11 @@
 
 import React from 'react';
 
-export default function Horizantalcard({ image }) {
+interface HorizontalCardProps {
+  image: any;
+}
+
+export default function Horizantalcard({ image }: HorizontalCardProps) {
   return (
     <div className="w-full max-w-7xl mx-auto px-4 py-4">
       <div className="w-full h-32 md:h-50 rounded-xl relative shadow-lg overflow-hidden">

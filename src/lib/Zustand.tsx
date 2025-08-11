@@ -1,169 +1,3 @@
-// import { create } from "zustand";
-// import { persist } from "zustand/middleware";
-// import jwt from "jsonwebtoken";
-
-// interface ThemeColors {
-//   topBarColor: string;
-//   sidebarColor: string;
-//   sidebarBackground: string;
-//   primary: string;
-//   primaryForeground: string;
-//   secondary: string;
-//   secondaryForeground: string;
-// }
-
-// interface AuthState {
-//   userId: string | null;
-//   role: string | null;
-//   exp: number | null;
-//   isAuthenticated: boolean;
-//   sessionId: string | null;
-//   login: (accessToken: string, refreshToken: string, sessionId: string) => void;
-//   logout: () => void;
-//   checkAuth: () => void;
-// }
-
-// interface StoreState extends AuthState {
-//   themeColors: ThemeColors;
-//   updateThemeColor: (key: keyof ThemeColors, value: string) => void;
-//   resetTheme: () => void;
-// }
-
-// const useStore = create<StoreState>()(
-//   persist(
-//     (set) => ({
-//       // 🔹 Auth State
-//       userId: null,
-//       role: null,
-//       exp: null,
-//       isAuthenticated: false,
-//       sessionId: null,
-
-//       login: (accessToken: string, refreshToken: string, sessionId: string) => {
-//         try {
-//           const decoded: any = jwt.decode(accessToken);
-//           console.log(decoded)
-//           if (decoded?.uid ) {
-//             set({
-//               userId: decoded.uid,
-//               role: decoded.rid,
-//               exp: decoded.exp,
-//               isAuthenticated: true,
-//               sessionId: sessionId,
-//             });
-//             localStorage.setItem("token", accessToken);
-//             localStorage.setItem("refreshToken", refreshToken);
-//             localStorage.setItem("sessionId", sessionId);
-//           }
-//         } catch (err) {
-//           console.error("JWT decode error:", err);
-//         }
-//       },
-
-//       logout: () => {
-//         set({ userId: null, role: null, exp: null, isAuthenticated: false, sessionId: null });
-//         localStorage.removeItem("token");
-//         localStorage.removeItem("refreshToken");
-//         localStorage.removeItem("sessionId");
-//       },
-
-//       checkAuth: () => {
-//         if (typeof window === "undefined") return;
-
-//         const token = localStorage.getItem("token");
-//         const sessionId = localStorage.getItem("sessionId");
-        
-//         if (token) {
-//           try {
-//             const decoded: any = jwt.decode(token);
-//             if (decoded?.uid ) {
-//               // Check if token is expired
-//               const currentTime = Date.now() / 1000;
-//               if (decoded.exp > currentTime) {
-//                 // Token is still valid
-//                 set({
-//                   userId: decoded.uid,
-//                   role: decoded.rid,
-//                   exp: decoded.exp,
-//                   isAuthenticated: true,
-//                   sessionId: sessionId,
-//                 });
-//                 console.log("User authenticated with valid token");
-//               } else {
-//                 // Token is expired, clear everything
-//                 console.log("Token expired, clearing authentication");
-//                 set({ userId: null, role: null, exp: null, isAuthenticated: false, sessionId: null });
-//                 localStorage.removeItem("token");
-//                 localStorage.removeItem("refreshToken");
-//                 localStorage.removeItem("sessionId");
-//                 localStorage.removeItem("id");
-//               }
-//             } else {
-//               // Invalid token structure
-//               console.log("Invalid token structure");
-//               set({ userId: null, role: null, exp: null, isAuthenticated: false, sessionId: null });
-//               localStorage.removeItem("token");
-//               localStorage.removeItem("refreshToken");
-//               localStorage.removeItem("sessionId");
-//               localStorage.removeItem("id");
-//             }
-//           } catch {
-//             // JWT decode error
-//             console.log("JWT decode error");
-//             set({ userId: null, role: null, exp: null, isAuthenticated: false, sessionId: null });
-//             localStorage.removeItem("token");
-//             localStorage.removeItem("refreshToken");
-//             localStorage.removeItem("sessionId");
-//             localStorage.removeItem("id");
-//           }
-//         } else {
-//           // No token found
-//           console.log("No token found");
-//           set({ userId: null, role: null, exp: null, isAuthenticated: false, sessionId: null });
-//         }
-//       },
-
-//       // 🔹 Theme Colors
-//       themeColors: {
-//         topBarColor: "",
-//         sidebarColor: "",
-//         sidebarBackground: "",
-//         primary: "240 5.9% 10%",
-//         primaryForeground: "0 0% 98%",
-//         secondary: "240 4.8% 95.9%",
-//         secondaryForeground: "240 5.9% 10%",
-//       },
-
-//       updateThemeColor: (key, value) =>
-//         set((state) => ({
-//           themeColors: {
-//             ...state.themeColors,
-//             [key]: value,
-//           },
-//         })),
-
-//       resetTheme: () =>
-//         set(() => ({
-//           themeColors: {
-//             topBarColor: "",
-//             sidebarColor: "",
-//             sidebarBackground: "",
-//             primary: "240 5.9% 10%",
-//             primaryForeground: "0 0% 98%",
-//             secondary: "240 4.8% 95.9%",
-//             secondaryForeground: "240 5.9% 10%",
-//           },
-//         })),
-//     }),
-//     {
-//       name: "app-store", // Local storage key
-//     }
-//   )
-// );
-
-// export default useStore;
-
-
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import jwt from "jsonwebtoken";
@@ -201,7 +35,7 @@ interface StoreState extends AuthState {
 
 const useStore = create<StoreState>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       // ➤ Auth state
       userId: null,
       role: null,
@@ -396,7 +230,7 @@ const useStore = create<StoreState>()(
               
               // Update the store with new token data
               const newDecoded: any = jwt.decode(access_token);
-              if (newDecoded?.uid && newDecoded?.rid) {
+              if (newDecoded?.uid) {
                 set({
                   userId: newDecoded.uid,
                   role: newDecoded.rid,
@@ -407,21 +241,18 @@ const useStore = create<StoreState>()(
               }
               
               return true;
-            } else {
-              console.log("❌ Refresh token response not successful:", data);
-              return false;
             }
-          } else {
-            console.log("❌ Refresh token request failed:", response.status);
-            return false;
           }
+          
+          console.log("❌ Token refresh failed");
+          return false;
         } catch (error) {
           console.error("❌ Error refreshing token:", error);
           return false;
         }
       },
 
-      // 🎨 Theme state (stored in localStorage)
+      // ➤ Theme state
       themeColors: {
         topBarColor: "",
         sidebarColor: "",

@@ -564,7 +564,7 @@ import styles from "../components/css/Carousel.module.css";
 import { useCategoryStore } from "@/lib/ZustanStore/categoriesStore";
 
 const Carousel: React.FC = () => {
-  const { categories, fetchCategories } = useCategoryStore();
+  const { categories, fetchCategories } = useCategoryStore() as any;
 
   const [windowWidth, setWindowWidth] = useState(
     typeof window !== "undefined" ? window.innerWidth : 1200
@@ -601,18 +601,18 @@ const Carousel: React.FC = () => {
   }, []);
 
   const filteredCategories = categories.filter(
-    (cat) => !!cat.category_img_thumbnail
+    (cat: any) => !!cat.category_img_thumbnail
   );
 
   // ✅ Use carousel even if only 1 item (infinite loop logic handles it)
   const useCarousel = filteredCategories.length >= 1;
 
   const originalImages = useCarousel
-    ? filteredCategories.map((cat) => `${cat.category_img_thumbnail}`)
+    ? filteredCategories.map((cat: any) => `${cat.category_img_thumbnail}`)
     : [];
 
   const imageDescriptions = useCarousel
-    ? filteredCategories.map((cat) => cat.category_name)
+    ? filteredCategories.map((cat: any) => cat.category_name)
     : [];
 
   const images = useCarousel
@@ -853,7 +853,7 @@ const Carousel: React.FC = () => {
         </div>
       ) : (
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-4">
-          {filteredCategories.map((cat, idx) => (
+          {filteredCategories.map((cat: any, idx: number) => (
             <Link
               key={idx}
               href={`/${cat.category_slug}`}
