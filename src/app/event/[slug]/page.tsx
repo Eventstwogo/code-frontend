@@ -67,6 +67,7 @@ import Filter from '@/components/filter/page';
 import Details from '@/components/details/page';
 import Trailer from '@/components/trailer';
 import axiosInstance from '@/lib/axiosInstance';
+import { useParams } from 'next/navigation';
 
 interface EventDetailPageProps {
   params: {
@@ -79,8 +80,9 @@ type DateItem = {
   date: string;
 };
 
-const EventDetailPage = ({ params }: EventDetailPageProps) => {
-  const { slug } = params; // ✅ use directly from props (not useParams)
+const EventDetailPage = () => {
+  const params = useParams();
+  const slug = params?.slug as string;
   const [event, setEvent] = useState<any>(null);
   const [eventDates, setEventDates] = useState<DateItem[]>([]);
   const [selectedDate, setSelectedDate] = useState<DateItem | null>(null);
@@ -129,7 +131,7 @@ const EventDetailPage = ({ params }: EventDetailPageProps) => {
   const futureDates = dates.filter(d => {
     // Create a date for the event date using the same month/year from start_date
     const eventDate = new Date(eventData.start_date);
-    eventDate.setDate(d.date);
+    eventDate.setDate(parseInt(d.date));
     eventDate.setHours(0, 0, 0, 0);
 
     return eventDate >= today;

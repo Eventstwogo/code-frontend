@@ -23,8 +23,19 @@
 'use client'
 import { create } from 'zustand'
 import axiosInstance from '../axiosInstance'
+import { Category, SubCategory } from '@/types'
 
-export const useCategoryStore = create((set) => ({
+interface CategoryStore {
+  categories: Category[];
+  subCategories: SubCategory[];
+  loading: boolean;
+  error: string | null;
+  notFound: boolean;
+  fetchCategories: () => Promise<void>;
+  fetchSubCategoriesBySlug: (slug: string) => Promise<void>;
+}
+
+export const useCategoryStore = create<CategoryStore>((set) => ({
   categories: [],
   subCategories: [],         // ✅ NEW STATE
   loading: false,
@@ -38,8 +49,8 @@ export const useCategoryStore = create((set) => ({
       console.log('Fetching all categories')
       const response = await axiosInstance.get('/api/v1/categories/list?status_value=false')
       set({ categories: response.data.data, loading: false })
-    } catch (error) {
-      set({ error: error.message || 'Error fetching categories', loading: false })
+    } catch (error: any) {
+      set({ error: error?.message || 'Error fetching categories', loading: false })
     }
   },
 
@@ -58,9 +69,9 @@ export const useCategoryStore = create((set) => ({
       }
 
       set({ subCategories, loading: false })
-    } catch (error) {
+    } catch (error: any) {
        set({ notFound: true, loading: false })
-      set({ error: error.message || 'Error fetching subcategories', loading: false })
+      set({ error: error?.message || 'Error fetching subcategories', loading: false })
     }
   },
 }))

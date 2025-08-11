@@ -3,25 +3,20 @@
 import Image from 'next/image';
 import Link from 'next/link';
 // data/trendingItems.ts
-export const trendingItems = [
+export const trendingItems: { imageUrl: string; title?: string }[] = [
   {
-  
     imageUrl: "/images/reward1.png",
   },
   {
-   
     imageUrl:"/images/ad2.png",
   },
   {
-    
     imageUrl: "/images/reward4.png",
   },
   {
-  
     imageUrl:"/images/reward1.png",
   },
   {
-   
     imageUrl: "/images/reward3.png",
   }
 ];

@@ -106,7 +106,7 @@ if (!validateForm()) return;
         phone_number: '',
         message: ''
       })
-    } catch (error) {
+    } catch (error: any) {
       const apiError = error?.response?.data;
 
   if (apiError?.detail && Array.isArray(apiError.detail)) {

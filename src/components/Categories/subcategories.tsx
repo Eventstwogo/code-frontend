@@ -4,13 +4,18 @@ import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 
-export default function CategoryCards({subcategories,category}) {
+interface CategoryCardsProps {
+  subcategories: any[];
+  category: string;
+}
+
+export default function CategoryCards({subcategories, category}: CategoryCardsProps) {
 
 
   return (
     <div className="mx-auto px-4 sm:px-6 md:px-8 lg:px-10 py-10 sm:py-16 md:py-20 w-full">
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4 md:gap-6">
-        {subcategories?.map((cat, idx) => (
+        {subcategories?.map((cat: any, idx: number) => (
           <Link
           href={`/${category}/${cat.subcategory_slug}`}
             key={idx}

@@ -534,7 +534,7 @@
 
 'use client'
 import React, { useEffect, useState, Suspense } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams, useParams } from 'next/navigation';
 import axiosInstance from '@/lib/axiosInstance';
 import useStore from '@/lib/Zustand';
 import { FaMapMarkerAlt, FaClock, FaCalendarAlt } from 'react-icons/fa';
@@ -577,8 +577,9 @@ interface BookingData {
   seats_count: number;
 }
  
-const BookingPageContent = ({ params }: BookingPageProps) => {
-  const { slug } = params;
+const BookingPageContent = () => {
+  const params = useParams();
+  const slug = params?.slug as string;
   const router = useRouter();
   const searchParams = useSearchParams();
   const { userId, isAuthenticated, checkAuth } = useStore();
@@ -759,80 +760,7 @@ const BookingPageContent = ({ params }: BookingPageProps) => {
       booking_date: selectedDate
     };
  
-    // try {
-    //   setBookingLoading(true);
-      
-      
-    //   console.log('Making booking API call with payload:', apiPayload);
-      
-    //   // Make the API call
-    //   const response = await axiosInstance.post('/api/v1/bookings', apiPayload);
-      
-    //   console.log('Booking API response:', response.data);
-      
-    //   if (response.data.statusCode === 200 || response.data.statusCode === 201) {
-    //     // Store booking ID and show confirmation dialog
-    //     const responseBookingId = response.data.data?.booking_id || response.data.booking_id || '';
-    //     setBookingId(responseBookingId);
-    //     setShowConfirmDialog(true);
-        
-    //     // Prepare detailed booking information for display
-    //     const detailedBookingInfo = {
-    //       apiResponse: response.data,
-    //       bookingData: apiPayload,
-    //       userDetails: {
-    //         username: profile?.username,
-    //         userId: userId,
-    //         isAuthenticated: isAuthenticated
-    //       },
-    //       eventDetails: {
-    //         eventId: event.event_id,
-    //         eventTitle: event.event_title,
-    //         eventImage: event.card_image,
-    //         address: event.extra_data?.address
-    //       },
-    //       slotDetails: {
-    //         slotId: selectedSlotDetails?.slot_id || event.slot_id,
-    //         slotName: selectedSlotDetails?.slot_name || 'Unknown Slot',
-    //         slotNumber: selectedSlot,
-    //         startTime: selectedSlotDetails?.start_time || '',
-    //         endTime: selectedSlotDetails?.end_time || '',
-    //         pricePerTicket: pricePerSeat,
-    //         availableSeats: selectedSlotDetails?.capacity || 0,
-    //         totalSeats: selectedSlotDetails?.capacity || 0,
-    //         duration: selectedSlotDetails?.duration || 0
-    //       },
-    //       bookingSummary: {
-    //         selectedDate: selectedDate,
-    //         numberOfTickets: seatsCount,
-    //         pricePerTicket: pricePerSeat,
-    //         totalAmount: totalPrice,
-    //         formattedDate: formatDate(selectedDate),
-    //         formattedTime: selectedSlotDetails ? `${formatTime(selectedSlotDetails.start_time)} - ${formatTime(selectedSlotDetails.end_time)}` : ''
-    //       },
-    //       timestamp: new Date().toISOString()
-    //     };
-        
-    //     // Display the booking details
-    //     setBookingDetails(detailedBookingInfo);
-    //     setShowBookingDetails(true);
-        
-    //   } else {
-    //     // API returned success status but not 200/201
-    //     const errorMessage = response.data.message || 'Booking failed. Please try again.';
-    //     window.alert(`Booking Failed: ${errorMessage}`);
-    //   }
-     
-    // } catch (error: any) {
-    //   console.error('Booking error:', error);
-      
-    //   // Error popup
-    //   const errorMessage = error.response?.data?.message || 'Booking failed. Please try again.';
-    //   window.alert(`Booking Failed: ${errorMessage}`);
-      
-    // } finally {
-    //   setBookingLoading(false);
-    // }
+   
 
     try {
     setBookingLoading(true);
@@ -1208,7 +1136,7 @@ console.log(slots)
   );
 };
  
-const BookingPage = ({ params }: BookingPageProps) => {
+const BookingPage = () => {
   return (
     <Suspense fallback={
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
@@ -1218,7 +1146,7 @@ const BookingPage = ({ params }: BookingPageProps) => {
         </div>
       </div>
     }>
-      <BookingPageContent params={params} />
+      <BookingPageContent />
     </Suspense>
   );
 };

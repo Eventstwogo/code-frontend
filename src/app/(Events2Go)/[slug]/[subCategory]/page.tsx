@@ -126,11 +126,11 @@ const Page = () => {
   const params = useParams()
   const slug = params?.subCategory
 
-  const [events, setEvents] = useState([])
-  const [heroEvents, setHeroEvents] = useState([])
+  const [events, setEvents] = useState<any[]>([])
+  const [heroEvents, setHeroEvents] = useState<any[]>([])
 
-  const [nowStreamingEvents, setNowStreamingEvents] = useState([])
-  const [comingSoonEvents, setComingSoonEvents] = useState([])
+  const [nowStreamingEvents, setNowStreamingEvents] = useState<any[]>([])
+  const [comingSoonEvents, setComingSoonEvents] = useState<any[]>([])
 
   const fetchEvents = async () => {
     try {

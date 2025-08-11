@@ -34,8 +34,8 @@ const page = () => {
   onWatchNow={() => alert("Start Watching!")}
 />
  
-      <Details />
-      <Trailer />
+      <Details event={{}} selectedDate={{}} />
+      <Trailer images={[]} />
 
     </div>
   )

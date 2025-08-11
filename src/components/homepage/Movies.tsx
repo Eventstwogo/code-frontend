@@ -3,10 +3,16 @@
 import { useRef, useEffect, useState } from 'react';
 import MovieCard from "../movies";
 import Link from "next/link";
-export default function MovieGridPage({movies,categoryName,slug}) {
+interface MovieGridPageProps {
+  movies: any[];
+  categoryName: string;
+  slug: string;
+}
+
+export default function MovieGridPage({movies, categoryName, slug}: MovieGridPageProps) {
 
 
-  const scrollRef = useRef(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
   const [scrollProgress, setScrollProgress] = useState(0);
   const [isOverflowing, setIsOverflowing] = useState(false);
 
@@ -60,7 +66,7 @@ export default function MovieGridPage({movies,categoryName,slug}) {
         ref={scrollRef}
         className="flex gap-6 overflow-x-auto pb-4 movie-grid-scroll"
       >
-        {movies.map((movie, index) => (
+        {movies.map((movie: any, index: number) => (
           <div
             key={index}
             className="flex-shrink-0"

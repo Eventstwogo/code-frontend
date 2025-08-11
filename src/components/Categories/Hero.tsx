@@ -152,7 +152,11 @@ import { Autoplay, Pagination } from "swiper/modules";
 import Link from "next/link";
 // Dummy movie data
 
-export default function TitanicHero({event}) {
+interface TitanicHeroProps {
+  event: any[];
+}
+
+export default function TitanicHero({event}: TitanicHeroProps) {
 
 
 
@@ -168,7 +172,7 @@ export default function TitanicHero({event}) {
       modules={[Autoplay, Pagination]}
       className="rounded-lg overflow-hidden h-[40vh] sm:h-[50vh] md:h-[60vh] lg:h-[70vh] w-full"
     >
-      {event?.map((movie, index) => {
+      {event?.map((movie: any, index: number) => {
        
         const displaySlug =
           movie.event_slug ||

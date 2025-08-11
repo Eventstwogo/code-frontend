@@ -5,6 +5,7 @@ import MovieCard from "../movies";
 
 export default function MovieGridPage() {
   // ✅ The data lives here with the parent
+  const sportsEvents: any[] = [];
 
 
 
@@ -32,7 +33,7 @@ export default function MovieGridPage() {
   "
     
 >
-  {sportsEvents.map((event, index) => (
+  {sportsEvents.map((event: any, index: number) => (
   <div
   key={index}
   className="

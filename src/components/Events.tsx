@@ -3,7 +3,11 @@
 import { useState } from 'react';
 import { FaHeart } from 'react-icons/fa';
 import Link from 'next/link';
-export default function Page({event}) {
+interface PageProps {
+  event?: any;
+}
+
+export default function Page({event}: PageProps) {
   // 1️⃣ Events Data
   const events = [
     {
@@ -32,14 +36,21 @@ export default function Page({event}) {
     Array(events.length).fill(false)
   );
 
-  const toggleLike = (index) => {
+  const toggleLike = (index: number) => {
     const updated = [...likedEvents];
     updated[index] = !updated[index];
     setLikedEvents(updated);
   };
 
   // 3️⃣ Inline EventCard Component
-  const EventCard = ({ event_title, card_image, extra_data, price, isLiked, onLike }) => (
+  const EventCard = ({ event_title, card_image, extra_data, price, isLiked, onLike }: {
+    event_title: string;
+    card_image: string;
+    extra_data: any;
+    price: string;
+    isLiked: boolean;
+    onLike: () => void;
+  }) => (
     <div className=" rounded-xl shadow-lg overflow-hidden border border-gray-200 flex-shrink-0">
       {/* Banner Image */}
       <div className="relative">
@@ -90,7 +101,7 @@ export default function Page({event}) {
         </Link>
       </div>
       <div className="grid md:grid-cols-3  grid-cols-1 gap-6 snap-x snap-mandatory scroll-smooth">
-        {event.map((event, index) => (
+        {event?.map((event: any, index: number) => (
           <EventCard
             key={index}
             {...event}

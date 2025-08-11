@@ -7,7 +7,12 @@ import { BsCalendar2EventFill } from "react-icons/bs";
 import { useRouter } from "next/navigation";
 import useStore from "@/lib/Zustand";
 
-export default function MovieDetails({event, selectedDate}) {
+interface MovieDetailsProps {
+  event: any;
+  selectedDate: any;
+}
+
+export default function MovieDetails({event, selectedDate}: MovieDetailsProps) {
   console.log(selectedDate);
   console.log(event)
   const [activeTab, setActiveTab] = useState("Synopsis");
@@ -27,7 +32,7 @@ export default function MovieDetails({event, selectedDate}) {
     }
   };
 
-  const getFormattedDate = (dateItem) => {
+  const getFormattedDate = (dateItem: any) => {
     if (!dateItem || !event) return '';
     
     // Get the current year and month from event start date

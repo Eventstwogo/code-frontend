@@ -14,7 +14,7 @@ interface SearchDropdownProps {
   onClose: () => void;
   error: string | null;
   selectedIndex?: number;
-  searchRef: React.RefObject<HTMLDivElement>;
+  searchRef: React.RefObject<HTMLDivElement | null>;
   mobileMenuOpen?: boolean;
   searchQuery?: string;
 }

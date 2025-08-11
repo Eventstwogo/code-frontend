@@ -49,7 +49,7 @@ import image2 from '../../public/images/ad2.png'
 import image3 from '../../public/images/ad3.png'
 import { useState,useEffect } from 'react'
 import axiosInstance from '@/lib/axiosInstance'
-import { Cookie } from 'next/font/google'
+import { Category } from '@/types'
 const Page = () => {
 
   const [categories, setCategories] = useState<Category[]>([]);
@@ -93,7 +93,7 @@ return (
         {categories.map((category) => (
           <div key={category.category_id} className="space-y-8">
             <MovieGrid 
-              movies={category.events} 
+              movies={category.events || []} 
               categoryName={category.category_name} 
               slug={category.category_slug}
             />

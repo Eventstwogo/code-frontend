@@ -40,7 +40,11 @@ const movies = [
   },
 ];
 
-export default function MovieTrailerSection({images}) {
+interface MovieTrailerSectionProps {
+  images: any[];
+}
+
+export default function MovieTrailerSection({images}: MovieTrailerSectionProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [activeTrailer, setActiveTrailer] = useState<string | null>(null);
 
@@ -60,7 +64,7 @@ export default function MovieTrailerSection({images}) {
             ref={scrollRef}
             className="flex overflow-x-auto gap-3 sm:gap-4 lg:gap-6 scroll-smooth pb-4 sm:pb-6 scrollbar-thin scrollbar-thumb-purple-300 scrollbar-track-gray-100"
           >
-            {images?.map((imageUrl, index) => (
+            {images?.map((imageUrl: any, index: number) => (
               <div
                 key={index}
                 className="relative flex-shrink-0 w-[180px] sm:w-[220px] lg:w-[250px] h-[240px] sm:h-[300px] lg:h-[360px] rounded-lg lg:rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow group"

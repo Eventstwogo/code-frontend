@@ -9,6 +9,7 @@ type BookingEvent = {
   booking_date: string;
   total_price: number;
   booking_status: string;
+  num_seats: number;
 };
 
 type BookingData = {

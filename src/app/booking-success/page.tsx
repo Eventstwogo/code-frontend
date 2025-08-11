@@ -1,5 +1,5 @@
 'use client'
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { FaCheckCircle, FaCalendarAlt, FaClock, FaMapMarkerAlt, FaTicketAlt, FaDownload, FaShare } from 'react-icons/fa';
 import { BsCalendar2EventFill } from 'react-icons/bs';
@@ -25,7 +25,7 @@ interface BookingDetails {
   slotId?: string;
 }
 
-const BookingSuccessPage = () => {
+const BookingSuccessContent = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [bookingDetails, setBookingDetails] = useState<BookingDetails | null>(null);
@@ -325,6 +325,21 @@ const BookingSuccessPage = () => {
         </div>
       </div>
     </div>
+  );
+};
+
+const BookingSuccessPage = () => {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading booking details...</p>
+        </div>
+      </div>
+    }>
+      <BookingSuccessContent />
+    </Suspense>
   );
 };
 
