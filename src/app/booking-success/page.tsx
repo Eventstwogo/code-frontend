@@ -62,7 +62,7 @@ const BookingSuccessContent = () => {
           const bookingDetails: BookingDetails = {
             bookingId: booking.booking_id?.toString() || bookingId,
             eventTitle: booking.event?.title || 'Event',
-            eventImage: booking.event?.card_image ? `${process.env.NEXT_PUBLIC_API_BASE_URL || ''}/${booking.event.card_image}` : '/images/placeholder.svg',
+            eventImage: booking.event?.card_image  || '/images/placeholder.svg',
             eventAddress: booking.event?.address || 'Address not available',
             selectedDate: booking.booking_date || '',
             slotName: booking.slot || 'Standard Slot',
@@ -254,7 +254,7 @@ const BookingSuccessContent = () => {
               <div className="space-y-3">
                 <div className="flex justify-between">
                   <span className="text-gray-600">Price per Ticket:</span>
-                  <span className="font-semibold">₹{bookingDetails.pricePerTicket}</span>
+                  <span className="font-semibold">${bookingDetails.pricePerTicket}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">Booking Date:</span>
@@ -262,7 +262,7 @@ const BookingSuccessContent = () => {
                 </div>
                 <div className="flex justify-between text-lg font-bold border-t pt-2">
                   <span>Total Amount:</span>
-                  <span className="text-purple-600">₹{bookingDetails.totalAmount}</span>
+                  <span className="text-purple-600">${bookingDetails.totalAmount}</span>
                 </div>
               </div>
             </div>

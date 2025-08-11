@@ -381,11 +381,11 @@ const BookingFailureContent = () => {
               <div className="space-y-3">
                 <div className="flex justify-between">
                   <span className="text-gray-600">Price per Ticket:</span>
-                  <span className="font-semibold">₹{failureDetails.pricePerTicket}</span>
+                  <span className="font-semibold">${failureDetails.pricePerTicket}</span>
                 </div>
                 <div className="flex justify-between text-lg font-bold border-t pt-2">
                   <span>Total Amount:</span>
-                  <span className="text-red-600">₹{failureDetails.totalAmount}</span>
+                  <span className="text-red-600">${failureDetails.totalAmount}</span>
                 </div>
                 {failureDetails.errorCode && (
                   <div className="flex justify-between">
