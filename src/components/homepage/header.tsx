@@ -138,7 +138,7 @@ export default function Header({ categories }: HeaderProps) {
         break;
     }
   };
-
+console.log(profile)
   return (
     <header className="header-container border-b shadow-sm bg-white w-full sticky top-0 z-[9999]">
       <div className="w-full max-w-full overflow-hidden">
@@ -242,9 +242,9 @@ export default function Header({ categories }: HeaderProps) {
               className="flex items-center gap-1 sm:gap-2 p-1 sm:p-2 hover:bg-gray-100 rounded-lg transition-colors"
             >
               <User className="h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6 text-gray-600 hover:text-purple-600 transition-colors" />
-              {userId && profile?.first_name && (
+              {userId && profile?.username && (
                 <span className="text-xs sm:text-sm font-medium text-gray-800 hidden lg:inline max-w-20 xl:max-w-none truncate">
-                  {profile.first_name}
+                  {profile.username}
                 </span>
               )}
             </Link>

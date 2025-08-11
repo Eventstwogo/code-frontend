@@ -269,17 +269,6 @@ const Page = () => {
 
       let rawEvents = [];
 
-      // Handle subcategory events
-      if (data?.subcategory_events && data.subcategory_events.events && data.subcategory_events.events.length > 0) {
-        console.log('Found subcategory events:', data.subcategory_events.events.length);
-        rawEvents.push({
-          subcategory_id: data.subcategory_events.subcategory_info?.subcategory_id || 'subcategory',
-          subcategory_slug: data.subcategory_events.subcategory_info?.subcategory_slug || slug,
-          subcategory_name: data.subcategory_events.subcategory_info?.subcategory_name || 'Subcategory Events',
-          events: data.subcategory_events.events,
-        });
-      }
-
       // Handle main category events
       if (data?.category_events && data.category_events.events && data.category_events.events.length > 0) {
         console.log('Found main category events:', data.category_events.events.length);
@@ -288,6 +277,21 @@ const Page = () => {
           subcategory_slug: data.category_events.category_info?.category_slug || slug,
           subcategory_name: data.category_events.category_info?.category_name || slug.replace(/-/g, ' '),
           events: data.category_events.events,
+        });
+      }
+
+      // Handle subcategory groups
+      if (data?.subcategory_groups && Array.isArray(data.subcategory_groups)) {
+        console.log('Found subcategory groups:', data.subcategory_groups.length);
+        data.subcategory_groups.forEach((group: any) => {
+          if (group.events && group.events.length > 0) {
+            rawEvents.push({
+              subcategory_id: group.subcategory_info?.subcategory_id || 'subcategory',
+              subcategory_slug: group.subcategory_info?.subcategory_slug || slug,
+              subcategory_name: group.subcategory_info?.subcategory_name || 'Subcategory Events',
+              events: group.events,
+            });
+          }
         });
       }
 
