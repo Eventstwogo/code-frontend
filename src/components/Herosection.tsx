@@ -2,83 +2,201 @@
 
 'use client';
 
-import React from 'react';
+import React, { useState, useRef } from 'react';
 import Image from 'next/image';
 import { Swiper, SwiperSlide } from 'swiper/react';
+import { Swiper as SwiperType } from 'swiper';
 import 'swiper/css';
 import 'swiper/css/pagination';
 import 'swiper/css/navigation';
-import { Autoplay, Pagination } from 'swiper/modules'; // removed Navigation since you want no arrows
+import { Autoplay, Pagination, Navigation } from 'swiper/modules';
 import { useRouter } from 'next/navigation';
+import { IoChevronBack, IoChevronForward } from 'react-icons/io5';
+
 interface HeroSectionProps {
   movies: any[];
 }
 
 export default function HeroSection({ movies }: HeroSectionProps) {
-  const router=useRouter()
+  const router = useRouter();
+  const [activeIndex, setActiveIndex] = useState(0);
+  const swiperRef = useRef<SwiperType>();
 
- const handleBookNowClick = (movie: any, e: any) => {
-  e.stopPropagation();
+  const handleBookNowClick = (movie: any, e: any) => {
+    e.stopPropagation();
 
-  const displaySlug = movie.event_slug || (
-    movie.event_title ? movie.event_title.toLowerCase().replace(/\s+/g, '-') : "unknown-event"
-  );
+    const displaySlug = movie.event_slug || (
+      movie.event_title ? movie.event_title.toLowerCase().replace(/\s+/g, '-') : "unknown-event"
+    );
 
-  router.push(`/event/${displaySlug}?event=${displaySlug}`);
-};
+    router.push(`/event/${displaySlug}?event=${displaySlug}`);
+  };
+
+  const goToPrevious = () => {
+    swiperRef.current?.slidePrev();
+  };
+
+  const goToNext = () => {
+    swiperRef.current?.slideNext();
+  };
+
+  const goToSlide = (index: number) => {
+    swiperRef.current?.slideTo(index);
+  };
+
+  if (!movies || movies.length === 0) {
+    return (
+      <div className="w-full h-[45vh] flex items-center justify-center bg-gradient-to-br from-purple-100 to-pink-100">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading events...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="w-full h-[40vh] sm:h-[50vh] md:h-[60vh] lg:h-[70vh] mx-auto px-2 sm:px-4 md:px-6">
+    <div className="relative w-full h-[50vh] sm:h-[45vh] md:h-[50vh] lg:h-[55vh] xl:h-[60vh] overflow-hidden">
+      {/* Fallback gradient background */}
+      <div className="absolute inset-0 bg-gradient-to-br from-gray-800 via-gray-700 to-gray-900" />
+      
       <Swiper
-slidesPerView='auto'
-        
+        onSwiper={(swiper) => {
+          swiperRef.current = swiper;
+        }}
+        onSlideChange={(swiper) => setActiveIndex(swiper.activeIndex)}
+         speed={800}  
         autoplay={{
-          delay: 2500,
+          delay: 5000,
           disableOnInteraction: false,
         }}
-          spaceBetween={30}
-        modules={[Autoplay,Pagination]}
-        className="mySwiper rounded-lg overflow-hidden h-full"
+        loop={true}
+        modules={[Autoplay, Pagination, Navigation]}
+        className="h-full"
       >
-        {movies?.map((movie: any, index: number) => (
+        {movies.map((movie: any, index: number) => (
           <SwiperSlide key={index}>
-            <div className="relative w-full h-full mx-auto rounded-lg overflow-hidden shadow-lg">
-              {/* Background Image */}
-              <Image
-                src={movie.banner_image}
-                alt={movie.event_title}
-                fill
-                className="object-cover h-full bg-black"
-                priority={index === 0}
-              />
+            <div className="relative w-full h-full">
+              {/* Individual slide background image - Blurred */}
+              <div className="absolute inset-0">
+                <Image
+                  src={movie.banner_image}
+                  alt={`${movie.event_title} background`}
+                  fill
+                  className="object-cover blur-xl scale-110"
+                  priority={index === 0}
+                />
+                {/* Overlay for better contrast */}
+                <div className="absolute inset-0 bg-white/30" />
+                {/* Additional gradient overlay */}
+               <div className="absolute inset-0 bg-gradient-to-b from-white/10 via-white/50 to-white/90" />
+              </div>
+              <div className="container mx-auto px-4 sm:px-6 md:px-8 h-full">
+                <div className="flex items-center h-full">
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 md:gap-10 lg:gap-16 xl:gap-20 items-center w-full">
+                    
+                    {/* Left Content */}
+                    <div className="text-center lg:text-left space-y-4 sm:space-y-6 md:space-y-8 order-2 lg:order-1 relative z-10">
+                      <div className="space-y-3 sm:space-y-4 md:space-y-6">
+                        <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold text-gray-900 leading-tight drop-shadow-sm">
+                          {movie.event_title}
+                        </h1>
+                        
+                        <div className="flex flex-wrap items-center justify-center lg:justify-start gap-2 sm:gap-3 text-xs sm:text-sm text-gray-700">
+                          {movie.category_name && (
+                            <span className="bg-gray-100 text-gray-800 px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm">
+                              {movie.category_name}
+                            </span>
+                          )}
+                          {movie.subcategory_name && (
+                            <span className="bg-gray-100 text-gray-800 px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm">
+                              {movie.subcategory_name}
+                            </span>
+                          )}
+                          {movie.event_date && (
+                            <span className="bg-blue-100 text-blue-800 px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm">
+                              {new Date(movie.event_date).toLocaleDateString()}
+                            </span>
+                          )}
+                        </div>
 
-              {/* Gradient Overlay */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/60 to-transparent" />
+                        {movie.description && (
+                          <p className="text-gray-700 text-sm sm:text-base md:text-base lg:text-lg leading-relaxed line-clamp-2 sm:line-clamp-3 max-w-sm sm:max-w-md lg:max-w-lg mx-auto lg:mx-0 font-medium drop-shadow-sm">
+                            {movie.description}
+                          </p>
+                        )}
+                      </div>
 
-              {/* Content Overlay */}
-              <div className="absolute bottom-0 p-3 sm:p-4 md:p-6 text-white text-left">
-                {movie.isOnSale && (
-                  <span className="inline-block bg-red-600 text-xs sm:text-sm font-bold px-2 sm:px-3 py-1 rounded uppercase text-start mb-2">
-                    Tickets on sale
-                  </span>
-                )}
-                <h2 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold mb-1 sm:mb-2 text-start line-clamp-2">
-                  {movie.event_title}
-                </h2>
-                <p className="text-xs sm:text-sm md:text-base mb-2 sm:mb-4 line-clamp-2 sm:line-clamp-3">
-                  {movie.description}
-                </p> 
-                <button 
-                  className="bg-purple-600 hover:bg-purple-700 text-xs sm:text-sm font-bold px-3 sm:px-4 py-2 rounded transition-colors duration-200" 
-                  onClick={(e) => handleBookNowClick(movie,e)}
-                >
-                  BOOK NOW
-                </button>
+                      <div className="pt-4 sm:pt-6">
+                        <button 
+                          className="bg-black hover:bg-gray-800 text-white font-semibold px-6 sm:px-8 md:px-10 py-3 sm:py-4 md:py-5 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-xl hover:shadow-2xl text-sm sm:text-base md:text-lg"
+                          onClick={(e) => handleBookNowClick(movie, e)}
+                        >
+             View details
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Right Image - Smaller Size */}
+                    <div className="order-1 lg:order-2 flex justify-center lg:justify-end">
+                      <div className="relative w-full max-w-[150px] sm:max-w-[180px] md:max-w-[200px] lg:max-w-[250px] xl:max-w-[350px]">
+                        <div className="aspect-[3/4] relative rounded-xl sm:rounded-2xl overflow-hidden shadow-xl sm:shadow-2xl">
+                          <Image
+                            src={movie.banner_image}
+                            alt={movie.event_title}
+                            fill
+                            className="object-cover"
+                            priority={index === 0}
+                          />
+                          {/* Subtle overlay for better image quality */}
+                          <div className="absolute inset-0 bg-black/5" />
+                        </div>
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
               </div>
             </div>
           </SwiperSlide>
         ))}
       </Swiper>
+
+      {/* Navigation Arrows */}
+      {movies.length > 1 && (
+        <>
+          <button
+            onClick={goToPrevious}
+            className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 z-10 bg-white/80 hover:bg-white text-gray-800 p-2 sm:p-3 rounded-full shadow-lg transition-all duration-300 hover:scale-110"
+          >
+            <IoChevronBack className="w-4 h-4 sm:w-6 sm:h-6" />
+          </button>
+          
+          <button
+            onClick={goToNext}
+            className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 z-10 bg-white/80 hover:bg-white text-gray-800 p-2 sm:p-3 rounded-full shadow-lg transition-all duration-300 hover:scale-110"
+          >
+            <IoChevronForward className="w-4 h-4 sm:w-6 sm:h-6" />
+          </button>
+        </>
+      )}
+
+      {/* Dots Pagination */}
+      {/* {movies.length > 1 && (
+        <div className="absolute bottom-4 sm:bottom-6 left-1/2 -translate-x-1/2 z-10 flex space-x-1.5 sm:space-x-2">
+          {movies.map((_, index) => (
+            <button
+              key={index}
+              onClick={() => goToSlide(index)}
+              className={`  rounded-full transition-all duration-300 w-[10px] h-[10px]  ${
+                index === activeIndex 
+                  ? 'bg-gray-800 scale-125' 
+                  : 'bg-gray-400 hover:bg-gray-600'
+              }`}
+            />
+          ))}
+        </div>
+      )} */}
     </div>
   );
 }

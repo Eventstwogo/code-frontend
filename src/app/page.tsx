@@ -43,7 +43,6 @@ import MovieGrid from '@/components/homepage/Movies'
 
 import CookiesPolicy from '@/components/cookie-polocy';
 import RotatingAds from '@/components/RotatingAds'
-import TestAds from '@/components/TestAds'
 import Partners from '@/components/Partners'
 import { useState,useEffect } from 'react'
 import axiosInstance from '@/lib/axiosInstance'
