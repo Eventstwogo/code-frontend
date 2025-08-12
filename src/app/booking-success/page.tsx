@@ -1,7 +1,7 @@
 'use client'
 import React, { useEffect, useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { FaCheckCircle, FaCalendarAlt, FaClock, FaMapMarkerAlt, FaTicketAlt, FaDownload, FaShare } from 'react-icons/fa';
+import { FaCheckCircle, FaCalendarAlt, FaClock, FaMapMarkerAlt, FaTicketAlt, FaDownload } from 'react-icons/fa';
 import { BsCalendar2EventFill } from 'react-icons/bs';
 import { MdEmail } from 'react-icons/md';
 import axiosInstance from '@/lib/axiosInstance';
@@ -123,24 +123,63 @@ const BookingSuccessContent = () => {
     });
   };
 
-  const handleDownloadTicket = () => {
-    // Implement ticket download functionality
-    toast.success('Ticket download functionality will be implemented here');
-  };
-
-  const handleShareBooking = () => {
-    if (navigator.share && bookingDetails) {
-      navigator.share({
-        title: `Booking Confirmed - ${bookingDetails.eventTitle}`,
-        text: `I've booked tickets for ${bookingDetails.eventTitle} on ${formatDate(bookingDetails.selectedDate)}`,
-        url: window.location.href
-      });
-    } else {
-      // Fallback to copying to clipboard
-      navigator.clipboard.writeText(window.location.href);
-      toast.success('Booking link copied to clipboard!');
+  const handleDownloadTicket = async () => {
+    if (!bookingDetails) return;
+    
+    try {
+      // Create a PDF-like ticket content
+      const ticketContent = `
+        EVENTS2GO - TICKET CONFIRMATION
+        ================================
+        
+        Event: ${bookingDetails.eventTitle}
+        Date: ${formatDate(bookingDetails.selectedDate)}
+        Time: ${formatTime(bookingDetails.startTime)} - ${formatTime(bookingDetails.endTime)}
+        Venue: ${bookingDetails.eventAddress}
+        
+        BOOKING DETAILS
+        ===============
+        Booking ID: ${bookingDetails.bookingId}
+        Slot: ${bookingDetails.slotName}
+        Number of Tickets: ${bookingDetails.numberOfTickets}
+        Price per Ticket: $${bookingDetails.pricePerTicket}
+        Total Amount: $${bookingDetails.totalAmount}
+        
+        Booking Date: ${formatDate(bookingDetails.bookingDate)}
+        Status: ${bookingDetails.bookingStatus || 'Confirmed'}
+        
+        IMPORTANT INFORMATION
+        ====================
+        • Please arrive at the venue at least 15 minutes before the event starts
+        • Carry a valid ID proof along with your ticket
+        • This ticket is valid for entry
+        • For any queries, contact our support team
+        
+        Thank you for choosing Events2go!
+        Visit us at: www.events2go.com
+        
+        Generated on: ${new Date().toLocaleString()}
+      `;
+      
+      // Create and download the ticket as a text file
+      const blob = new Blob([ticketContent], { type: 'text/plain' });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `Events2go_Ticket_${bookingDetails.bookingId}.txt`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+      
+      toast.success('Ticket downloaded successfully!');
+    } catch (error) {
+      console.error('Error downloading ticket:', error);
+      toast.error('Failed to download ticket. Please try again.');
     }
   };
+
+
 
   const handleBackToHome = () => {
     router.push('/');
@@ -270,20 +309,13 @@ const BookingSuccessContent = () => {
         </div>
 
         {/* Action Buttons */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
           <button
             onClick={handleDownloadTicket}
             className="flex items-center justify-center gap-2 bg-purple-600 text-white px-4 py-3 rounded-lg hover:bg-purple-700 transition-colors"
           >
             <FaDownload />
             Download Ticket
-          </button>
-          <button
-            onClick={handleShareBooking}
-            className="flex items-center justify-center gap-2 bg-blue-600 text-white px-4 py-3 rounded-lg hover:bg-blue-700 transition-colors"
-          >
-            <FaShare />
-            Share Booking
           </button>
           <button
             onClick={handleViewMyBookings}

@@ -42,11 +42,9 @@ import Carousel from '@/components/categoriesScroll'
 import MovieGrid from '@/components/homepage/Movies'
 
 import CookiesPolicy from '@/components/cookie-polocy';
-import Horizantalcard from '@/components/Ads'
-import Offers from '@/components/Rewards'
-import image1 from '../../public/images/ad1.png'
-import image2 from '../../public/images/ad2.png'
-import image3 from '../../public/images/ad3.png'
+import RotatingAds from '@/components/RotatingAds'
+import TestAds from '@/components/TestAds'
+import Partners from '@/components/Partners'
 import { useState,useEffect } from 'react'
 import axiosInstance from '@/lib/axiosInstance'
 import { Category } from '@/types'
@@ -88,23 +86,25 @@ return (
         <Carousel/>
       </div>
 
+
+
       {/* Dynamic Category Sections */}
       <div className="space-y-12">
-        {categories.map((category) => (
+        {categories.map((category, index) => (
           <div key={category.category_id} className="space-y-8">
             <MovieGrid 
               movies={category.events || []} 
               categoryName={category.category_name} 
               slug={category.category_slug}
             />
-            <Horizantalcard image={image1} />
+            <RotatingAds position={index} />
           </div>
         ))}
       </div>
 
-      {/* Final Offers Section */}
+      {/* Partners Section */}
       <div className="mt-16">
-        <Offers/>
+        <Partners/>
       </div>
       <CookiesPolicy />
     </div>

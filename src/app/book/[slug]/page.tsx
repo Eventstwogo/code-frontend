@@ -979,18 +979,23 @@ console.log(slots)
                 -
               </button>
               <span className="text-xl font-semibold w-12 text-center">{seatsCount}</span>
-           <button
+<button
   onClick={() => {
-  const selectedSlotData = slots.find(s => s.slot_name === selectedSlot);
+    const selectedSlotData = slots.find(s => s.slot_name === selectedSlot);
 
-  if (selectedSlotData && seatsCount < selectedSlotData.capacity) {
-    setSeatsCount(seatsCount + 1);
-  }
-}}
+    if (
+      selectedSlotData &&
+      seatsCount < selectedSlotData.capacity &&
+      seatsCount < 6
+    ) {
+      setSeatsCount(seatsCount + 1);
+    }
+  }}
   className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center hover:bg-gray-300"
 >
   +
 </button>
+
 
              </div>
            </div>
