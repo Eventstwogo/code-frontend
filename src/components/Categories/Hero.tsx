@@ -198,7 +198,7 @@ export default function TitanicHero({event}: TitanicHeroProps) {
 
   return (
     <div 
-      className="relative w-full h-[50vh] sm:h-[55vh] md:h-[60vh] lg:h-[65vh] xl:h-[70vh] overflow-hidden hero-mobile-layout hero-xs-layout hero-xxs-layout"
+      className="relative w-full h-[55vh] sm:h-[55vh] md:h-[60vh] lg:h-[65vh] xl:h-[70vh] overflow-hidden hero-mobile-layout hero-xs-layout hero-xxs-layout"
       onKeyDown={handleKeyDown}
       tabIndex={0}
       role="region"
