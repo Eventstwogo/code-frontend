@@ -95,6 +95,8 @@
 
 import Image from "next/image";
 import React, { useMemo } from "react";
+import { FaMapMarkerAlt } from "react-icons/fa";
+import { BsCalendar2EventFill } from "react-icons/bs";
 
 type MovieHeroProps = {
   title: string;
@@ -103,15 +105,17 @@ type MovieHeroProps = {
   description: string;
   poster: string;
   backgroundImage: string;
+  location?: string; // Optional location prop
 };
 
 export default function MovieHero({
   title,
-  runtime,
+
   releaseDate,
   description,
   poster,
   backgroundImage,
+  location
 }: MovieHeroProps) {
   const statusTag = useMemo(() => {
     const today = new Date();
@@ -165,11 +169,24 @@ export default function MovieHero({
             <h1 className="text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl font-bold mb-1 sm:mb-2 leading-tight">{title}</h1>
 
             {/* Details */}
-            <p className="text-xs sm:text-sm lg:text-base text-gray-200 mb-1 sm:mb-2">
-              {releaseDate}
-            </p>
-
+            <div className="flex items-start gap-3 mb-3">
+                            <BsCalendar2EventFill className="text-purple-500 mt-1 flex-shrink-0" />
+                            <div>
+                             
+                              <p className="text-sm text-white">{releaseDate}</p>
+                            </div>
+                          </div>
+    {location && (
+                <div className="flex items-start gap-3 mb-3">
+                  <FaMapMarkerAlt className="text-purple-500 mt-1 flex-shrink-0" />
+                  <div>
+                   
+                    <p className="text-sm text-white">{location}</p>
+                  </div>
+                </div>
+              )}
             <p className="text-xs sm:text-sm lg:text-base text-gray-300 mb-2 line-clamp-2 sm:line-clamp-3 max-w-2xl">{description}</p>
+
           </div>
         </div>
 
