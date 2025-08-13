@@ -174,19 +174,36 @@ export default function TitanicHero({event}: TitanicHeroProps) {
     swiperRef.current?.slideTo(index);
   };
 
+  // Keyboard navigation
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'ArrowLeft') {
+      e.preventDefault();
+      goToPrevious();
+    } else if (e.key === 'ArrowRight') {
+      e.preventDefault();
+      goToNext();
+    }
+  };
+
   if (!event || event.length === 0) {
     return (
-      <div className="w-full h-[45vh] flex items-center justify-center bg-gradient-to-br from-purple-100 to-pink-100">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading events...</p>
+      <div className="w-full h-[50vh] sm:h-[55vh] md:h-[60vh] lg:h-[65vh] xl:h-[70vh] flex items-center justify-center bg-gradient-to-br from-purple-100 to-pink-100">
+        <div className="text-center px-4">
+          <div className="animate-spin rounded-full h-8 w-8 sm:h-10 sm:w-10 md:h-12 md:w-12 border-b-2 border-purple-600 mx-auto mb-3 sm:mb-4"></div>
+          <p className="text-gray-600 text-sm sm:text-base">Loading events...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="relative w-full h-[50vh] sm:h-[45vh] md:h-[50vh] lg:h-[55vh] xl:h-[60vh] overflow-hidden">
+    <div 
+      className="relative w-full h-[70vh] sm:h-[55vh] md:h-[60vh] lg:h-[65vh] xl:h-[70vh] overflow-hidden hero-mobile-layout hero-xs-layout hero-xxs-layout"
+      onKeyDown={handleKeyDown}
+      tabIndex={0}
+      role="region"
+      aria-label="Event showcase carousel"
+    >
       {/* Fallback gradient background */}
       <div className="absolute inset-0 bg-gradient-to-br from-purple-50 via-pink-50 to-orange-50" />
       
@@ -198,11 +215,35 @@ export default function TitanicHero({event}: TitanicHeroProps) {
         autoplay={{
           delay: 5000,
           disableOnInteraction: false,
+          pauseOnMouseEnter: true,
         }}
-          speed={800}  
+        speed={800}  
         loop={true}
+        grabCursor={true}
+        touchRatio={1}
+        touchAngle={45}
+        threshold={10}
+        resistance={true}
+        resistanceRatio={0.85}
         modules={[Autoplay, Pagination, Navigation]}
         className="h-full"
+        breakpoints={{
+          320: {
+            touchRatio: 1.5,
+            threshold: 5,
+            resistanceRatio: 0.9,
+          },
+          475: {
+            touchRatio: 1.3,
+            threshold: 7,
+            resistanceRatio: 0.87,
+          },
+          640: {
+            touchRatio: 1,
+            threshold: 10,
+            resistanceRatio: 0.85,
+          },
+        }}
       >
         {event?.map((movie: any, index: number) => {
           const displaySlug =
@@ -217,78 +258,89 @@ export default function TitanicHero({event}: TitanicHeroProps) {
                 {/* Individual slide background image - Blurred */}
                 <div className="absolute inset-0">
                   <Image
-                    src={movie.banner_image}
-                    alt={`${movie.event_title} background`}
+                    src={movie.banner_image || movie.card_image || '/images/placeholder.svg'}
+                    alt={`${movie.event_title || 'Event'} background`}
                     fill
-                    className="object-cover blur-xl scale-110"
+                    className="object-cover blur-xl scale-110 transition-opacity duration-500"
                     priority={index === 0}
+                    loading={index === 0 ? 'eager' : 'lazy'}
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement;
+                      target.src = movie.card_image || '/images/placeholder.svg';
+                    }}
                   />
                   {/* Overlay for better contrast */}
                   <div className="absolute inset-0 bg-white/20" />
                   {/* Additional gradient overlay */}
                   <div className="absolute inset-0 bg-gradient-to-b from-white/0 via-white/50 to-white/90" />
                 </div>
-                <div className="container mx-auto px-4 sm:px-6 md:px-8 h-full">
-                  <div className="flex items-center h-full">
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 md:gap-10 lg:gap-16 xl:gap-20 items-center w-full">
+                <div className="container mx-auto px-3 sm:px-4 md:px-6 lg:px-8 h-full hero-xs-spacing hero-xxs-spacing">
+                  <div className="flex items-center justify-center h-full py-4 sm:py-6 md:py-8">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 md:gap-8 lg:gap-12 xl:gap-16 items-center w-full max-w-7xl hero-mobile-content hero-xs-content hero-xxs-content">
                       
                       {/* Left Content */}
-                      <div className="text-center lg:text-left space-y-4 sm:space-y-6 md:space-y-8 order-2 lg:order-1 relative z-10">
-                        <div className="space-y-3 sm:space-y-4 md:space-y-6">
-                          <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold text-gray-900 leading-tight">
+                      <div className="text-center md:text-left space-y-2 sm:space-y-3 md:space-y-4 lg:space-y-6 order-2 md:order-1 relative z-10">
+                        <div className="space-y-1.5 sm:space-y-2 md:space-y-3 lg:space-y-4">
+                          <h1 className="text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl 2xl:text-4xl font-bold text-gray-900 leading-tight px-1 sm:px-2 md:px-0 hero-xs-text hero-xxs-text">
                             {movie.event_title}
                           </h1>
                           
-                          <div className="flex flex-wrap items-center justify-center lg:justify-start gap-2 sm:gap-3 text-xs sm:text-sm text-gray-600">
+                          <div className="flex flex-wrap items-center justify-center md:justify-start gap-1 sm:gap-1.5 md:gap-2 lg:gap-3 text-xs sm:text-sm text-gray-600 px-1 sm:px-2 md:px-0">
                             {movie.category_name && (
-                              <span className="bg-gray-100 text-gray-800 px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm">
+                              <span className="bg-gray-100 text-gray-800 px-1.5 sm:px-2 md:px-3 py-0.5 sm:py-1 rounded-full text-xs whitespace-nowrap">
                                 {movie.category_name}
                               </span>
                             )}
                             {movie.subcategory_name && (
-                              <span className="bg-gray-100 text-gray-800 px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm">
+                              <span className="bg-gray-100 text-gray-800 px-1.5 sm:px-2 md:px-3 py-0.5 sm:py-1 rounded-full text-xs whitespace-nowrap">
                                 {movie.subcategory_name}
                               </span>
                             )}
                             {movie.event_date && (
-                              <span className="bg-blue-100 text-blue-800 px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm">
+                              <span className="bg-blue-100 text-blue-800 px-1.5 sm:px-2 md:px-3 py-0.5 sm:py-1 rounded-full text-xs whitespace-nowrap">
                                 {new Date(movie.event_date).toLocaleDateString()}
                               </span>
                             )}
                             {movie.extra_data?.ageRestriction && (
-                              <span className="bg-yellow-100 text-yellow-800 px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm">
+                              <span className="bg-yellow-100 text-yellow-800 px-1.5 sm:px-2 md:px-3 py-0.5 sm:py-1 rounded-full text-xs whitespace-nowrap">
                                 {movie.extra_data.ageRestriction}
                               </span>
                             )}
                           </div>
 
                           {movie.extra_data?.description && (
-                            <p className="text-gray-600 text-sm sm:text-base md:text-base lg:text-lg leading-relaxed line-clamp-2 sm:line-clamp-3 max-w-sm sm:max-w-md lg:max-w-lg mx-auto lg:mx-0 font-bold">
+                            <p className="text-gray-600 text-xs sm:text-sm md:text-base lg:text-lg leading-relaxed line-clamp-2 md:line-clamp-3 max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg mx-auto md:mx-0 font-medium px-1 sm:px-2 md:px-0">
                               {movie.extra_data.description}
                             </p>
                           )}
                         </div>
 
-                        <div className="pt-4 sm:pt-6">
+                        <div className="pt-1.5 sm:pt-2 md:pt-4 lg:pt-6">
                           <Link
                             href={`/event/${displaySlug}?event=${displaySlug}`}
-                            className="bg-black hover:bg-gray-800 text-white font-semibold px-6 sm:px-8 md:px-10 py-3 sm:py-4 md:py-5 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg inline-block text-sm sm:text-base md:text-lg"
+                            className="bg-black hover:bg-gray-800 text-white font-semibold px-3 sm:px-4 md:px-6 lg:px-8 xl:px-10 py-1.5 sm:py-2 md:py-3 lg:py-4 xl:py-5 rounded-md sm:rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg inline-block text-xs sm:text-sm md:text-base lg:text-lg hero-xs-button"
                           >
-                  View details
+                            View details
                           </Link>
                         </div>
                       </div>
 
-                      {/* Right Image - Smaller Size */}
-                      <div className="order-1 lg:order-2 flex justify-center lg:justify-end">
-                        <div className="relative w-full max-w-[150px] sm:max-w-[180px] md:max-w-[200px] lg:max-w-[250px] xl:max-w-[350px]">
-                          <div className="aspect-[3/4] relative rounded-xl sm:rounded-2xl overflow-hidden shadow-xl sm:shadow-2xl">
+                      {/* Right Image - Responsive Size */}
+                      <div className="order-1 md:order-2 flex justify-center md:justify-end items-center">
+                        <div className="relative w-full max-w-[160px] xs:max-w-[180px] sm:max-w-[200px] md:max-w-[220px] lg:max-w-[260px] xl:max-w-[300px] 2xl:max-w-[360px] hero-mobile-image hero-xs-image hero-xxs-image mx-auto md:mx-0">
+                          <div className="aspect-[3/4] relative rounded-md sm:rounded-lg md:rounded-xl lg:rounded-2xl overflow-hidden shadow-md sm:shadow-lg md:shadow-xl lg:shadow-2xl bg-gray-100">
                             <Image
-                              src={movie.card_image}
-                              alt={movie.event_title}
+                              src={movie.card_image || '/images/placeholder.svg'}
+                              alt={movie.event_title || 'Event image'}
                               fill
-                              className="object-cover"
+                              className="object-cover object-center transition-opacity duration-300"
                               priority={index === 0}
+                              loading={index === 0 ? 'eager' : 'lazy'}
+                              sizes="(max-width: 360px) 140px, (max-width: 475px) 160px, (max-width: 640px) 180px, (max-width: 768px) 200px, (max-width: 1024px) 220px, (max-width: 1280px) 260px, 300px"
+                              onError={(e) => {
+                                const target = e.target as HTMLImageElement;
+                                target.src = '/images/placeholder.svg';
+                              }}
                             />
                             {/* Subtle overlay for better image quality */}
                             <div className="absolute inset-0 bg-black/5" />
@@ -310,36 +362,39 @@ export default function TitanicHero({event}: TitanicHeroProps) {
         <>
           <button
             onClick={goToPrevious}
-            className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 z-10 bg-white/80 hover:bg-white text-gray-800 p-2 sm:p-3 rounded-full shadow-lg transition-all duration-300 hover:scale-110"
+            className="absolute left-1 sm:left-2 md:left-4 top-1/2 -translate-y-1/2 z-20 text-black hover:text-gray-800 p-1.5 sm:p-2 md:p-3   transition-all duration-300 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-gray-400"
+            aria-label="Previous slide"
           >
-            <IoChevronBack className="w-4 h-4 sm:w-6 sm:h-6" />
+            <IoChevronBack className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 lg:w-6 lg:h-6" />
           </button>
           
           <button
             onClick={goToNext}
-            className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 z-10 bg-white/80 hover:bg-white text-gray-800 p-2 sm:p-3 rounded-full shadow-lg transition-all duration-300 hover:scale-110"
+            className="absolute right-1 sm:right-2 md:right-4 top-1/2 -translate-y-1/2 z-20 text-black hover:text-gray-800 p-1.5 sm:p-2 md:p-3  transition-all duration-300 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-gray-400"
+            aria-label="Next slide"
           >
-            <IoChevronForward className="w-4 h-4 sm:w-6 sm:h-6" />
+            <IoChevronForward className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 lg:w-6 lg:h-6" />
           </button>
         </>
       )}
 
       {/* Dots Pagination */}
-      {/* {event.length > 1 && (
-        <div className="absolute bottom-4 sm:bottom-6 left-1/2 -translate-x-1/2 z-10 flex space-x-1.5 sm:space-x-2">
+      {event.length > 1 && event.length <= 5 && (
+        <div className="absolute bottom-2 sm:bottom-4 md:bottom-6 left-1/2 -translate-x-1/2 z-20 flex space-x-1 sm:space-x-1.5 md:space-x-2">
           {event.map((_, index) => (
             <button
               key={index}
               onClick={() => goToSlide(index)}
-              className={`w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full transition-all duration-300 ${
+              className={`w-2 h-2 sm:w-2.5 sm:h-2.5 md:w-3 md:h-3 rounded-full transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white/50 ${
                 index === activeIndex 
                   ? 'bg-gray-800 scale-125' 
                   : 'bg-gray-400 hover:bg-gray-600'
               }`}
+              aria-label={`Go to slide ${index + 1}`}
             />
           ))}
         </div>
-      )} */}
+      )}
     </div>
   );
 }

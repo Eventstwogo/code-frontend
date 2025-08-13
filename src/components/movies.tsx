@@ -76,7 +76,7 @@ export default function MovieCard({
         <div className="mt-auto">
           <button 
             onClick={handleBookNowClick}
-            className="bg-purple-500 text-white px-4 py-2 rounded hover:bg-purple-600 transition w-full font-semibold text-sm"
+            className="bg-purple-500 text-white px-4 py-2 rounded hover:bg-purple-600 transition w-full font-semibold text-sm cursor-pointer"
           >
             BOOK NOW
           </button>

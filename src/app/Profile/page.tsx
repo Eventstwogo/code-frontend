@@ -267,7 +267,7 @@ console.log(bookings);
       </div>
       <Separator className="my-4" />
       <nav className="flex flex-col space-y-2 mb-5">
-        {['profile', 'bookings', 'payments', 'addresses', 'settings'].map((section) => (
+        {['profile', 'bookings',  'settings'].map((section) => (
           <button
             key={section}
             onClick={() => {

@@ -46,7 +46,7 @@ export default function HeroSection({ movies }: HeroSectionProps) {
 
   if (!movies || movies.length === 0) {
     return (
-      <div className="w-full h-[45vh] flex items-center justify-center bg-gradient-to-br from-purple-100 to-pink-100">
+      <div className="w-full h-[60vh] flex items-center justify-center bg-gradient-to-br from-purple-100 to-pink-100">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto mb-4"></div>
           <p className="text-gray-600">Loading events...</p>
@@ -56,7 +56,7 @@ export default function HeroSection({ movies }: HeroSectionProps) {
   }
 
   return (
-    <div className="relative w-full h-[50vh] sm:h-[45vh] md:h-[50vh] lg:h-[55vh] xl:h-[60vh] overflow-hidden">
+    <div className="relative w-full h-[75vh] sm:h-[60vh] md:h-[65vh] lg:h-[70vh] xl:h-[75vh] overflow-hidden">
       {/* Fallback gradient background */}
       <div className="absolute inset-0 bg-gradient-to-br from-gray-800 via-gray-700 to-gray-900" />
       
@@ -80,7 +80,7 @@ export default function HeroSection({ movies }: HeroSectionProps) {
               {/* Individual slide background image - Blurred */}
               <div className="absolute inset-0">
                 <Image
-                  src={movie.banner_image}
+                  src={movie.card_image}
                   alt={`${movie.event_title} background`}
                   fill
                   className="object-cover blur-xl scale-110"
@@ -92,7 +92,7 @@ export default function HeroSection({ movies }: HeroSectionProps) {
                <div className="absolute inset-0 bg-gradient-to-b from-white/10 via-white/50 to-white/90" />
               </div>
               <div className="container mx-auto px-4 sm:px-6 md:px-8 h-full">
-                <div className="flex items-center h-full">
+                <div className="flex items-center h-full py-4 sm:py-6 md:py-8">
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 md:gap-10 lg:gap-16 xl:gap-20 items-center w-full">
                     
                     {/* Left Content */}
@@ -129,7 +129,7 @@ export default function HeroSection({ movies }: HeroSectionProps) {
 
                       <div className="pt-4 sm:pt-6">
                         <button 
-                          className="bg-black hover:bg-gray-800 text-white font-semibold px-6 sm:px-8 md:px-10 py-3 sm:py-4 md:py-5 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-xl hover:shadow-2xl text-sm sm:text-base md:text-lg"
+                          className="bg-black hover:bg-gray-800 text-white font-semibold px-6 sm:px-8 md:px-10 py-3 sm:py-4 md:py-5 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-xl hover:shadow-2xl text-sm sm:text-base md:text-lg cursor-pointer"
                           onClick={(e) => handleBookNowClick(movie, e)}
                         >
              View details
@@ -139,18 +139,24 @@ export default function HeroSection({ movies }: HeroSectionProps) {
 
                     {/* Right Image - Smaller Size */}
                     <div className="order-1 lg:order-2 flex justify-center lg:justify-end">
-                      <div className="relative w-full max-w-[150px] sm:max-w-[180px] md:max-w-[200px] lg:max-w-[250px] xl:max-w-[350px]">
-                        <div className="aspect-[3/4] relative rounded-xl sm:rounded-2xl overflow-hidden shadow-xl sm:shadow-2xl">
-                          <Image
-                            src={movie.banner_image}
-                            alt={movie.event_title}
-                            fill
-                            className="object-cover"
-                            priority={index === 0}
-                          />
-                          {/* Subtle overlay for better image quality */}
-                          <div className="absolute inset-0 bg-black/5" />
-                        </div>
+                      <div className="relative w-full max-w-[120px] sm:max-w-[140px] md:max-w-[160px] lg:max-w-[200px] xl:max-w-[280px]">
+                         <div className="aspect-[5/6] sm:aspect-[4/5] relative rounded-md sm:rounded-lg md:rounded-xl lg:rounded-2xl overflow-hidden shadow-md sm:shadow-lg md:shadow-xl lg:shadow-2xl bg-gray-100">
+                                                  <Image
+                                                    src={movie.card_image || '/images/placeholder.svg'}
+                                                    alt={movie.event_title || 'Event image'}
+                                                    fill
+                                                    className="object-cover object-center transition-opacity duration-300"
+                                                    priority={index === 0}
+                                                    loading={index === 0 ? 'eager' : 'lazy'}
+                                                    sizes="(max-width: 320px) 100px, (max-width: 360px) 120px, (max-width: 475px) 140px, (max-width: 640px) 160px, (max-width: 768px) 180px, (max-width: 1024px) 200px, (max-width: 1280px) 240px, 280px"
+                                                    onError={(e) => {
+                                                      const target = e.target as HTMLImageElement;
+                                                      target.src = '/images/placeholder.svg';
+                                                    }}
+                                                  />
+                                                  {/* Subtle overlay for better image quality */}
+                                                  <div className="absolute inset-0 bg-black/5" />
+                                                </div>
                       </div>
                     </div>
 
@@ -167,16 +173,16 @@ export default function HeroSection({ movies }: HeroSectionProps) {
         <>
           <button
             onClick={goToPrevious}
-            className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 z-10 bg-white/80 hover:bg-white text-gray-800 p-2 sm:p-3 rounded-full shadow-lg transition-all duration-300 hover:scale-110"
+            className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 z-10 text-black hover:text-gray-300 p-2 sm:p-3 transition-all duration-300 hover:scale-110"
           >
-            <IoChevronBack className="w-4 h-4 sm:w-6 sm:h-6" />
+            <IoChevronBack className="w-6 h-6 sm:w-8 sm:h-8 drop-shadow-lg" />
           </button>
           
           <button
             onClick={goToNext}
-            className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 z-10 bg-white/80 hover:bg-white text-gray-800 p-2 sm:p-3 rounded-full shadow-lg transition-all duration-300 hover:scale-110"
+            className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 z-10 text-black hover:text-gray-300 p-2 sm:p-3 transition-all duration-300 hover:scale-110"
           >
-            <IoChevronForward className="w-4 h-4 sm:w-6 sm:h-6" />
+            <IoChevronForward className="w-6 h-6 sm:w-8 sm:h-8 drop-shadow-lg" />
           </button>
         </>
       )}

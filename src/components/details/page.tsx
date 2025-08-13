@@ -94,7 +94,15 @@ export default function MovieDetails({event, selectedDate}: MovieDetailsProps) {
               {event?.hash_tags && (
                 <div className="flex items-start gap-2">
                   <span className="text-sm sm:text-base font-medium text-gray-800">Tags:</span>
-                  <span className="text-sm sm:text-base text-gray-600">{event?.hash_tags}</span>
+  <span
+  className="
+    text-sm sm:text-base text-gray-600
+    max-w-[100%] sm:max-w-none
+    whitespace-normal
+    break-all
+    block
+  "
+>{event?.hash_tags}</span>
                 </div>
               )}
             </div>
