@@ -198,7 +198,7 @@ export default function TitanicHero({event}: TitanicHeroProps) {
 
   return (
     <div 
-      className="relative w-full h-[70vh] sm:h-[55vh] md:h-[60vh] lg:h-[65vh] xl:h-[70vh] overflow-hidden hero-mobile-layout hero-xs-layout hero-xxs-layout"
+      className="relative w-full h-[50vh] sm:h-[55vh] md:h-[60vh] lg:h-[65vh] xl:h-[70vh] overflow-hidden hero-mobile-layout hero-xs-layout hero-xxs-layout"
       onKeyDown={handleKeyDown}
       tabIndex={0}
       role="region"
@@ -318,7 +318,7 @@ export default function TitanicHero({event}: TitanicHeroProps) {
                         <div className="pt-1.5 sm:pt-2 md:pt-4 lg:pt-6">
                           <Link
                             href={`/event/${displaySlug}?event=${displaySlug}`}
-                            className="bg-black hover:bg-gray-800 text-white font-semibold px-3 sm:px-4 md:px-6 lg:px-8 xl:px-10 py-1.5 sm:py-2 md:py-3 lg:py-4 xl:py-5 rounded-md sm:rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg inline-block text-xs sm:text-sm md:text-base lg:text-lg hero-xs-button"
+                             className="bg-black hover:bg-gray-800 text-white font-semibold px-6 sm:px-8 md:px-10 py-3 sm:py-4 md:py-5 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-xl hover:shadow-2xl text-sm sm:text-base md:text-lg cursor-pointer"
                           >
                             View details
                           </Link>
@@ -336,7 +336,7 @@ export default function TitanicHero({event}: TitanicHeroProps) {
                               className="object-cover object-center transition-opacity duration-300"
                               priority={index === 0}
                               loading={index === 0 ? 'eager' : 'lazy'}
-                              sizes="(max-width: 360px) 140px, (max-width: 475px) 160px, (max-width: 640px) 180px, (max-width: 768px) 200px, (max-width: 1024px) 220px, (max-width: 1280px) 260px, 300px"
+                              sizes="(max-width: 360px) 180px, (max-width: 475px) 160px, (max-width: 640px) 180px, (max-width: 768px) 200px, (max-width: 1024px) 220px, (max-width: 1280px) 260px, 300px"
                               onError={(e) => {
                                 const target = e.target as HTMLImageElement;
                                 target.src = '/images/placeholder.svg';
@@ -379,7 +379,7 @@ export default function TitanicHero({event}: TitanicHeroProps) {
       )}
 
       {/* Dots Pagination */}
-      {event.length > 1 && event.length <= 5 && (
+      {/* {event.length > 1 && event.length <= 5 && (
         <div className="absolute bottom-2 sm:bottom-4 md:bottom-6 left-1/2 -translate-x-1/2 z-20 flex space-x-1 sm:space-x-1.5 md:space-x-2">
           {event.map((_, index) => (
             <button
@@ -394,7 +394,7 @@ export default function TitanicHero({event}: TitanicHeroProps) {
             />
           ))}
         </div>
-      )}
+      )} */}
     </div>
   );
 }

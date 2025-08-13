@@ -56,7 +56,7 @@ export default function HeroSection({ movies }: HeroSectionProps) {
   }
 
   return (
-    <div className="relative w-full h-[75vh] sm:h-[60vh] md:h-[65vh] lg:h-[70vh] xl:h-[75vh] overflow-hidden">
+    <div className="relative w-full h-[50vh] sm:h-[60vh] md:h-[65vh] lg:h-[70vh] xl:h-[75vh] overflow-hidden">
       {/* Fallback gradient background */}
       <div className="absolute inset-0 bg-gradient-to-br from-gray-800 via-gray-700 to-gray-900" />
       
@@ -148,7 +148,7 @@ export default function HeroSection({ movies }: HeroSectionProps) {
                                                     className="object-cover object-center transition-opacity duration-300"
                                                     priority={index === 0}
                                                     loading={index === 0 ? 'eager' : 'lazy'}
-                                                    sizes="(max-width: 320px) 100px, (max-width: 360px) 120px, (max-width: 475px) 140px, (max-width: 640px) 160px, (max-width: 768px) 180px, (max-width: 1024px) 200px, (max-width: 1280px) 240px, 280px"
+                                                    sizes="(max-width: 320px) 180px, (max-width: 360px) 180px, (max-width: 475px) 140px, (max-width: 640px) 160px, (max-width: 768px) 180px, (max-width: 1024px) 200px, (max-width: 1280px) 240px, 280px"
                                                     onError={(e) => {
                                                       const target = e.target as HTMLImageElement;
                                                       target.src = '/images/placeholder.svg';
