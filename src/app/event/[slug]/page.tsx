@@ -167,6 +167,7 @@ console.log(eventDates);
         description={event?.extra_data?.description}
         poster={event.card_image}
         backgroundImage={event.banner_image}
+        location={event.extra_data?.address}
       />
 
       <div className="bg-white">

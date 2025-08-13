@@ -47,6 +47,7 @@ import Partners from '@/components/Partners'
 import { useState,useEffect } from 'react'
 import axiosInstance from '@/lib/axiosInstance'
 import { Category } from '@/types'
+import FeaturedSection from '@/components/FeaturedSection'
 const Page = () => {
 
   const [categories, setCategories] = useState<Category[]>([]);
@@ -86,7 +87,7 @@ return (
       </div>
 
 
-
+<FeaturedSection/>
       {/* Dynamic Category Sections */}
       <div className="space-y-12">
         {categories.map((category, index) => (
