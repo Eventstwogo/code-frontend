@@ -6,7 +6,7 @@ export default function Footer() {
       <div className="grid grid-cols-1 md:grid-cols-5 gap-8 items-start text-sm">
         {/* Logo and Tagline */}
         <div className="md:col-span-1 flex flex-col items-start gap-2">
-          <img src="/images/logo.png" alt="Events2Go Logo" className="h-20" />
+          <img src="/images/logo1.png" alt="Events2Go Logo" className="h-20" />
           <p className="font-semibold text-lg">EVENTS 2 GO</p>
           <p className="text-xs text-gray-500">
             "Explore movies, trending events, workshops..."

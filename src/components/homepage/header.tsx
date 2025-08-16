@@ -149,7 +149,7 @@ console.log(profile)
           <div className="flex-shrink-0">
             <Link href="/">
               <Image
-                src="/images/logo.png"
+                src="/images/logo1.png"
                 alt="EventsNego Logo"
                 width={60}
                 height={60}
