@@ -150,7 +150,7 @@ console.log(profile)
             <Link href="/">
               <Image
                 src="/images/logo1.png"
-                alt="EventsNego Logo"
+                alt="Events2go Logo"
                 width={60}
                 height={60}
                 className="w-10 h-10 sm:w-12 sm:h-12 md:w-16 md:h-16 lg:w-20 lg:h-20"
@@ -368,7 +368,7 @@ console.log(profile)
             {/* Footer */}
             <div className="p-4 border-t border-gray-200">
               <p className="text-xs text-gray-500 text-center">
-                EventsNego © 2024
+                Events2go © 2024
               </p>
             </div>
           </div>
