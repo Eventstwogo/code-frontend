@@ -82,7 +82,7 @@ const FeaturedCard = ({ event }: { event: FeaturedEvent }) => {
           className="object-cover transition-transform duration-700 group-hover:scale-110"
           onError={(e) => {
             const target = e.target as HTMLImageElement;
-            target.src = '/images/placeholder.svg';
+            target.src = '/placeholder.svg';
           }}
         />
         {/* Gradient Overlay */}
@@ -129,8 +129,7 @@ const FeaturedCard = ({ event }: { event: FeaturedEvent }) => {
 export default function FeaturedCards({ 
   events, 
   title = "Featured Events", 
-  showViewAll = true,
-  viewAllLink = "/featured"
+
 }: FeaturedCardsProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [scrollProgress, setScrollProgress] = useState(0);
