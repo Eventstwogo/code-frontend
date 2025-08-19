@@ -135,15 +135,15 @@ const Page = () => {
   const fetchEvents = async () => {
     try {
       const response = await axiosInstance.get(
-        `/api/v1/category-events/events-by-slug/${slug}?page=1&limit=100&event_type=upcoming`
+        `/api/v1/new-category-events/events-by-slug/${slug}?page=1&limit=100&event_type=upcoming`
       )
       const allEvents = response.data.data.events || []
 
   const todayDate = new Date().toISOString().split("T")[0]; // "YYYY-MM-DD"
 
 const present = allEvents.filter((event: any) => {
-  const start = new Date(event.start_date);
-  const end = new Date(event.end_date);
+  const start = new Date(event.event_dates[0]);
+  const end = new Date(event.event_dates[event.event_dates.length - 1]);
   const today = new Date(todayDate);
 
   return start <= today && end >= today; // ongoing or starting today

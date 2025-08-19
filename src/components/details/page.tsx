@@ -23,8 +23,11 @@ export default function MovieDetails({event, selectedDate}: MovieDetailsProps) {
 
   const handleBookTickets = () => {
     if (userId) {
+      console.log(selectedDate)
       // User is authenticated, navigate to book now page with selected date
-      const dateParam = selectedDate ? `?date=${getFormattedDate(selectedDate)}&&slug_id=${event?.slot_id || ''}` : '';
+     const dateParam = selectedDate
+  ? `?date=${selectedDate}&slug_id=${event?.slot_id || ''}`
+  : '';
       router.push(`/book/${event?.event_slug || ''}${dateParam}`);
     } else {
       // User is not authenticated, navigate to login page
@@ -127,7 +130,7 @@ export default function MovieDetails({event, selectedDate}: MovieDetailsProps) {
                 <BsCalendar2EventFill className="text-purple-500 mt-1 flex-shrink-0" />
                 <div>
                   <p className="text-sm font-medium text-gray-800">Event Dates</p>
-                  <p className="text-sm text-gray-600">{event?.start_date || 'TBD'} to {event?.end_date || 'TBD'}</p>
+                  <p className="text-sm text-gray-600">{event?.event_dates[0] || 'TBD'} to {event?.event_dates?.[event.event_dates.length - 1] || "TBD"}</p>
                 </div>
               </div>
               
