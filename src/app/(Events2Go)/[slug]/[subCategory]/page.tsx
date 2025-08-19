@@ -150,7 +150,7 @@ const present = allEvents.filter((event: any) => {
 });
 
 const future = allEvents.filter((event: any) => {
-  const start = new Date(event.start_date);
+  const start = new Date(event.event_dates[0]);
   const today = new Date(todayDate);
 
   return start > today; // strictly in the future

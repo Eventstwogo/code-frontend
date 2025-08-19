@@ -203,11 +203,11 @@ const end= new Date(event.event_dates[event.event_dates.length - 1]);
 
     const future = subcategory.events.filter((event: any) => {
       // Check if event has required date fields
-      if (!event.start_date) {
+      if (!event.event_dates[0]) {
         return false; // Don't include in future if no date info
       }
 
-      const start = new Date(event.start_date);
+      const start = new Date(event.event_dates[0]);
 
       // Check for invalid dates
       if (isNaN(start.getTime())) {

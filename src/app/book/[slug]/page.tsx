@@ -943,9 +943,7 @@ const BookingPageContent = () => {
                         : 'border-gray-200 hover:border-purple-300'
                     }`}
                   >
-                    <div className="flex items-center justify-between mb-2">
-                      <h3 className="font-semibold">{slot.slot_name}</h3>
-                    </div>
+                    
                     <div className="flex items-center gap-2 text-sm text-gray-600 mb-2">
                       <FaClock />
                       <span>
