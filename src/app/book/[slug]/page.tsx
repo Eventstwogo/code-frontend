@@ -837,7 +837,7 @@ console.log(selectedCategory)
          
           price_per_seat: selectedCategory.price,
          
-          num_seats: selectedCategory.booked,
+          num_seats: seatsCount,
 
         }
       ]
@@ -1107,7 +1107,7 @@ console.log(selectedCategory)
                     <span>Time:</span>
                     <span>
                       {selectedSlotData
-                        ? `${formatTime(selectedSlotData.start_time)} - ${formatTime(
+                        ? `${(selectedSlotData.start_time)} - ${(
                             selectedSlotData.end_time
                           )}`
                         : ''}
