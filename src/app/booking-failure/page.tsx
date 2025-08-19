@@ -38,37 +38,36 @@ const BookingFailureContent = () => {
         setLoading(true);
         
         // Check if we have a booking ID to fetch from API
-        const bookingId = searchParams.get('booking_id');
+        const bookingId = searchParams.get('order_id');
         
         if (bookingId) {
           try {
             // Try to fetch booking details from API (might be a failed booking)
-            const response = await axiosInstance.get(`/api/v1/bookings/${bookingId}`);
+            const response = await axiosInstance.get(`/api/v1/new-bookings/${bookingId}`);
             
             if (response.data.statusCode === 200 && response.data.data) {
               const booking = response.data.data;
-              
-              setFailureDetails({
-                bookingId: booking.booking_id?.toString() || bookingId,
-                eventTitle: booking.event?.title || 'Event',
-                eventImage: booking.event?.card_image ? `${process.env.NEXT_PUBLIC_API_BASE_URL || ''}/${booking.event.card_image}` : '/images/placeholder.svg',
-                eventAddress: booking.event?.address || 'Address not available',
-                selectedDate: booking.booking_date || '',
-                slotName: booking.slot || 'Standard Slot',
-                startTime: booking.slot_time?.split(' - ')[0] || '',
-                endTime: booking.slot_time?.split(' - ')[1] || '',
-                numberOfTickets: booking.num_seats || 1,
-                pricePerTicket: booking.price_per_seat || 0,
-                totalAmount: booking.total_price || 0,
-                errorMessage: booking.booking_status === 'failed' ? 
-                  (booking.failure_reason || 'Booking failed') : 
-                  'An unexpected error occurred during booking',
-                errorCode: booking.error_code || 'BOOKING_FAILED',
-                transactionId: booking.paypal_order_id,
-                eventId: booking.event?.event_id,
-                eventSlug: booking.event?.slug,
-                slotId: booking.slot_id || booking.slot
-              });
+
+                  const bookingDetails: BookingDetails = {
+            bookingId: booking.booking_id?.toString() || bookingId,
+            eventTitle: booking.event?.title || 'Event',
+            eventImage: booking.event?.card_image  || '/images/placeholder.svg',
+            eventAddress: booking.event?.location || 'Address not available',
+            selectedDate: booking.event.event_date || '',
+            slotName: booking.slot || 'Standard Slot',
+            categoryName: booking.seat_categories[0]?.label || 'General',
+            startTime: booking.slot_time?.split(' - ')[0] || '',
+            endTime: booking.slot_time?.split(' - ')[1] || '',
+            numberOfTickets: booking.seat_categories[0]?.num_seats || "",
+            pricePerTicket: booking.seat_categories[0].price_per_seat || 0,
+            totalAmount: booking.total_amount || 0,
+            bookingDate: booking.created_at || new Date().toISOString(),
+            userEmail: booking.user?.email,
+            bookingStatus: booking.booking_status || 'confirmed',
+            eventId: booking.event?.event_id,
+            slotId: booking.slot
+          };
+              setFailureDetails(bookingDetails);
               setLoading(false);
               return;
             }
