@@ -39,7 +39,7 @@ const BookingSuccessContent = () => {
         setError(null);
         
         // Get booking ID from URL parameters
-        const bookingId = searchParams.get('booking_id') || searchParams.get('booking)Id');
+        const bookingId = searchParams.get('order_id') || searchParams.get('order)Id');
 
         if (!bookingId) {
           // Try to get from localStorage as fallback
@@ -53,24 +53,25 @@ const BookingSuccessContent = () => {
         }
 
         // Fetch booking details from API
-        const response = await axiosInstance.get(`/api/v1/bookings/${bookingId}`);
+        const response = await axiosInstance.get(`/api/v1/new-bookings/${bookingId}`);
         
-        if (response.data.statusCode === 200 && response.data.data) {
+        if (response.status === 200 && response.data) {
           const booking = response.data.data;
-          
+          console.log('Booking details fetched:', booking.seat_categories.num_seats);
           // Transform API response to match our interface
           const bookingDetails: BookingDetails = {
             bookingId: booking.booking_id?.toString() || bookingId,
             eventTitle: booking.event?.title || 'Event',
             eventImage: booking.event?.card_image  || '/images/placeholder.svg',
-            eventAddress: booking.event?.address || 'Address not available',
-            selectedDate: booking.booking_date || '',
+            eventAddress: booking.event?.location || 'Address not available',
+            selectedDate: booking.event.event_date || '',
             slotName: booking.slot || 'Standard Slot',
+            categoryName: booking.seat_categories[0]?.label || 'General',
             startTime: booking.slot_time?.split(' - ')[0] || '',
             endTime: booking.slot_time?.split(' - ')[1] || '',
-            numberOfTickets: booking.num_seats || 1,
-            pricePerTicket: booking.price_per_seat || 0,
-            totalAmount: booking.total_price || 0,
+            numberOfTickets: booking.seat_categories[0]?.num_seats || "",
+            pricePerTicket: booking.seat_categories[0].price_per_seat || 0,
+            totalAmount: booking.total_amount || 0,
             bookingDate: booking.created_at || new Date().toISOString(),
             userEmail: booking.user?.email,
             bookingStatus: booking.booking_status || 'confirmed',

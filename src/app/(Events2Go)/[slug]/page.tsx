@@ -184,13 +184,13 @@ const categorizeEventsByDate = (eventsBySubcategory: any[]) => {
 
     const present = subcategory.events.filter((event: any) => {
       // Check if event has required date fields
-      if (!event.start_date) {
+      if (!event.event_dates[0]) {
         console.warn('Event missing start_date:', event);
         return true; // Default to present if no date info
       }
 
-      const start = new Date(event.start_date);
-      const end = event.end_date ? new Date(event.end_date) : start;
+      const start = new Date(event.event_dates[0]);
+const end= new Date(event.event_dates[event.event_dates.length - 1]);
 
       // Check for invalid dates
       if (isNaN(start.getTime()) || isNaN(end.getTime())) {
@@ -261,7 +261,7 @@ const Page = () => {
   const fetchEvents = async () => {
     try {
       const response = await axiosInstance(
-        `/api/v1/events/category-or-subcategory/${slug}?page=1&per_page=10`
+        `/api/v1/new-events/category-or-subcategory/${slug}?page=1&per_page=10`
       );
       const data = response.data?.data;
 

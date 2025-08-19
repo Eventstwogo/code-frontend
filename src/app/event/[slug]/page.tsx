@@ -117,30 +117,23 @@ const EventDetailPage = () => {
 
   const fetchEvent = async () => {
     try {
-      const response = await axiosInstance.get(`/api/v1/events/slug/${slug}`);
+      const response = await axiosInstance.get(`/api/v1/new-events/slug/${slug}`);
       const eventData = response.data.data;
       setEvent(eventData);
       
       // Generate dates from the event data
-    if (eventData.start_date && eventData.end_date) {
-  const dates = generateEventDates(eventData.start_date, eventData.end_date);
+    if (eventData.event_dates) {
+  const dates = eventData.event_dates
 
   const today = new Date();
   today.setHours(0, 0, 0, 0); // ignore time
 
-  const futureDates = dates.filter(d => {
-    // Create a date for the event date using the same month/year from start_date
-    const eventDate = new Date(eventData.start_date);
-    eventDate.setDate(parseInt(d.date));
-    eventDate.setHours(0, 0, 0, 0);
 
-    return eventDate >= today;
-  });
 
-  setEventDates(futureDates);
+  setEventDates(dates);
 
-  if (futureDates.length > 0) {
-    setSelectedDate(futureDates[0]);
+  if (dates.length > 0) {
+    setSelectedDate(dates[0]);
   }
 }
 
@@ -157,13 +150,13 @@ const EventDetailPage = () => {
 
   if (!event) return <p>Loading...</p>;
 
-console.log(eventDates);
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Moviesection
         title={event.event_title}
         runtime="170 min"
-        releaseDate={event.start_date || ''}
+        releaseDate={event.event_dates[0] || ''}
         description={event?.extra_data?.description}
         poster={event.card_image}
         backgroundImage={event.banner_image}

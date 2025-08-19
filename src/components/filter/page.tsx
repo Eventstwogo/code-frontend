@@ -47,7 +47,7 @@ export default function MovieDateSelector({
                   : "text-black hover:bg-gray-100 border border-gray-200"
               }`}
             >
-              <span className="text-sm sm:text-lg font-bold">{d.date}</span>
+              <span className="text-sm sm:text-lg font-bold">{d}</span>
               <span className="text-xs sm:text-sm">{d.day}</span>
             </button>
           ))}
