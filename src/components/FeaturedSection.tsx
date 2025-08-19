@@ -31,7 +31,7 @@ export default function FeaturedSection({
       setError(null);
       
       // You can modify this API endpoint based on your backend structure
-      let url = `/api/v1/featured-events`;
+      let url = `/api/v1/featured-events/`;
       if (categoryFilter) {
         url += `&category=${categoryFilter}`;
       }
