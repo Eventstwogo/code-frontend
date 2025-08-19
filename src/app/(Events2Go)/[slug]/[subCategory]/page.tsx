@@ -168,7 +168,7 @@ const future = allEvents.filter((event: any) => {
   const fetchHeroEvents = async () => {
     try {
       const response = await axiosInstance(
-        `/api/v1/events/latest/category-or-subcategory/${slug}?event_type=upcoming`
+        `/api/v1/new-events/latest/category-or-subcategory/${slug}?event_type=upcoming`
       )
       setHeroEvents(response.data.data.events || [])
     } catch (error) {
