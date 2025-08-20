@@ -124,7 +124,7 @@ const EventDetailPage = () => {
       // Generate dates from the event data
     if (eventData.event_dates) {
   const dates = eventData.event_dates
-
+console.log(dates)
   const today = new Date();
   today.setHours(0, 0, 0, 0); // ignore time
 
