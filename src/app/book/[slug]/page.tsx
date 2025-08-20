@@ -557,13 +557,13 @@ console.log('slots', slots);
               </button>
             </div>
           </div>
+
+        )}
           {isCouponApplied && (
   <p className="text-sm text-gray-600 mt-2">
     Seat count cannot be changed while a coupon is applied. Remove the coupon to adjust the number of seats.
   </p>
 )}
-        )}
-
         {selectedSlot && selectedSeatCategory && (
           <div className="bg-white rounded-lg shadow-md p-6 mb-6">
             <h2 className="text-xl font-semibold mb-4">Booking Summary</h2>
