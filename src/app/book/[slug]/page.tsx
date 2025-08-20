@@ -1426,17 +1426,47 @@ const BookingPageContent = () => {
       }]
     };
 
+    // try {
+    //   setBookingLoading(true);
+    //   const response = await axiosInstance.post('/api/v1/new-bookings/book', apiPayload);
+    //   const approvalUrl = response.data?.data?.approval_url;
+    //   if (approvalUrl) {
+    //     window.location.href = approvalUrl;
+    //   } else {
+    //     toast.error('Unable to redirect to payment page.');
+    //   }
+    // } catch (error: any) {
+    //   const errorMessage = error.response?.data?.message || 'Booking failed. Please try again.';
+    //   toast.error(`Booking Failed: ${errorMessage}`);
+    // } finally {
+    //   setBookingLoading(false);
+    // }
+
     try {
       setBookingLoading(true);
-      const response = await axiosInstance.post('/api/v1/new-bookings/book', apiPayload);
-      const approvalUrl = response.data?.data?.approval_url;
-      if (approvalUrl) {
-        window.location.href = approvalUrl;
+
+      const response = await axiosInstance.post(
+        "/api/v1/new-bookings/book",
+        apiPayload
+      );
+
+      const { data, message } = response.data;
+
+      if (data?.approval_url) {
+        // Paid booking flow → Redirect to PayPal approval page
+        window.location.href = data.approval_url;
+
+      } else if (data?.redirect_url && data?.status === "APPROVED" && data?.payment_status === "COMPLETED") {
+        // Free booking flow → Redirect to booking success page
+        toast.success(message || "Booking confirmed without payment!");
+        window.location.href = data.redirect_url;
+
       } else {
-        toast.error('Unable to redirect to payment page.');
+        toast.error("Unexpected booking response. Please try again.");
       }
     } catch (error: any) {
-      const errorMessage = error.response?.data?.message || 'Booking failed. Please try again.';
+      const errorMessage =
+        error.response?.data?.message || "Booking failed. Please try again.";
       toast.error(`Booking Failed: ${errorMessage}`);
     } finally {
       setBookingLoading(false);
