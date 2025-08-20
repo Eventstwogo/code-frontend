@@ -529,6 +529,9 @@ console.log('slots', slots);
               <button
                 onClick={() => setSeatsCount(Math.max(1, seatsCount - 1))}
                 className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center hover:bg-gray-300"
+                disabled={isCouponApplied
+          
+                }
               >
                 -
               </button>
@@ -548,11 +551,17 @@ console.log('slots', slots);
                   }
                 }}
                 className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center hover:bg-gray-300"
+                disabled={isCouponApplied || seatsCount >= 6}
               >
                 +
               </button>
             </div>
           </div>
+          {isCouponApplied && (
+  <p className="text-sm text-gray-600 mt-2">
+    Seat count cannot be changed while a coupon is applied. Remove the coupon to adjust the number of seats.
+  </p>
+)}
         )}
 
         {selectedSlot && selectedSeatCategory && (
