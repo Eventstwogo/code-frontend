@@ -33,6 +33,7 @@ export default function SearchDropdown({
   const [position, setPosition] = useState({ top: 0, left: 0, width: 0 });
   const dropdownRef = useRef<HTMLDivElement>(null);
 
+  // Update dropdown position on open, results change, scroll, and resize
   useEffect(() => {
     if (!isOpen || !searchRef.current) return;
 
@@ -48,14 +49,18 @@ export default function SearchDropdown({
     };
 
     updatePosition();
-    window.addEventListener('scroll', updatePosition);
-    window.addEventListener('resize', updatePosition);
+
+    const handleScroll = () => requestAnimationFrame(updatePosition);
+    const handleResize = () => requestAnimationFrame(updatePosition);
+
+    window.addEventListener('scroll', handleScroll, true); // capture phase for parent scrolls
+    window.addEventListener('resize', handleResize);
 
     return () => {
-      window.removeEventListener('scroll', updatePosition);
-      window.removeEventListener('resize', updatePosition);
+      window.removeEventListener('scroll', handleScroll, true);
+      window.removeEventListener('resize', handleResize);
     };
-  }, [isOpen, searchRef]);
+  }, [isOpen, searchRef, results]); // recalc when results change
 
   // Handle click outside
   useEffect(() => {
@@ -63,7 +68,7 @@ export default function SearchDropdown({
 
     const handleClickOutside = (event: MouseEvent) => {
       if (
-        dropdownRef.current && 
+        dropdownRef.current &&
         !dropdownRef.current.contains(event.target as Node) &&
         searchRef.current &&
         !searchRef.current.contains(event.target as Node)
@@ -79,13 +84,13 @@ export default function SearchDropdown({
   }, [isOpen, onClose, searchRef]);
 
   if (!isOpen || mobileMenuOpen) return null;
-  console.log(results)
+
   return (
     <Portal>
       <div 
         ref={dropdownRef}
         data-search-dropdown
-        className="fixed bg-white border border-gray-200 rounded-lg shadow-2xl max-h-96 overflow-y-auto"
+        className="absolute bg-white border border-gray-200 rounded-lg shadow-2xl max-h-96 overflow-y-auto"
         style={{ 
           zIndex: 999999,
           top: position.top,
@@ -104,15 +109,11 @@ export default function SearchDropdown({
             {error}
           </div>
         ) : results.length === 0 ? (
-          searchQuery.trim() !== "" ? (
-            <div className="px-4 py-6 text-center text-sm text-gray-500">
-              no events found
-            </div>
-          ) : (
-            <div className="px-4 py-3 text-sm text-gray-500">
-              Start typing to search events...
-            </div>
-          )
+          <div className="px-4 py-3 text-sm text-gray-500">
+            {searchQuery.trim() !== "" 
+              ? "No events found matching your search query."
+              : "Start typing to search events..."}
+          </div>
         ) : (
           <div className="py-2">
             {results.map((event, index) => (
@@ -153,11 +154,11 @@ export default function SearchDropdown({
                     </h3>
                     
                     <div className="mt-1 flex items-center space-x-4 text-xs text-gray-500">
-                      {event.start_date && (
+                      {event.next_event_date && (
                         <div className="flex items-center space-x-1">
                           <Calendar className="h-3 w-3" />
                           <span>
-                            {new Date(event.start_date).toLocaleDateString('en-US', {
+                            {new Date(event.next_event_date).toLocaleDateString('en-US', {
                               month: 'short',
                               day: 'numeric'
                             })}
@@ -173,11 +174,16 @@ export default function SearchDropdown({
                       )}
                     </div>
 
-                    {event.category_name && (
+                    {event.category_title && (
                       <div className="mt-1">
                         <span className="inline-block px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded-full">
-                          {event.category_name}
+                          {event.category_title}
                         </span>
+                        {event.subcategory_title && (
+                          <span className="inline-block ml-2 px-2 py-1 text-xs bg-gray-100 text-gray-700 rounded-full">
+                            {event.subcategory_title}
+                          </span>
+                        )}
                       </div>
                     )}
                   </div>

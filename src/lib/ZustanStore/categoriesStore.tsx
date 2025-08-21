@@ -47,7 +47,7 @@ export const useCategoryStore = create<CategoryStore>((set) => ({
     set({ loading: true, error: null })
     try {
       console.log('Fetching all categories')
-      const response = await axiosInstance.get('/api/v1/categories/list?status_value=false')
+      const response = await axiosInstance.get('/api/v1/categories/list/event-categories?status_value=false')
       set({ categories: response.data.data, loading: false })
     } catch (error: any) {
       set({ error: error?.message || 'Error fetching categories', loading: false })

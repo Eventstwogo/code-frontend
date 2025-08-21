@@ -2,20 +2,14 @@ import { useState, useEffect, useCallback } from 'react';
 import axiosInstance from '@/lib/axiosInstance';
 
 export interface SearchResult {
-  event_id: number;
+  event_id: string; // updated: your API returns string IDs
   event_title: string;
   event_slug: string;
   card_image: string;
-  start_date: string;
-  end_date: string;
-  location: string;
-  category_name?: string;
-  subcategory_name?: string;
-}
-
-export interface SearchResponse {
-  events: SearchResult[];
-  total: number;
+  location: string | null;
+  category_title: string;
+  subcategory_title?: string | null;
+  next_event_date: string | null;
 }
 
 export const useSearch = () => {
@@ -36,49 +30,24 @@ export const useSearch = () => {
     setError(null);
 
     try {
-      // Search through categories with events
-      const fallbackResponse = await axiosInstance.get('/api/v1/category-events/categories-with-events');
-      const allEvents: SearchResult[] = [];
-      
-      if (fallbackResponse.data && fallbackResponse.data.data && fallbackResponse.data.data.categories) {
-        fallbackResponse.data.data.categories.forEach((category: any) => {
-          if (category.events && Array.isArray(category.events)) {
-            category.events.forEach((event: any) => {
-              const searchTerm = query.toLowerCase();
-              const eventTitle = event.event_title?.toLowerCase() || '';
-              const eventLocation = event.location?.toLowerCase() || '';
-              const categoryName = category.category_name?.toLowerCase() || '';
-              
-              if (eventTitle.includes(searchTerm) ||
-                  eventLocation.includes(searchTerm) ||
-                  categoryName.includes(searchTerm)) {
-                allEvents.push({
-                  event_id: event.event_id,
-                  event_title: event.event_title,
-                  event_slug: event.event_slug,
-                  card_image: event.card_image,
-                  start_date: event.start_date,
-                  end_date: event.end_date,
-                  location: event.location,
-                  category_name: category.category_name,
-                  subcategory_name: event.subcategory_name
-                });
-              }
-            });
-          }
-        });
-      }
-      
-      // Remove duplicates and limit results
-      const uniqueEvents = allEvents.filter((event, index, self) => 
-        index === self.findIndex(e => e.event_id === event.event_id)
-      );
-      
-      setSearchResults(uniqueEvents.slice(0, 10));
-      setIsOpen(uniqueEvents.length > 0);
-    } catch (err) {
+      const response = await axiosInstance.get(`/api/v1/new-events/search`, {
+        params: { q: query },
+      });
+
+      const events: SearchResult[] = response.data || [];
+      setSearchResults(events.slice(0, 10)); // show only first 10
+      setIsOpen(events.length > 0);
+    } catch (err: any) {
       console.error('Search error:', err);
-      setError('Failed to search events');
+
+      if (err.response && err.response.status === 404) {
+        // backend "no events found" error
+        const data = err.response.data;
+        setError(data.message || 'No events found matching your search query.');
+      } else {
+        setError('Failed to search events');
+      }
+
       setSearchResults([]);
       setIsOpen(false);
     } finally {
@@ -94,8 +63,6 @@ export const useSearch = () => {
       } else {
         setSearchResults([]);
         setError(null);
-        // Don't automatically close dropdown when query is empty
-        // Let the component handle when to close it
       }
     }, 300);
 
@@ -117,6 +84,6 @@ export const useSearch = () => {
     isOpen,
     setIsOpen,
     error,
-    clearSearch
+    clearSearch,
   };
 };
