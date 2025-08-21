@@ -1,17 +1,15 @@
+"use client";
 
-
-'use client';
-
-import React, { useState, useRef } from 'react';
-import Image from 'next/image';
-import { Swiper, SwiperSlide } from 'swiper/react';
-import { Swiper as SwiperType } from 'swiper';
-import 'swiper/css';
-import 'swiper/css/pagination';
-import 'swiper/css/navigation';
-import { Autoplay, Pagination, Navigation } from 'swiper/modules';
-import { useRouter } from 'next/navigation';
-import { IoChevronBack, IoChevronForward } from 'react-icons/io5';
+import React, { useState, useRef } from "react";
+import Image from "next/image";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Swiper as SwiperType } from "swiper";
+import "swiper/css";
+import "swiper/css/pagination";
+import "swiper/css/navigation";
+import { Autoplay, Pagination, Navigation } from "swiper/modules";
+import { useRouter } from "next/navigation";
+import { IoChevronBack, IoChevronForward } from "react-icons/io5";
 
 interface HeroSectionProps {
   movies: any[];
@@ -25,9 +23,11 @@ export default function HeroSection({ movies }: HeroSectionProps) {
   const handleBookNowClick = (movie: any, e: any) => {
     e.stopPropagation();
 
-    const displaySlug = movie.event_slug || (
-      movie.event_title ? movie.event_title.toLowerCase().replace(/\s+/g, '-') : "unknown-event"
-    );
+    const displaySlug =
+      movie.event_slug ||
+      (movie.event_title
+        ? movie.event_title.toLowerCase().replace(/\s+/g, "-")
+        : "unknown-event");
 
     router.push(`/event/${displaySlug}?event=${displaySlug}`);
   };
@@ -59,13 +59,13 @@ export default function HeroSection({ movies }: HeroSectionProps) {
     <div className="relative w-full h-[50vh] sm:h-[60vh] md:h-[65vh] lg:h-[70vh] xl:h-[75vh] overflow-hidden">
       {/* Fallback gradient background */}
       <div className="absolute inset-0 bg-gradient-to-br from-gray-800 via-gray-700 to-gray-900" />
-      
+
       <Swiper
         onSwiper={(swiper) => {
           swiperRef.current = swiper;
         }}
         onSlideChange={(swiper) => setActiveIndex(swiper.activeIndex)}
-         speed={800}  
+        speed={800}
         autoplay={{
           delay: 5000,
           disableOnInteraction: false,
@@ -89,19 +89,18 @@ export default function HeroSection({ movies }: HeroSectionProps) {
                 {/* Overlay for better contrast */}
                 <div className="absolute inset-0 bg-white/30" />
                 {/* Additional gradient overlay */}
-               <div className="absolute inset-0 bg-gradient-to-b from-white/10 via-white/50 to-white/90" />
+                <div className="absolute inset-0 bg-gradient-to-b from-white/10 via-white/50 to-white/90" />
               </div>
               <div className="container mx-auto px-4 sm:px-6 md:px-8 h-full">
                 <div className="flex items-center h-full py-4 sm:py-6 md:py-8">
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 md:gap-10 lg:gap-16 xl:gap-20 items-center w-full">
-                    
                     {/* Left Content */}
                     <div className="text-center lg:text-left space-y-4 sm:space-y-6 md:space-y-8 order-2 lg:order-1 relative z-10">
                       <div className="space-y-3 sm:space-y-4 md:space-y-6">
                         <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold text-gray-900 leading-tight drop-shadow-sm">
                           {movie.event_title}
                         </h1>
-                        
+
                         <div className="flex flex-wrap items-center justify-center lg:justify-start gap-2 sm:gap-3 text-xs sm:text-sm text-gray-700">
                           {movie.category_name && (
                             <span className="bg-gray-100 text-gray-800 px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm">
@@ -128,11 +127,11 @@ export default function HeroSection({ movies }: HeroSectionProps) {
                       </div>
 
                       <div className="pt-4 sm:pt-6">
-                        <button 
+                        <button
                           className="bg-black hover:bg-gray-800 text-white font-semibold px-6 sm:px-8 md:px-10 py-3 sm:py-4 md:py-5 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-xl hover:shadow-2xl text-sm sm:text-base md:text-lg cursor-pointer"
                           onClick={(e) => handleBookNowClick(movie, e)}
                         >
-             View details
+                          View details
                         </button>
                       </div>
                     </div>
@@ -140,26 +139,25 @@ export default function HeroSection({ movies }: HeroSectionProps) {
                     {/* Right Image - Smaller Size */}
                     <div className="order-1 lg:order-2 flex justify-center lg:justify-end">
                       <div className="relative w-full max-w-[120px] sm:max-w-[140px] md:max-w-[160px] lg:max-w-[200px] xl:max-w-[280px]">
-                         <div className="aspect-[5/6] sm:aspect-[4/5] relative rounded-md sm:rounded-lg md:rounded-xl lg:rounded-2xl overflow-hidden shadow-md sm:shadow-lg md:shadow-xl lg:shadow-2xl bg-gray-100">
-                                                  <Image
-                                                    src={movie.card_image || '/images/placeholder.svg'}
-                                                    alt={movie.event_title || 'Event image'}
-                                                    fill
-                                                    className="object-cover object-center transition-opacity duration-300"
-                                                    priority={index === 0}
-                                                    loading={index === 0 ? 'eager' : 'lazy'}
-                                                    sizes="(max-width: 320px) 180px, (max-width: 360px) 180px, (max-width: 475px) 140px, (max-width: 640px) 160px, (max-width: 768px) 180px, (max-width: 1024px) 200px, (max-width: 1280px) 240px, 280px"
-                                                    onError={(e) => {
-                                                      const target = e.target as HTMLImageElement;
-                                                      target.src = '/images/placeholder.svg';
-                                                    }}
-                                                  />
-                                                  {/* Subtle overlay for better image quality */}
-                                                  <div className="absolute inset-0 bg-black/5" />
-                                                </div>
+                        <div className="aspect-[5/6] sm:aspect-[4/5] relative rounded-md sm:rounded-lg md:rounded-xl lg:rounded-2xl overflow-hidden shadow-md sm:shadow-lg md:shadow-xl lg:shadow-2xl bg-gray-100">
+                          <Image
+                            src={movie.card_image || "/images/placeholder.svg"}
+                            alt={movie.event_title || "Event image"}
+                            fill
+                            className="object-cover object-center transition-opacity duration-300"
+                            priority={index === 0}
+                            loading={index === 0 ? "eager" : "lazy"}
+                            sizes="(max-width: 320px) 180px, (max-width: 360px) 180px, (max-width: 475px) 140px, (max-width: 640px) 160px, (max-width: 768px) 180px, (max-width: 1024px) 200px, (max-width: 1280px) 240px, 280px"
+                            onError={(e) => {
+                              const target = e.target as HTMLImageElement;
+                              target.src = "/images/placeholder.svg";
+                            }}
+                          />
+                          {/* Subtle overlay for better image quality */}
+                          <div className="absolute inset-0 bg-black/5" />
+                        </div>
                       </div>
                     </div>
-
                   </div>
                 </div>
               </div>
@@ -177,7 +175,7 @@ export default function HeroSection({ movies }: HeroSectionProps) {
           >
             <IoChevronBack className="w-6 h-6 sm:w-8 sm:h-8 drop-shadow-lg" />
           </button>
-          
+
           <button
             onClick={goToNext}
             className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 z-10 text-black hover:text-gray-300 p-2 sm:p-3 transition-all duration-300 hover:scale-110"

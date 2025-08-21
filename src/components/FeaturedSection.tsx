@@ -44,7 +44,7 @@ export default function FeaturedSection({
         setFeaturedEvents(response.data.data.events || response.data.data);
       } else {
         // Fallback: use regular events and mark some as featured
-        const fallbackResponse = await axiosInstance.get('/api/v1/events/latest/category-or-subcategory/events');
+        const fallbackResponse = await axiosInstance.get('/api/v1/new-events/latest/category-or-subcategory/events');
         const events = fallbackResponse.data.data || [];
         
         // Mark first few events as featured for demo purposes

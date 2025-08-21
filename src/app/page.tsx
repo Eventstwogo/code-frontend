@@ -68,7 +68,7 @@ fetchSpecialevents()
   }, []);
   const fetchSpecialevents = async () => {
     try {
-      const response = await axiosInstance(`/api/v1/events/latest/category-or-subcategory/events`)
+      const response = await axiosInstance(`/api/v1/new-events/latest/category-or-subcategory/events`)
       setHeroEvents(response.data.data.events)
     } catch (error) {
       console.error(error)

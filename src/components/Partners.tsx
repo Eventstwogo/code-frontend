@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import React, { useEffect, useState } from 'react';
-import Link from 'next/link';
-import axiosInstance from '@/lib/axiosInstance';
+import React, { useEffect, useState } from "react";
+import Image from "next/image";
+import axiosInstance from "@/lib/axiosInstance";
 
 interface Partner {
   partner_id: string;
@@ -32,17 +32,21 @@ export default function Partners() {
       try {
         setLoading(true);
         setError(null);
-        
-        const response = await axiosInstance.get<PartnersApiResponse>('/api/v1/partners');
-        
+
+        const response = await axiosInstance.get<PartnersApiResponse>(
+          "/api/v1/partners"
+        );
+
         if (response.data.statusCode === 200) {
           setPartnersData(response.data.data);
         } else {
-          setError('Failed to fetch partners data');
+          setError("Failed to fetch partners data");
         }
       } catch (err: any) {
-        console.error('Error fetching partners data:', err);
-        setError(err.response?.data?.message || 'Failed to load partners information');
+        console.error("Error fetching partners data:", err);
+        setError(
+          err.response?.data?.message || "Failed to load partners information"
+        );
       } finally {
         setLoading(false);
       }
@@ -77,8 +81,8 @@ export default function Partners() {
         </div>
         <div className="text-center py-12">
           <p className="text-red-600 mb-4">{error}</p>
-          <button 
-            onClick={() => window.location.reload()} 
+          <button
+            onClick={() => window.location.reload()}
             className="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700 transition-colors"
           >
             Try Again
@@ -99,7 +103,6 @@ export default function Partners() {
         <h1 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold text-gray-900 truncate">
           Our Partners
         </h1>
-       
       </div>
 
       {/* Partners Grid */}
@@ -116,14 +119,14 @@ export default function Partners() {
               className="block group"
             >
               <div className="relative w-full h-20 sm:h-24 md:h-28 lg:h-32 flex items-center justify-center">
-                <img
+                <Image
                   src={partner.logo}
                   alt={`Partner ${partner.partner_id}`}
-                  className="max-w-full max-h-full object-contain grayscale group-hover:grayscale-0 transition-all duration-300 group-hover:scale-105"
+                  fill
+                  className="object-contain transition-all duration-300 group-hover:scale-105"
                   onError={(e) => {
                     const target = e.target as HTMLImageElement;
-                    target.style.display = 'none';
-                    // Show a placeholder or fallback
+                    target.style.display = "none";
                     const parent = target.parentElement;
                     if (parent) {
                       parent.innerHTML = `
@@ -139,9 +142,6 @@ export default function Partners() {
           </div>
         ))}
       </div>
-
-      {/* Optional description */}
-      
     </section>
   );
 }
