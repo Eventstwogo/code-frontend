@@ -1,5 +1,5 @@
-import { create } from 'zustand';
-import axiosInstance from '@/lib/axiosInstance'; // or wherever you define your axios instance
+import { create } from "zustand";
+import axiosInstance from "@/lib/axiosInstance"; // or wherever you define your axios instance
 
 type ProfileData = {
   user_id: string;
@@ -25,13 +25,13 @@ export const useProfileStore = create<ProfileStore>((set) => ({
   fetchProfile: async () => {
     set({ loading: true, error: null });
     try {
-      const response = await axiosInstance.get('/api/v1/users/profile');
+      const response = await axiosInstance.get("/api/v1/users/profile");
       const profileData = response.data?.data;
 
       set({ profile: profileData, loading: false });
     } catch (error: any) {
       set({
-        error: error?.response?.data?.message || 'Failed to fetch profile.',
+        error: error?.response?.data?.message || "Failed to fetch profile.",
         loading: false,
       });
     }
