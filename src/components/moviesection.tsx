@@ -125,7 +125,7 @@ export default function MovieHero({
     today.setHours(0, 0, 0, 0);
     release.setHours(0, 0, 0, 0);
 
-    return release <= today ? "NOW SHOWING" : "COMING SOON";
+    return release <= today ? "NOW SHOWING" : "BOOKING IN PROGRESS";
   }, [releaseDate]);
 
   return (

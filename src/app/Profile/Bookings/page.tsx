@@ -79,7 +79,8 @@ const QRCodeDisplay = ({
 };
 
 export default function BookingsPage() {
-  const complexColorRegex = /oklch\(([\d.]+)\s+([\d.]+)\s+([\d.]+)(?:\s*\/\s*[\d.]+)?\)/g;
+  const complexColorRegex =
+    /oklch\(([\d.]+)\s+([\d.]+)\s+([\d.]+)(?:\s*\/\s*[\d.]+)?\)/g;
 
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
@@ -142,8 +143,6 @@ export default function BookingsPage() {
       toast.error("Failed to fetch booking details");
     }
   };
-
-
 
   const convertOklchToRgb = (html: string): string => {
     return html.replace(complexColorRegex, (match) => {
@@ -222,34 +221,34 @@ export default function BookingsPage() {
         let r, g, b;
         if (H >= 0 && H < 60) {
           // Red-Yellow
-          r = Math.round((L + C * 0.5) * 255 / 100);
-          g = Math.round((L + C * 0.3) * 255 / 100);
-          b = Math.round((L - C * 0.2) * 255 / 100);
+          r = Math.round(((L + C * 0.5) * 255) / 100);
+          g = Math.round(((L + C * 0.3) * 255) / 100);
+          b = Math.round(((L - C * 0.2) * 255) / 100);
         } else if (H >= 60 && H < 120) {
           // Yellow-Green
-          r = Math.round((L + C * 0.3) * 255 / 100);
-          g = Math.round((L + C * 0.5) * 255 / 100);
-          b = Math.round((L - C * 0.2) * 255 / 100);
+          r = Math.round(((L + C * 0.3) * 255) / 100);
+          g = Math.round(((L + C * 0.5) * 255) / 100);
+          b = Math.round(((L - C * 0.2) * 255) / 100);
         } else if (H >= 120 && H < 180) {
           // Green-Cyan
-          r = Math.round((L - C * 0.2) * 255 / 100);
-          g = Math.round((L + C * 0.5) * 255 / 100);
-          b = Math.round((L + C * 0.3) * 255 / 100);
+          r = Math.round(((L - C * 0.2) * 255) / 100);
+          g = Math.round(((L + C * 0.5) * 255) / 100);
+          b = Math.round(((L + C * 0.3) * 255) / 100);
         } else if (H >= 180 && H < 240) {
           // Cyan-Blue
-          r = Math.round((L - C * 0.2) * 255 / 100);
-          g = Math.round((L + C * 0.3) * 255 / 100);
-          b = Math.round((L + C * 0.5) * 255 / 100);
+          r = Math.round(((L - C * 0.2) * 255) / 100);
+          g = Math.round(((L + C * 0.3) * 255) / 100);
+          b = Math.round(((L + C * 0.5) * 255) / 100);
         } else if (H >= 240 && H < 300) {
           // Blue-Magenta
-          r = Math.round((L + C * 0.3) * 255 / 100);
-          g = Math.round((L - C * 0.2) * 255 / 100);
-          b = Math.round((L + C * 0.5) * 255 / 100);
+          r = Math.round(((L + C * 0.3) * 255) / 100);
+          g = Math.round(((L - C * 0.2) * 255) / 100);
+          b = Math.round(((L + C * 0.5) * 255) / 100);
         } else {
           // Magenta-Red
-          r = Math.round((L + C * 0.5) * 255 / 100);
-          g = Math.round((L - C * 0.2) * 255 / 100);
-          b = Math.round((L + C * 0.3) * 255 / 100);
+          r = Math.round(((L + C * 0.5) * 255) / 100);
+          g = Math.round(((L - C * 0.2) * 255) / 100);
+          b = Math.round(((L + C * 0.3) * 255) / 100);
         }
 
         // Clamp values to 0-255 range
@@ -281,16 +280,44 @@ export default function BookingsPage() {
     try {
       toast.info("Generating your ticket PDF...");
 
+      const available_templates_names = [
+        "Diamond",
+        "Gold",
+        "Platinum",
+        "Silver",
+        "Standard",
+        "VIP",
+        "VVIP",
+      ];
+      console.log("Available templates:", available_templates_names);
+
       // Use the first seat category's label for the template, or fallback to 'Standard'
-      const category = booking.seat_categories[0]?.label.toLowerCase() || "standard";
-      let templateUrl = `/templates/${category}.html`;
+      const categoryName =
+        booking.seat_categories[0]?.label.toLowerCase() || "standard";
+
+      // Find a matching template name ignoring case
+      let matchedTemplate = available_templates_names.find(
+        (name) => name.toLowerCase() === categoryName
+      );
+
+      console.log("Matched template:", matchedTemplate);
+
+      // If no match is found, use "Standard" as default
+      if (!matchedTemplate) {
+        matchedTemplate = "Standard";
+      }
+      console.log("Using template:", matchedTemplate);
+
+      let templateUrl = `/templates/${matchedTemplate}.html`;
 
       // Fetch the HTML template
       let response = await fetch(templateUrl);
 
       // If the template is not found, use the default Standard.html
       if (!response.ok) {
-        console.warn(`Template for category "${category}" not found. Using Standard.html`);
+        console.warn(
+          `Template "${matchedTemplate}" not found. Using Standard.html`
+        );
         templateUrl = `/templates/Standard.html`;
         response = await fetch(templateUrl);
       }
@@ -301,10 +328,8 @@ export default function BookingsPage() {
       const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(
         JSON.stringify({
           orderId: booking.order_id,
-          eventTitle: booking.event.title,
           eventDate: booking.event.event_date,
-          totalAmount: booking.total_amount,
-          status: booking.booking_status,
+          eventTime: booking.event.event_time,
         })
       )}&format=png&ecc=M&margin=1`;
 
@@ -314,13 +339,16 @@ export default function BookingsPage() {
         .replace(/\${eventTitle}/g, booking.event.title || "Event Title")
         .replace(
           /\${businessLogo}/g,
-          booking.event.business_logo || "/images/logo-placeholder.png"
+          booking.event.business_logo || "/images/placeholder.svg"
         )
         .replace(
           /\${eventImage}/g,
           booking.event.card_image || "/images/event-placeholder.png"
         )
-        .replace(/\${selectedDate}/g, formatDate(booking.event.event_date) || "TBD")
+        .replace(
+          /\${selectedDate}/g,
+          formatDate(booking.event.event_date) || "TBD"
+        )
         .replace(/\${startTime}/g, booking.event.event_time || "TBD")
         .replace(
           /\${categoryName}/g,
@@ -333,7 +361,13 @@ export default function BookingsPage() {
             .toString() || "1"
         )
         .replace(/\${eventAddress}/g, booking.event.address || "Venue TBD")
-        .replace(/\${qrCodeUrl}/g, qrCodeUrl || "/images/qr-placeholder.png");
+        .replace(/\${qrCodeUrl}/g, qrCodeUrl || "/images/qr-placeholder.png")
+        .replace(
+          /\${custom_category_name}/g,
+          booking.seat_categories[0]?.label
+            ? booking.seat_categories[0].label.toUpperCase()
+            : "STANDARD"
+        );
 
       // Convert OKLCH colors to RGB
       ticketHTML = convertOklchToRgb(ticketHTML);
@@ -342,7 +376,10 @@ export default function BookingsPage() {
       try {
         await generatePDFWithHtml2Canvas(ticketHTML);
       } catch (html2canvasError) {
-        console.warn("html2canvas failed, trying fallback method:", html2canvasError);
+        console.warn(
+          "html2canvas failed, trying fallback method:",
+          html2canvasError
+        );
         await generatePDFWithFallback(ticketHTML);
       }
 
@@ -353,112 +390,134 @@ export default function BookingsPage() {
     }
   };
 
-const generatePDFWithHtml2Canvas = async (ticketHTML: string) => {
-  const tempContainer = document.createElement("div");
-  tempContainer.style.position = "fixed";
-  tempContainer.style.left = "-10000px";
-  tempContainer.style.top = "0px";
-  tempContainer.style.width = "794px"; // A4 width in pixels
-  tempContainer.style.height = "auto";
-  tempContainer.style.zIndex = "-1000";
-  tempContainer.style.visibility = "hidden";
-  tempContainer.style.pointerEvents = "none";
+  const generatePDFWithHtml2Canvas = async (ticketHTML: string) => {
+    const tempContainer = document.createElement("div");
+    tempContainer.style.position = "fixed";
+    tempContainer.style.left = "-10000px";
+    tempContainer.style.top = "0px";
+    tempContainer.style.width = "794px"; // A4 width in pixels
+    tempContainer.style.height = "auto";
+    tempContainer.style.zIndex = "-1000";
+    tempContainer.style.visibility = "hidden";
+    tempContainer.style.pointerEvents = "none";
 
-  tempContainer.innerHTML = `<div class="ticket-wrapper" style="width: 794px; min-height: 1123px; background: white; padding: 0; margin: 0;">${ticketHTML}</div>`;
-  document.body.appendChild(tempContainer);
+    tempContainer.innerHTML = `<div class="ticket-wrapper" style="width: 794px; min-height: 1123px; background: white; padding: 0; margin: 0;">${ticketHTML}</div>`;
+    document.body.appendChild(tempContainer);
 
-  await new Promise((resolve) => setTimeout(resolve, 100));
+    await new Promise((resolve) => setTimeout(resolve, 100));
 
-  const images = tempContainer.querySelectorAll("img");
-  await Promise.all(
-    Array.from(images).map((img) =>
-      new Promise((resolve) => {
-        if (img.complete) resolve(true);
-        else {
-          img.onload = () => resolve(true);
-          img.onerror = () => resolve(true);
-          setTimeout(() => resolve(true), 3000);
+    const images = tempContainer.querySelectorAll("img");
+    await Promise.all(
+      Array.from(images).map(
+        (img) =>
+          new Promise((resolve) => {
+            if (img.complete) resolve(true);
+            else {
+              img.onload = () => resolve(true);
+              img.onerror = () => resolve(true);
+              setTimeout(() => resolve(true), 3000);
+            }
+          })
+      )
+    );
+
+    await new Promise((resolve) => setTimeout(resolve, 500));
+
+    const html2canvas = (await import("html2canvas")).default;
+    const targetElement = tempContainer.querySelector(
+      ".ticket-wrapper"
+    ) as HTMLElement;
+    const canvas = await html2canvas(targetElement, {
+      scale: 1.5,
+      useCORS: true,
+      allowTaint: true,
+      backgroundColor: "#ffffff",
+      scrollX: 0,
+      scrollY: 0,
+      windowWidth: 794,
+      windowHeight: 1123,
+      logging: false,
+      removeContainer: false,
+      foreignObjectRendering: false,
+      onclone: (clonedDoc, element) => {
+        const clonedBody = clonedDoc.body;
+        if (clonedBody) {
+          clonedBody.style.margin = "0";
+          clonedBody.style.padding = "0";
+          clonedBody.style.width = "794px";
+          clonedBody.style.height = "auto";
         }
-      })
-    )
-  );
-
-  await new Promise((resolve) => setTimeout(resolve, 500));
-
-  const html2canvas = (await import("html2canvas")).default;
-  const targetElement = tempContainer.querySelector(".ticket-wrapper") as HTMLElement;
-  const canvas = await html2canvas(targetElement, {
-    scale: 1.5,
-    useCORS: true,
-    allowTaint: true,
-    backgroundColor: "#ffffff",
-    scrollX: 0,
-    scrollY: 0,
-    windowWidth: 794,
-    windowHeight: 1123,
-    logging: false,
-    removeContainer: false,
-    foreignObjectRendering: false,
-    onclone: (clonedDoc, element) => {
-      const clonedBody = clonedDoc.body;
-      if (clonedBody) {
-        clonedBody.style.margin = "0";
-        clonedBody.style.padding = "0";
-        clonedBody.style.width = "794px";
-        clonedBody.style.height = "auto";
-      }
-      const allElements = element.querySelectorAll("*");
-      allElements.forEach((el: any) => {
-        if (el.style) {
-          if (el.style.color && el.style.color.includes("oklch")) {
-            el.style.color = convertOklchToRgb(el.style.color);
+        const allElements = element.querySelectorAll("*");
+        allElements.forEach((el: any) => {
+          if (el.style) {
+            if (el.style.color && el.style.color.includes("oklch")) {
+              el.style.color = convertOklchToRgb(el.style.color);
+            }
+            if (
+              el.style.backgroundColor &&
+              el.style.backgroundColor.includes("oklch")
+            ) {
+              el.style.backgroundColor = convertOklchToRgb(
+                el.style.backgroundColor
+              );
+            }
+            if (
+              el.style.borderColor &&
+              el.style.borderColor.includes("oklch")
+            ) {
+              el.style.borderColor = convertOklchToRgb(el.style.borderColor);
+            }
           }
-          if (el.style.backgroundColor && el.style.backgroundColor.includes("oklch")) {
-            el.style.backgroundColor = convertOklchToRgb(el.style.backgroundColor);
-          }
-          if (el.style.borderColor && el.style.borderColor.includes("oklch")) {
-            el.style.borderColor = convertOklchToRgb(el.style.borderColor);
-          }
-        }
-      });
-    },
-  });
+        });
+      },
+    });
 
-  try {
-    document.body.removeChild(tempContainer);
-  } catch (cleanupError) {
-    console.warn("Error cleaning up temp container:", cleanupError);
-  }
-
-  const jsPDF = (await import("jspdf")).jsPDF;
-  const pdf = new jsPDF("portrait", "mm", "a4");
-  const pdfWidth = pdf.internal.pageSize.getWidth();
-  const pdfHeight = pdf.internal.pageSize.getHeight();
-  const imgWidth = 210; // A4 width in mm
-  const imgHeight = (canvas.height * imgWidth) / canvas.width;
-  let heightLeft = imgHeight;
-  let position = 0;
-
-  const imgData = canvas.toDataURL("image/jpeg", 0.95);
-
-  while (heightLeft > 0) {
-    pdf.addImage(imgData, "JPEG", 0, position, imgWidth, Math.min(imgHeight, pdfHeight));
-    heightLeft -= pdfHeight;
-    position -= 297; // A4 height in mm
-    if (heightLeft > 0) {
-      pdf.addPage();
+    try {
+      document.body.removeChild(tempContainer);
+    } catch (cleanupError) {
+      console.warn("Error cleaning up temp container:", cleanupError);
     }
-  }
 
-  const fileName = `Events2Go_Ticket_${booking?.seat_categories[0]?.label || "General"}_${booking.order_id}.pdf`;
-  pdf.save(fileName);
-};
+    const jsPDF = (await import("jspdf")).jsPDF;
+    const pdf = new jsPDF("portrait", "mm", "a4");
+    const pdfWidth = pdf.internal.pageSize.getWidth();
+    const pdfHeight = pdf.internal.pageSize.getHeight();
+    const imgWidth = 210; // A4 width in mm
+    const imgHeight = (canvas.height * imgWidth) / canvas.width;
+    let heightLeft = imgHeight;
+    let position = 0;
+
+    const imgData = canvas.toDataURL("image/jpeg", 0.95);
+
+    while (heightLeft > 0) {
+      pdf.addImage(
+        imgData,
+        "JPEG",
+        0,
+        position,
+        imgWidth,
+        Math.min(imgHeight, pdfHeight)
+      );
+      heightLeft -= pdfHeight;
+      position -= 297; // A4 height in mm
+      if (heightLeft > 0) {
+        pdf.addPage();
+      }
+    }
+
+    const fileName = `Events2Go_Ticket_${
+      booking?.seat_categories[0]?.label || "General"
+    }_${booking.order_id}.pdf`;
+    pdf.save(fileName);
+  };
 
   const generatePDFWithFallback = async (ticketHTML: string) => {
     // Fallback method: Create a new window and use browser's print functionality
     const printWindow = window.open("", "_blank", "width=794,height=1123");
     if (!printWindow) {
-      throw new Error("Could not open print window. Please check popup blockers.");
+      throw new Error(
+        "Could not open print window. Please check popup blockers."
+      );
     }
 
     const fullHTML = `
