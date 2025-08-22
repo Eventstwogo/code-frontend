@@ -1,6 +1,8 @@
 'use client'
 import React, { useEffect, useState } from 'react'
 import axiosInstance from '@/lib/axiosInstance'
+import Image from 'next/image'
+import Link from 'next/link';
 
 interface AboutUsData {
   about_us_id: string;
@@ -31,9 +33,9 @@ const AboutPage = () => {
       try {
         setLoading(true);
         setError(null);
-        
+
         const response = await axiosInstance.get<ApiResponse>('/api/v1/about-us');
-        
+
         if (response.data.statusCode === 200) {
           setAboutData(response.data.data);
         } else {
@@ -52,7 +54,7 @@ const AboutPage = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto mb-4"></div>
           <p className="text-gray-600">Loading about us information...</p>
@@ -63,7 +65,7 @@ const AboutPage = () => {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center">
           <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
             <p className="font-medium">Error loading content</p>
@@ -82,10 +84,8 @@ const AboutPage = () => {
 
   if (!aboutData) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-gray-600">No about us information available</p>
-        </div>
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <p className="text-gray-600 text-lg">No about us information available</p>
       </div>
     );
   }
@@ -93,89 +93,75 @@ const AboutPage = () => {
   return (
     <div className="min-h-screen bg-gray-50 w-full">
       {/* Hero Section */}
-      <div className="bg-gradient-to-r from-purple-600 to-blue-600 text-white py-16">
-        <div className="w-full mx-auto px-6 text-center">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">About Events2go</h1>
+      <div className="bg-gradient-to-r from-purple-600 to-blue-600 text-white py-20">
+        <div className="max-w-5xl mx-auto px-6 text-center">
+          <h1 className="text-5xl font-bold mb-4">About Events2go</h1>
           <p className="text-xl opacity-90">Your one-stop platform for all tickets</p>
         </div>
       </div>
 
-      {/* Main Content */}
-      <div className="max-w-full mx-auto px-6 py-12">
-        <div className="bg-white rounded-lg shadow-lg p-8">
-          {/* Content from API */}
-          <div 
-            className="max-w-none
-              [&_h2]:text-4xl [&_h2]:font-bold [&_h2]:mb-8 [&_h2]:mt-10
-              [&_h3]:text-3xl [&_h3]:font-bold [&_h3]:mb-6 [&_h3]:mt-8
-              [&_p]:text-lg [&_p]:leading-relaxed [&_p]:mb-6
-              [&_strong]:font-semibold [&_strong]:text-lg
-              [&_hr]:border-gray-300 [&_hr]:my-10 [&_hr]:border-t-2
-              [&_ul]:my-6 [&_ul]:list-disc [&_ul]:ml-6
-              [&_li]:my-3 [&_li]:text-lg
-              [&_br]:mb-2"
-            dangerouslySetInnerHTML={{ 
-              __html: aboutData.about_us_data.additonalprop1 
-            }}
-          />
-          
-          {/* Additional Info Section */}
-          {/* <div className="mt-12 pt-8 border-t border-gray-200">
-            <div className="grid md:grid-cols-3 gap-8">
-              <div className="text-center">
-                <div className="bg-purple-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                  <svg className="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z" />
-                  </svg>
-                </div>
-                <h3 className="text-lg font-semibold mb-2">Easy Booking</h3>
-                <p className="text-gray-600">Simple and secure ticket booking process</p>
-              </div>
-              
-              <div className="text-center">
-                <div className="bg-blue-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                  <svg className="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                  </svg>
-                </div>
-                <h3 className="text-lg font-semibold mb-2">For Everyone</h3>
-                <p className="text-gray-600">Perfect for both attendees and organizers</p>
-              </div>
-              
-              <div className="text-center">
-                <div className="bg-green-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                  <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                </div>
-                <h3 className="text-lg font-semibold mb-2">Trusted Platform</h3>
-                <p className="text-gray-600">Reliable and secure event management</p>
-              </div>
-            </div>
-          </div> */}
+      {/* About Section */}
+      <div className="max-w-full mx-auto px-6 py-16 grid md:grid-cols-2 gap-12 items-center">
+        {/* Image */}
+        <div className="flex justify-center md:justify-center">
+          <div className="w-80 h-80 md:w-96 md:h-96 relative rounded-lg overflow-hidden shadow-lg">
+            <Image
+              src="/images/logo1.png"
+              alt="About Events2go"
+              fill
+              className="object-cover"
+            />
+          </div>
         </div>
-        
-        {/* CTA Section */}
-        {/* <div className="mt-12 text-center">
-          <div className="bg-gradient-to-r from-purple-600 to-blue-600 rounded-lg p-8 text-white">
-            <h2 className="text-2xl font-bold mb-4">Ready to Get Started?</h2>
-            <p className="text-lg mb-6 opacity-90">Join thousands of users who trust Events2go for their ticketing needs</p>
-            <div className="space-x-4">
-              <a 
-                href="/events" 
-                className="bg-white text-purple-600 px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors inline-block"
-              >
-                Browse Events
-              </a>
-              <a 
-                href="/contact" 
-                className="border-2 border-white text-white px-6 py-3 rounded-lg font-semibold hover:bg-white hover:text-purple-600 transition-colors inline-block"
-              >
-                Contact Us
-              </a>
+
+        {/* Content */}
+        <div className="space-y-6 max-w-3xl">
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-800">Who We Are</h2>
+          <div
+            className="text-gray-700 text-lg [&_p]:mb-4 [&_ul]:list-disc [&_ul]:ml-6 [&_li]:mb-2"
+            dangerouslySetInnerHTML={{ __html: aboutData.about_us_data.additonalprop1 }}
+          />
+        </div>
+      </div>
+
+      {/* Mission / Values Section */}
+      <div className="bg-white py-16">
+        <div className="max-w-5xl mx-auto px-6 text-center space-y-12">
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-800">Our Mission</h2>
+          <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+            We aim to make ticket booking for events seamless, convenient, and accessible to everyone.
+          </p>
+
+          <div className="grid md:grid-cols-3 gap-8">
+            <div className="bg-purple-50 rounded-lg p-6 shadow hover:shadow-md transition-shadow">
+              <h3 className="font-semibold text-xl mb-2">Reliability</h3>
+              <p className="text-gray-600">Providing accurate event info and smooth ticket booking.</p>
+            </div>
+            <div className="bg-purple-50 rounded-lg p-6 shadow hover:shadow-md transition-shadow">
+              <h3 className="font-semibold text-xl mb-2">User Experience</h3>
+              <p className="text-gray-600">Easy-to-use interface that anyone can navigate.</p>
+            </div>
+            <div className="bg-purple-50 rounded-lg p-6 shadow hover:shadow-md transition-shadow">
+              <h3 className="font-semibold text-xl mb-2">Support</h3>
+              <p className="text-gray-600">Dedicated support to help you enjoy your events worry-free.</p>
             </div>
           </div>
-        </div> */}
+        </div>
+      </div>
+
+      {/* CTA Section */}
+      <div className="py-16 bg-gradient-to-r from-purple-600 to-blue-600 text-white text-center">
+        <h2 className="text-3xl md:text-4xl font-bold mb-4">Join Events2go Today</h2>
+        <p className="text-lg mb-6">Experience hassle-free ticket booking for all your favorite events.</p>
+    
+<Link
+  href="/"
+  className="inline-block bg-white text-purple-600 px-6 py-3 rounded font-semibold hover:bg-gray-100 transition-colors"
+>
+  Get Started
+</Link>
+
+
       </div>
     </div>
   );
