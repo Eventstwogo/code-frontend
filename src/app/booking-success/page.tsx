@@ -282,33 +282,51 @@ const BookingSuccessContent = () => {
     try {
       toast.info("Generating your ticket PDF...");
       
-      const category = bookingDetails.categoryName.toLowerCase();
-      let templateUrl = `/templates/${category}.html`;
+      const available_templates_names = ["Diamond", "Gold", "Platinum", "Silver", "Standard", "VIP", "VVIP"];
+      console.log('Available templates:', available_templates_names);
+
+      // Convert the categoryName to lower case for comparison
+      const categoryName = bookingDetails.categoryName.toLowerCase();
+
+      // Find a matching template name ignoring case
+      let matchedTemplate = available_templates_names.find(
+        name => name.toLowerCase() === categoryName
+      );
+
+      console.log('Matched template:', matchedTemplate);
+
+      // If no match is found, use "Standard" as default
+      if (!matchedTemplate) {
+        matchedTemplate = "Standard";
+      }
+      console.log('Using template:', matchedTemplate);
+
+      const templateUrl = `/templates/${matchedTemplate}.html`;
 
       // Fetch the HTML template
       let response = await fetch(templateUrl);
 
-      // If the template is not found, use the default Standard.html
       if (!response.ok) {
-        console.warn(`Template for category "${category}" not found. Using Standard.html`);
-        templateUrl = `/templates/Standard.html`;
-        response = await fetch(templateUrl);
+        console.warn(`Template "${matchedTemplate}" not found. Using Standard.html`);
+        response = await fetch(`/templates/Standard.html`);
       }
 
       let ticketHTML = await response.text();
+      console.log("bookingDetails.categoryName.toUpperCase():", bookingDetails.categoryName ? bookingDetails.categoryName.toUpperCase() : 'STANDARD');
 
       // Replace placeholders dynamically with safe fallbacks
       ticketHTML = ticketHTML
         .replace(/\$\{bookingId\}/g, bookingDetails.bookingId || 'Booking ID')
         .replace(/\$\{eventTitle\}/g, bookingDetails.eventTitle || 'Event Title')
-        .replace(/\$\{businessLogo\}/g, bookingDetails.businessLogo || '/images/logo-placeholder.png')
+        .replace(/\$\{businessLogo\}/g, bookingDetails.businessLogo || '/images/placeholder.svg')
         .replace(/\$\{eventImage\}/g, bookingDetails.eventImage || '/images/event-placeholder.png')
         .replace(/\$\{selectedDate\}/g, formatDate(bookingDetails.selectedDate))
         .replace(/\$\{startTime\}/g, bookingDetails.startTime || 'TBD')
         .replace(/\$\{categoryName\}/g, bookingDetails.categoryName || 'General')
         .replace(/\$\{numberOfTickets\}/g, bookingDetails.numberOfTickets?.toString() || '1')
         .replace(/\$\{eventAddress\}/g, bookingDetails.eventAddress || 'Venue TBD')
-        .replace(/\$\{qrCodeUrl\}/g, qrCodeUrl || '/images/qr-placeholder.png');
+        .replace(/\$\{qrCodeUrl\}/g, qrCodeUrl || '/images/qr-placeholder.png')
+        .replace(/\$\{custom_category_name\}/g, (bookingDetails.categoryName ? bookingDetails.categoryName.toUpperCase() : 'STANDARD'));
 
       // Convert OKLCH colors to RGB
       ticketHTML = convertOklchToRgb(ticketHTML);
