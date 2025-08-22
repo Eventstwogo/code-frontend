@@ -41,6 +41,13 @@ const profileSchema = z.object({
   email: z.string().email("Invalid email address"),
 })
 
+function toTitleCase(text: string) {
+  return text
+    .replace(/_/g, " ")
+    .toLowerCase()
+    .replace(/\b\w/g, c => c.toUpperCase());
+}
+
 type ProfileSchemaType = z.infer<typeof profileSchema>
 
 export default function ProfilePage() {
@@ -310,7 +317,7 @@ export default function ProfilePage() {
               <form className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {["first_name", "last_name", "username", "email"].map((field) => (
                   <div key={field} className="space-y-2 relative">
-                    <Label htmlFor={field} className="text-sm font-medium">{field.replace("_", " ")}</Label>
+                    <Label htmlFor={field} className="text-sm font-medium">{toTitleCase(field)}</Label>
                     {isEditing ? (
                       <>
                         <Input id={field} {...register(field as keyof ProfileSchemaType)} />
@@ -326,7 +333,7 @@ export default function ProfilePage() {
                       </>
                     ) : (
                       <div className="p-3 bg-gray-50 rounded-md border">
-                        <p className="text-gray-900">{profile?.[field as keyof ProfileSchemaType] || "Not provided"}</p>
+                        <p className="text-gray-900">{profile?.[field as keyof ProfileSchemaType] || "N/A"}</p>
                       </div>
                     )}
                     {errors[field as keyof ProfileSchemaType] && (

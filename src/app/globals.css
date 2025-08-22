@@ -639,9 +639,16 @@ body {
 }
 
 
+/* Restore default cursor for interactive elements */
+button, a {
+  cursor: pointer;
+}
 
-
-
+/* Disabled state */
+button:disabled,
+a[aria-disabled="true"] {
+  cursor: not-allowed;
+}
 
 
 /* CUSTOM SCROLLBAR STYLING */

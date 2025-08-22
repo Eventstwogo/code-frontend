@@ -334,9 +334,11 @@ export default function BookingsPage() {
                       {/* Header */}
                       <div className="flex justify-between items-start mb-2">
                         <div className="flex-1">
-                          <h3 className="text-lg font-bold text-slate-900 mb-1 leading-tight">
-                            {booking.event.title}
-                          </h3>
+                          <Link href={`/event/${booking.event.slug}`}>
+                            <h3 className="text-lg font-bold text-slate-900 mb-1 leading-tight">
+                              {booking.event.title}
+                            </h3>
+                          </Link>
                           <div className="flex items-center gap-2 text-slate-600 text-sm">
                             <Building2 className="w-3 h-3" />
                             <span>{booking.event.organizer_name}</span>
