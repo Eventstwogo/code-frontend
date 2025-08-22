@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Silver Ticket</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&display=swap" rel="stylesheet">
+
+  <!-- Self-host Brixton Sans -->
+  <style>
+    @font-face {
+      font-family: 'Brixton Sans';
+      src: url('/fonts/BrixtonSans.woff2') format('woff2'),
+        url('/fonts/BrixtonSans.woff') format('woff');
+      font-weight: 400 700;
+      font-style: normal;
+    }
+
+    body {
+      font-family: 'Brixton Sans', sans-serif;
+      font-weight: 700;
+      /* make everything bold by default */
+    }
+  </style>
+</head>
+
+<body class="flex justify-center items-center min-h-screen bg-gray-100">
+  <div class="relative">
+    <div
+      class="flex bg-gradient-to-r from-gray-900 via-gray-600 to-gray-300 rounded-xl shadow-xl overflow-hidden max-w-6xl h-80">
+
+      <!-- Left Rotated Title -->
+      <div
+        class="relative w-12 bg-gradient-to-r from-gray-900 via-gray-600 to-gray-300 flex items-center justify-center rounded-l-lg">
+        <div class="transform -rotate-90 whitespace-nowrap flex items-center justify-center gap-1">
+
+          <!-- Left Coin -->
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24">
+            <defs>
+              <linearGradient id="subtleSilver" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#f8f9fa" />
+                <stop offset="50%" stop-color="#d1d5db" />
+                <stop offset="100%" stop-color="#6b7280" />
+              </linearGradient>
+            </defs>
+            <circle cx="12" cy="12" r="10" fill="url(#subtleSilver)" stroke="#4b5563" stroke-width="1.5" />
+          </svg>
+
+          <!-- SILVER Label -->
+          <span class="text-white text-lg tracking-widest" style="font-family: 'Cinzel Decorative', serif;">
+            SILVER
+          </span>
+
+          <!-- Right Coin -->
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="10" fill="url(#subtleSilver)" stroke="#4b5563" stroke-width="1.5" />
+          </svg>
+        </div>
+      </div>
+
+      <!-- Logo + QR Section -->
+      <div class="w-24 bg-white flex flex-col items-center justify-between py-6">
+        <img src="${businessLogo}" alt="organizer logo"
+          class="w-16 h-16 object-contain rounded-full border border-gray-300" />
+
+        <!-- Events2Go logo -->
+        <img src="https://events2go.syd1.cdn.digitaloceanspaces.com/events2go.png" alt="Events 2Go Logo"
+          class="w-16 h-20 object-contain transform -rotate-90 opacity-90" />
+
+        <img src="${qrCodeUrl}" alt="QR Code" class="w-16 h-16 object-contain rounded border border-gray-300" />
+      </div>
+
+      <!-- Event Image Section -->
+      <div class="relative h-full bg-cover bg-center" style="background-image: url('${eventImage}');">
+        <div
+          class="relative z-10 h-full p-5 flex flex-col justify-between bg-black/40 border-l border-r border-dotted border-white/50">
+          <div class="space-y-3 mt-6">
+            <div>
+              <label class="text-white/80 text-xs uppercase tracking-wide">Name</label>
+              <div class="border-b border-dotted border-white/60 pb-1 mt-1">
+                <span class="text-white text-lg">${eventTitle}</span>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4 border-b border-dotted border-white/60 pb-1 mt-1">
+              <div>
+                <label class="text-white/80 text-xs uppercase tracking-wide">Event Date</label>
+                <div><span class="text-white text-sm">${selectedDate}</span></div>
+              </div>
+              <div>
+                <label class="text-white/80 text-xs uppercase tracking-wide">Event Time</label>
+                <div><span class="text-white text-sm">${startTime}</span></div>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4 border-b border-dotted border-white/60 pb-1 mt-1">
+              <div>
+                <label class="text-white/80 text-xs uppercase tracking-wide">Category</label>
+                <div><span class="text-white text-sm">${categoryName}</span></div>
+              </div>
+              <div>
+                <label class="text-white/80 text-xs uppercase tracking-wide">Seat</label>
+                <div><span class="text-white text-sm">${numberOfTickets}</span></div>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-6 border-b border-dotted border-white/60 pb-1 mt-1">
+              <div>
+                <label class="text-white/80 text-xs uppercase tracking-wide">Venue</label>
+                <div><span class="text-white text-sm">${eventAddress}</span></div>
+              </div>
+              <div>
+                <label class="text-white/80 text-xs uppercase tracking-wide">Booking ID</label>
+                <div><span class="text-white text-sm">${bookingId}</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Info Section -->
+      <div class="w-64 bg-white flex flex-col justify-between py-6 px-2">
+        <div class="text-center mb-4 flex items-center justify-center gap-2">
+
+          <!-- Left Coin -->
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="10" fill="url(#subtleSilver)" stroke="#4b5563" stroke-width="1.5" />
+          </svg>
+
+          <!-- SILVER Label -->
+          <h2 class="text-gray-800 text-lg tracking-widest" style="font-family: 'Cinzel Decorative', serif;">
+            SILVER
+          </h2>
+
+          <!-- Right Coin -->
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="10" fill="url(#subtleSilver)" stroke="#4b5563" stroke-width="1.5" />
+          </svg>
+        </div>
+
+        <div class="flex items-center justify-center relative mb-2">
+          <div class="relative">
+            <!-- Events2Go logo -->
+            <img src="https://events2go.syd1.cdn.digitaloceanspaces.com/events2go.png" alt="Events 2Go Logo"
+              class="w-40 h-48 object-contain opacity-90" />
+
+            <div class="absolute -top-2 -left-4">
+              <img src="${businessLogo}" alt="organizer logo"
+                class="w-14 h-14 object-contain rounded-full border border-gray-300" />
+            </div>
+          </div>
+        </div>
+
+        <div class="text-center space-y-0 text-[10px] leading-tight">
+          <p class="text-black">Please arrive 15 min before the Event start.</p>
+          <p class="text-black tracking-wide">www.events2go.com.au</p>
+        </div>
+      </div>
+
+      <!-- Divider -->
+      <div class="w-px bg-gray-300 relative">
+        <div class="absolute inset-y-0 left-0 flex flex-col justify-center space-y-1">
+          <div class="w-1 h-4 bg-gray-400 rounded-full"></div>
+          <div class="w-1 h-4 bg-gray-400 rounded-full"></div>
+          <div class="w-1 h-4 bg-gray-400 rounded-full"></div>
+          <div class="w-1 h-4 bg-gray-400 rounded-full"></div>
+        </div>
+      </div>
+
+      <!-- Right Gradient Section -->
+      <div
+        class="w-80 bg-gradient-to-r from-gray-900 via-gray-600 to-gray-300 p-6 flex flex-col justify-between rounded-r-lg relative">
+        <div class="absolute top-4 right-4">
+          <img src="${qrCodeUrl}" alt="QR Code" class="w-16 h-16 object-contain rounded border border-white/70" />
+        </div>
+
+        <div class="text-white space-y-3 mt-8">
+          <div class="border-b border-dotted border-white/60 pb-1 mt-1">
+            <label class="text-xs uppercase tracking-wide">Name</label>
+            <div>
+              <span class="text-lg">${eventTitle}</span>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-4 border-b border-dotted border-white/60 pb-1 mt-1">
+            <div>
+              <label class="text-xs uppercase tracking-wide">Event Date</label>
+              <div><span class="text-sm">${selectedDate}</span></div>
+            </div>
+            <div>
+              <label class="text-xs uppercase tracking-wide">Event Time</label>
+              <div><span class="text-sm">${startTime}</span></div>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-3 gap-10 border-b border-dotted border-white/60 pb-1 mt-1">
+            <div>
+              <label class="text-xs uppercase tracking-wide">Category</label>
+              <div><span class="text-sm">${categoryName}</span></div>
+            </div>
+            <div>
+              <label class="text-xs uppercase tracking-wide">Seat</label>
+              <div><span class="text-sm">${numberOfTickets}</span></div>
+            </div>
+            <div>
+              <label class="text-xs uppercase tracking-wide">Admit</label>
+              <div><span class="text-sm">1</span></div>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-6 border-b border-dotted border-white/60 pb-1 mt-1">
+            <div>
+              <label class="text-xs uppercase tracking-wide">Venue</label>
+              <div><span class="text-sm">${eventAddress}</span></div>
+            </div>
+            <div>
+              <label class="text-xs uppercase tracking-wide">Booking ID</label>
+              <div><span class="text-sm">${bookingId}</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</body>
+
+</html>

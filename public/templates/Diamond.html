@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Diamond Event Ticket</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+
+  <!-- Premium Fonts -->
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Brixton+Sans:wght@400;600;700&display=swap"
+    rel="stylesheet">
+
+  <style>
+    body {
+      font-family: 'Brixton Sans', sans-serif;
+      font-weight: 600;
+    }
+
+    .text-diamond-gradient {
+      background: linear-gradient(to bottom, #a8e6ff, #e0f7ff, #ffffff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-family: 'Cinzel Decorative', serif !important;
+      font-weight: 700;
+      letter-spacing: 2px;
+    }
+
+    .border-diamond {
+      border-color: #b3e5fc;
+    }
+
+    .bg-diamond-overlay {
+      background: rgba(200, 240, 255, 0.4);
+    }
+
+    .bg-diamond-dark {
+      background: linear-gradient(135deg, #4dd0e1, #81d4fa, #e1f5fe);
+    }
+
+    .bg-diamond-light {
+      background: linear-gradient(to bottom, #e0f7fa, #ffffff);
+    }
+  </style>
+</head>
+
+<body class="flex justify-center items-center min-h-screen bg-gradient-to-br from-[#e0f7fa] to-[#ffffff]">
+  <div class="relative">
+    <div class="flex bg-diamond-dark rounded-xl shadow-2xl overflow-hidden max-w-6xl h-80">
+
+      <!-- Left Rotated Diamond Title -->
+      <div class="relative w-[55px] bg-[#b3e5fc] flex items-center justify-center rounded-l-xl">
+        <div class="transform -rotate-90 whitespace-nowrap flex items-center justify-center gap-1">
+          <i class="fa-solid fa-gem text-white w-5 h-5 drop-shadow"></i>
+          <span class="text-[#0277bd] text-xl tracking-widest uppercase font-bold"
+            style="font-family: 'Cinzel Decorative', serif;">
+            DIAMOND
+          </span>
+          <i class="fa-solid fa-gem text-white w-5 h-5 drop-shadow"></i>
+        </div>
+      </div>
+
+      <!-- Logo + QR Section -->
+      <div class="w-24 bg-white flex flex-col items-center justify-between py-6">
+        <div class="relative">
+          <img src="${businessLogo}" alt="organizer logo" class="w-16 h-16 object-contain rounded-full border border-[#81d4fa]" />
+        </div>
+        <div class="relative flex flex-col items-center">
+          <img src="https://events2go.syd1.cdn.digitaloceanspaces.com/events2go.png"
+            alt="Events 2Go Logo" class="w-20 h-24 object-contain transform -rotate-90" />
+        </div>
+        <img src="${qrCodeUrl}" alt="QR Code" class="w-16 h-16 object-contain rounded border border-[#81d4fa]" />
+      </div>
+
+      <!-- Event Image Section -->
+      <div class="relative h-full bg-cover bg-center" style="background-image: url('${eventImage}');">
+        <div
+          class="relative z-10 h-full p-4 pl-6 pr-6 flex flex-col justify-between bg-black/50 border-l-2 border-r-2 border-dotted border-diamond pb-1">
+          <div class="space-y-3">
+            <div>
+              <label class="text-white text-sm uppercase">NAME</label>
+              <div class="border-b-2 border-dotted border-white pb-1 mt-1">
+                <span class="text-white text-sm">${eventTitle}</span>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4 border-b-2 border-dotted border-white pb-1 mt-1">
+              <div>
+                <label class="text-white text-sm uppercase">EVENT DATE</label>
+                <div><span class="text-white text-sm">${selectedDate}</span></div>
+              </div>
+              <div>
+                <label class="text-white text-sm uppercase">EVENT TIME</label>
+                <div><span class="text-white text-sm">${startTime}</span></div>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4 border-b-2 border-dotted border-white pb-1 mt-1">
+              <div>
+                <label class="text-white text-sm uppercase">CATEGORY</label>
+                <div><span class="text-white text-sm">${categoryName}</span></div>
+              </div>
+              <div>
+                <label class="text-white text-sm uppercase">SEAT</label>
+                <div><span class="text-white text-sm">${numberOfTickets}</span></div>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-6 border-b-2 border-dotted border-white pb-1 mt-1">
+              <div>
+                <label class="text-white text-sm uppercase">VENUE</label>
+                <div><span class="text-white text-sm">${eventAddress}</span></div>
+              </div>
+              <div>
+                <label class="text-white text-sm uppercase">BOOKING ID</label>
+                <div><span class="text-white text-sm">${bookingId}</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Info Section -->
+      <div class="w-64 bg-diamond-light flex flex-col justify-between py-6 px-1">
+        <div class="text-center mb-4 flex items-center justify-center gap-2">
+          <i class="fa-solid fa-gem text-[#4dd0e1] w-5 h-5"></i>
+          <span class="text-[#0277bd] text-xl tracking-widest uppercase font-bold"
+            style="font-family: 'Cinzel Decorative', serif;">
+            DIAMOND
+          </span>
+          <i class="fa-solid fa-gem text-[#4dd0e1] w-5 h-5"></i>
+        </div>
+        <div class="flex items-center justify-center relative mb-2">
+          <div class="relative">
+            <img src="https://events2go.syd1.cdn.digitaloceanspaces.com/events2go.png"
+              alt="Events 2Go Logo" class="w-44 h-52 object-contain" />
+            <div class="absolute -top-2 -left-4">
+              <img src="${businessLogo}" alt="organizer logo"
+                class="w-16 h-16 object-contain rounded-full border border-[#81d4fa]" />
+            </div>
+          </div>
+        </div>
+
+         <div class="text-center space-y-0">
+          <p class="text-black text-xs">Please arrive 15 min before the Event start.</p>
+          <p class="text-black text-xs">www.events2go.com.au</p>
+        </div>
+      </div>
+
+      <!-- Divider -->
+      <div class="w-px bg-[#b3e5fc] relative">
+        <div class="absolute inset-y-0 left-0 flex flex-col justify-center">
+          <div class="w-1 h-4 bg-[#4dd0e1] mb-1 rounded-full"></div>
+          <div class="w-1 h-4 bg-[#4dd0e1] mb-1 rounded-full"></div>
+          <div class="w-1 h-4 bg-[#4dd0e1] mb-1 rounded-full"></div>
+          <div class="w-1 h-4 bg-[#4dd0e1] mb-1 rounded-full"></div>
+        </div>
+      </div>
+
+      <!-- Right Gradient Section -->
+      <div class="w-80 bg-diamond-dark p-6 flex flex-col justify-between rounded-r-xl relative">
+        <div class="absolute top-4 right-4">
+          <img src="${qrCodeUrl}" alt="QR Code" class="w-16 h-16 object-contain rounded border border-[#81d4fa]" />
+        </div>
+
+        <div class="space-y-3 mt-8 text-white">
+          <div class="border-b-2 border-dotted border-white pb-1 mt-1">
+            <label class="text-sm">NAME</label>
+            <div><span class="text-white text-sm">${eventTitle}</span></div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-4 border-b-2 border-dotted border-white pb-1 mt-1">
+            <div>
+              <label class="text-sm">EVENT DATE</label>
+              <div><span class="text-white text-sm">${selectedDate}</span></div>
+            </div>
+            <div>
+              <label class="text-sm">EVENT TIME</label>
+              <div><span class="text-white text-sm">${startTime}</span></div>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-3 gap-10 border-b-2 border-dotted border-white pb-1 mt-1">
+            <div>
+              <label class="text-sm">CATEGORY</label>
+              <div><span class="text-white text-sm">${categoryName}</span></div>
+            </div>
+            <div>
+              <label class="text-sm">SEAT</label>
+              <div><span class="text-white text-sm">${numberOfTickets}</span></div>
+            </div>
+            <div>
+              <label class="text-sm">ADMIT</label>
+              <div><span class="text-white text-sm">1</span></div>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-6 border-b-2 border-dotted border-white pb-1 mt-1">
+            <div>
+              <label class="text-sm uppercase">VENUE</label>
+              <div><span class="text-sm text-white">${eventAddress}</span></div>
+            </div>
+            <div>
+              <label class="text-sm uppercase">BOOKING ID</label>
+              <div><span class="text-sm text-white">${bookingId}</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</body>
+
+</html>

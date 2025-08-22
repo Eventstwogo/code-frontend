@@ -79,6 +79,8 @@ const QRCodeDisplay = ({
 };
 
 export default function BookingsPage() {
+  const complexColorRegex = /oklch\(([\d.]+)\s+([\d.]+)\s+([\d.]+)(?:\s*\/\s*[\d.]+)?\)/g;
+
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [authChecked, setAuthChecked] = useState(false);
@@ -141,9 +143,377 @@ export default function BookingsPage() {
     }
   };
 
-  const handleDownloadBooking = (orderId: string) => {
-    const downloadUrl = `http://localhost:8000/api/v1/new-bookings/${orderId}/download`;
-    window.open(downloadUrl, "_blank");
+
+
+  const convertOklchToRgb = (html: string): string => {
+    return html.replace(complexColorRegex, (match) => {
+      try {
+        // Extract L, C, H values from oklch(L C H) or oklch(L C H / A)
+        const values = match.match(/oklch\(\s*([^)]+)\s*\)/);
+        if (!values || !values[1]) return "rgb(100, 100, 100)";
+
+        const parts = values[1].split(/[\/\s]+/);
+        const L = parseFloat(parts[0]) * 100; // Convert to 0-100 range
+        const C = parseFloat(parts[1]) * 100; // Convert to 0-100 range
+        const H = parseFloat(parts[2]); // Hue in degrees
+
+        // Simple OKLCH to RGB conversion approximation
+        // This is a simplified conversion for common values
+        const commonConversions: { [key: string]: string } = {
+          // Pure colors
+          "oklch(1 0 0)": "rgb(255, 255, 255)", // White
+          "oklch(0 0 0)": "rgb(0, 0, 0)", // Black
+
+          // Gray scale
+          "oklch(0.1 0 0)": "rgb(26, 26, 26)",
+          "oklch(0.2 0 0)": "rgb(51, 51, 51)",
+          "oklch(0.3 0 0)": "rgb(77, 77, 77)",
+          "oklch(0.4 0 0)": "rgb(102, 102, 102)",
+          "oklch(0.5 0 0)": "rgb(128, 128, 128)",
+          "oklch(0.6 0 0)": "rgb(153, 153, 153)",
+          "oklch(0.7 0 0)": "rgb(179, 179, 179)",
+          "oklch(0.8 0 0)": "rgb(204, 204, 204)",
+          "oklch(0.9 0 0)": "rgb(230, 230, 230)",
+
+          // Common brand colors approximations
+          "oklch(0.278 0.029 256.848)": "rgb(59, 64, 75)",
+          "oklch(0.631 0.066 256.848)": "rgb(139, 153, 177)",
+          "oklch(0.859 0.023 256.848)": "rgb(212, 218, 227)",
+          "oklch(0.967 0.007 256.848)": "rgb(245, 246, 248)",
+          "oklch(0.986 0.003 256.848)": "rgb(250, 251, 252)",
+
+          // Gold colors
+          "oklch(0.659 0.216 29.233)": "rgb(218, 165, 32)",
+          "oklch(0.804 0.171 83.096)": "rgb(255, 215, 0)",
+
+          // Purple colors
+          "oklch(0.647 0.248 258.338)": "rgb(99, 102, 241)",
+          "oklch(0.569 0.193 259.944)": "rgb(139, 92, 246)",
+
+          // Blue colors
+          "oklch(0.573 0.214 220.38)": "rgb(59, 130, 246)",
+          "oklch(0.627 0.204 231.321)": "rgb(96, 165, 250)",
+
+          // Green colors
+          "oklch(0.750 0.197 164.25)": "rgb(34, 197, 94)",
+          "oklch(0.696 0.143 142.495)": "rgb(74, 222, 128)",
+
+          // Red colors
+          "oklch(0.627 0.257 29.234)": "rgb(239, 68, 68)",
+          "oklch(0.686 0.205 40.853)": "rgb(248, 113, 113)",
+        };
+
+        // Check for exact matches first
+        const normalized = match.toLowerCase().replace(/\s+/g, " ").trim();
+        for (const [oklch, rgb] of Object.entries(commonConversions)) {
+          if (normalized === oklch.toLowerCase()) {
+            return rgb;
+          }
+        }
+
+        // Fallback conversion based on L value for grayscale
+        if (C < 0.05) {
+          // Very low chroma = grayscale
+          const gray = Math.round((L * 255) / 100);
+          return `rgb(${gray}, ${gray}, ${gray})`;
+        }
+
+        // Basic hue-based conversion for colored values
+        let r, g, b;
+        if (H >= 0 && H < 60) {
+          // Red-Yellow
+          r = Math.round((L + C * 0.5) * 255 / 100);
+          g = Math.round((L + C * 0.3) * 255 / 100);
+          b = Math.round((L - C * 0.2) * 255 / 100);
+        } else if (H >= 60 && H < 120) {
+          // Yellow-Green
+          r = Math.round((L + C * 0.3) * 255 / 100);
+          g = Math.round((L + C * 0.5) * 255 / 100);
+          b = Math.round((L - C * 0.2) * 255 / 100);
+        } else if (H >= 120 && H < 180) {
+          // Green-Cyan
+          r = Math.round((L - C * 0.2) * 255 / 100);
+          g = Math.round((L + C * 0.5) * 255 / 100);
+          b = Math.round((L + C * 0.3) * 255 / 100);
+        } else if (H >= 180 && H < 240) {
+          // Cyan-Blue
+          r = Math.round((L - C * 0.2) * 255 / 100);
+          g = Math.round((L + C * 0.3) * 255 / 100);
+          b = Math.round((L + C * 0.5) * 255 / 100);
+        } else if (H >= 240 && H < 300) {
+          // Blue-Magenta
+          r = Math.round((L + C * 0.3) * 255 / 100);
+          g = Math.round((L - C * 0.2) * 255 / 100);
+          b = Math.round((L + C * 0.5) * 255 / 100);
+        } else {
+          // Magenta-Red
+          r = Math.round((L + C * 0.5) * 255 / 100);
+          g = Math.round((L - C * 0.2) * 255 / 100);
+          b = Math.round((L + C * 0.3) * 255 / 100);
+        }
+
+        // Clamp values to 0-255 range
+        r = Math.max(0, Math.min(255, r));
+        g = Math.max(0, Math.min(255, g));
+        b = Math.max(0, Math.min(255, b));
+
+        return `rgb(${r}, ${g}, ${b})`;
+      } catch (error) {
+        console.warn("Failed to parse OKLCH color:", match);
+        return "rgb(128, 128, 128)"; // Fallback gray
+      }
+    });
+  };
+
+  // Format date function
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString("en-AU", {
+      weekday: "long",
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+  };
+
+  const handleDownloadTicket = async (booking: any) => {
+    if (!booking) return;
+
+    try {
+      toast.info("Generating your ticket PDF...");
+
+      // Use the first seat category's label for the template, or fallback to 'Standard'
+      const category = booking.seat_categories[0]?.label.toLowerCase() || "standard";
+      let templateUrl = `/templates/${category}.html`;
+
+      // Fetch the HTML template
+      let response = await fetch(templateUrl);
+
+      // If the template is not found, use the default Standard.html
+      if (!response.ok) {
+        console.warn(`Template for category "${category}" not found. Using Standard.html`);
+        templateUrl = `/templates/Standard.html`;
+        response = await fetch(templateUrl);
+      }
+
+      let ticketHTML = await response.text();
+
+      // Generate QR code URL
+      const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(
+        JSON.stringify({
+          orderId: booking.order_id,
+          eventTitle: booking.event.title,
+          eventDate: booking.event.event_date,
+          totalAmount: booking.total_amount,
+          status: booking.booking_status,
+        })
+      )}&format=png&ecc=M&margin=1`;
+
+      // Replace placeholders dynamically with safe fallbacks
+      ticketHTML = ticketHTML
+        .replace(/\${bookingId}/g, booking.order_id || "Booking ID")
+        .replace(/\${eventTitle}/g, booking.event.title || "Event Title")
+        .replace(
+          /\${businessLogo}/g,
+          booking.event.business_logo || "/images/logo-placeholder.png"
+        )
+        .replace(
+          /\${eventImage}/g,
+          booking.event.card_image || "/images/event-placeholder.png"
+        )
+        .replace(/\${selectedDate}/g, formatDate(booking.event.event_date) || "TBD")
+        .replace(/\${startTime}/g, booking.event.event_time || "TBD")
+        .replace(
+          /\${categoryName}/g,
+          booking.seat_categories[0]?.label || "General"
+        )
+        .replace(
+          /\${numberOfTickets}/g,
+          booking.seat_categories
+            .reduce((sum: number, seat: any) => sum + seat.num_seats, 0)
+            .toString() || "1"
+        )
+        .replace(/\${eventAddress}/g, booking.event.address || "Venue TBD")
+        .replace(/\${qrCodeUrl}/g, qrCodeUrl || "/images/qr-placeholder.png");
+
+      // Convert OKLCH colors to RGB
+      ticketHTML = convertOklchToRgb(ticketHTML);
+
+      // Try the modern approach first, fallback to simple method if it fails
+      try {
+        await generatePDFWithHtml2Canvas(ticketHTML);
+      } catch (html2canvasError) {
+        console.warn("html2canvas failed, trying fallback method:", html2canvasError);
+        await generatePDFWithFallback(ticketHTML);
+      }
+
+      toast.success("Ticket downloaded successfully!");
+    } catch (error) {
+      console.error("Error generating PDF ticket:", error);
+      toast.error("Failed to download ticket. Please try again.");
+    }
+  };
+
+const generatePDFWithHtml2Canvas = async (ticketHTML: string) => {
+  const tempContainer = document.createElement("div");
+  tempContainer.style.position = "fixed";
+  tempContainer.style.left = "-10000px";
+  tempContainer.style.top = "0px";
+  tempContainer.style.width = "794px"; // A4 width in pixels
+  tempContainer.style.height = "auto";
+  tempContainer.style.zIndex = "-1000";
+  tempContainer.style.visibility = "hidden";
+  tempContainer.style.pointerEvents = "none";
+
+  tempContainer.innerHTML = `<div class="ticket-wrapper" style="width: 794px; min-height: 1123px; background: white; padding: 0; margin: 0;">${ticketHTML}</div>`;
+  document.body.appendChild(tempContainer);
+
+  await new Promise((resolve) => setTimeout(resolve, 100));
+
+  const images = tempContainer.querySelectorAll("img");
+  await Promise.all(
+    Array.from(images).map((img) =>
+      new Promise((resolve) => {
+        if (img.complete) resolve(true);
+        else {
+          img.onload = () => resolve(true);
+          img.onerror = () => resolve(true);
+          setTimeout(() => resolve(true), 3000);
+        }
+      })
+    )
+  );
+
+  await new Promise((resolve) => setTimeout(resolve, 500));
+
+  const html2canvas = (await import("html2canvas")).default;
+  const targetElement = tempContainer.querySelector(".ticket-wrapper") as HTMLElement;
+  const canvas = await html2canvas(targetElement, {
+    scale: 1.5,
+    useCORS: true,
+    allowTaint: true,
+    backgroundColor: "#ffffff",
+    scrollX: 0,
+    scrollY: 0,
+    windowWidth: 794,
+    windowHeight: 1123,
+    logging: false,
+    removeContainer: false,
+    foreignObjectRendering: false,
+    onclone: (clonedDoc, element) => {
+      const clonedBody = clonedDoc.body;
+      if (clonedBody) {
+        clonedBody.style.margin = "0";
+        clonedBody.style.padding = "0";
+        clonedBody.style.width = "794px";
+        clonedBody.style.height = "auto";
+      }
+      const allElements = element.querySelectorAll("*");
+      allElements.forEach((el: any) => {
+        if (el.style) {
+          if (el.style.color && el.style.color.includes("oklch")) {
+            el.style.color = convertOklchToRgb(el.style.color);
+          }
+          if (el.style.backgroundColor && el.style.backgroundColor.includes("oklch")) {
+            el.style.backgroundColor = convertOklchToRgb(el.style.backgroundColor);
+          }
+          if (el.style.borderColor && el.style.borderColor.includes("oklch")) {
+            el.style.borderColor = convertOklchToRgb(el.style.borderColor);
+          }
+        }
+      });
+    },
+  });
+
+  try {
+    document.body.removeChild(tempContainer);
+  } catch (cleanupError) {
+    console.warn("Error cleaning up temp container:", cleanupError);
+  }
+
+  const jsPDF = (await import("jspdf")).jsPDF;
+  const pdf = new jsPDF("portrait", "mm", "a4");
+  const pdfWidth = pdf.internal.pageSize.getWidth();
+  const pdfHeight = pdf.internal.pageSize.getHeight();
+  const imgWidth = 210; // A4 width in mm
+  const imgHeight = (canvas.height * imgWidth) / canvas.width;
+  let heightLeft = imgHeight;
+  let position = 0;
+
+  const imgData = canvas.toDataURL("image/jpeg", 0.95);
+
+  while (heightLeft > 0) {
+    pdf.addImage(imgData, "JPEG", 0, position, imgWidth, Math.min(imgHeight, pdfHeight));
+    heightLeft -= pdfHeight;
+    position -= 297; // A4 height in mm
+    if (heightLeft > 0) {
+      pdf.addPage();
+    }
+  }
+
+  const fileName = `Events2Go_Ticket_${booking?.seat_categories[0]?.label || "General"}_${booking.order_id}.pdf`;
+  pdf.save(fileName);
+};
+
+  const generatePDFWithFallback = async (ticketHTML: string) => {
+    // Fallback method: Create a new window and use browser's print functionality
+    const printWindow = window.open("", "_blank", "width=794,height=1123");
+    if (!printWindow) {
+      throw new Error("Could not open print window. Please check popup blockers.");
+    }
+
+    const fullHTML = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="UTF-8">
+        <title>Event Ticket</title>
+        <style>
+          @page {
+ GdkError: The program 'BookingsPage' received an X Window System error.
+This probably reflects a bug in the program.
+The error was 'BadAlloc'.
+  (Details: serial 3764 error_code 11 request_code 130 (MIT-SHM) minor_code 3)
+  (Note to programmers: normally, X errors are reported asynchronously;
+   that is, you will receive the error a while after causing it.
+   To debug your program, run it with the GDK_SYNCHRONIZE environment
+   variable to change this behavior. You can then get a meaningful
+   backtrace from your debugger if you break on the gdk_x_error() function.)
+             size: A4;
+            margin: 0;
+          }
+          body {
+            margin: 0;
+            padding: 0;
+            width: 270mm;
+            height: 297mm;
+            font-family: Arial, sans-serif;
+          }
+          @media print {
+            body {
+              -webkit-print-color-adjust: exact;
+              color-adjust: exact;
+            }
+          }
+        </style>
+      </head>
+      <body>
+        ${ticketHTML}
+        <script>
+          window.onload = function() {
+            setTimeout(function() {
+              window.print();
+              setTimeout(function() {
+                window.close();
+              }, 1000);
+            }, 500);
+          };
+        </script>
+      </body>
+      </html>
+    `;
+
+    printWindow.document.write(fullHTML);
+    printWindow.document.close();
   };
 
   const formatAUD = (amount: number) => {
@@ -468,9 +838,7 @@ export default function BookingsPage() {
                           View Details
                         </Button>
                         <Button
-                          onClick={() =>
-                            handleDownloadBooking(booking.order_id)
-                          }
+                          onClick={() => handleDownloadTicket(booking)}
                           variant="outline"
                           size="sm"
                           className="flex items-center gap-1 bg-white hover:bg-slate-50 border-slate-200 text-xs px-3 py-1.5"
@@ -530,15 +898,15 @@ export default function BookingsPage() {
                 <button
                   onClick={() => setModalOpen(false)}
                   className="
-    absolute 
-    top-2 right-2 sm:top-4 sm:right-4 
-    flex items-center justify-center
-    w-8 h-8 sm:w-10 sm:h-10
-    text-slate-500 hover:text-slate-700 
-    bg-white rounded-full 
-    shadow-sm hover:shadow-md 
-    transition-all
-  "
+                    absolute 
+                    top-2 right-2 sm:top-4 sm:right-4 
+                    flex items-center justify-center
+                    w-8 h-8 sm:w-10 sm:h-10
+                    text-slate-500 hover:text-slate-700 
+                    bg-white rounded-full 
+                    shadow-sm hover:shadow-md 
+                    transition-all
+                  "
                 >
                   <X className="w-4 h-4 sm:w-5 sm:h-5" />
                 </button>
@@ -599,14 +967,7 @@ export default function BookingsPage() {
                               Date
                             </label>
                             <p className="text-slate-900 font-medium text-sm sm:text-base">
-                              {new Date(
-                                selectedBooking.event.event_date
-                              ).toLocaleDateString("en-AU", {
-                                weekday: "long",
-                                year: "numeric",
-                                month: "long",
-                                day: "numeric",
-                              })}
+                              {formatDate(selectedBooking.event.event_date)}
                             </p>
                           </div>
                           <div>
@@ -772,9 +1133,7 @@ export default function BookingsPage() {
                 {/* Footer Actions */}
                 <div className="flex flex-col sm:flex-row gap-3 justify-end mt-6 sm:mt-8 pt-4 sm:pt-6 border-t border-slate-200">
                   <Button
-                    onClick={() =>
-                      handleDownloadBooking(selectedBooking.order_id)
-                    }
+                    onClick={() => handleDownloadTicket(selectedBooking)}
                     variant="outline"
                     className="flex items-center gap-2 border-slate-200 hover:bg-slate-50 text-sm sm:text-base"
                   >
