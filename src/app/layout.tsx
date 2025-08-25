@@ -5,6 +5,7 @@ import Header from "@/components/homepage/header";
 import HeaderClient from "@/components/HeaderClient";
 import Footer from "@/components/footer";
 import { Toaster } from "sonner";
+import WhatsAppButton from "../components/WhatsAppButton";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -32,6 +33,7 @@ export default function RootLayout({
       >
         <HeaderClient/>
         {children}
+        <WhatsAppButton/>
         <Footer/>
         <Toaster richColors position="bottom-right" />
       </body>
