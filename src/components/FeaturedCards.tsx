@@ -198,7 +198,7 @@ export default function FeaturedCards({
      <Swiper
   modules={[Autoplay]}
   spaceBetween={16}
-  slidesPerView={1}
+  slidesPerView={5}
   loop={true}
   autoplay={{
     delay: 3000, // 3 seconds per slide
