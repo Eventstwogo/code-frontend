@@ -96,6 +96,9 @@
 //                   title={movie.event_title}
 //                   image={movie.card_image}
 //                 />
+
+
+
 //               ))
 //             ) : (
 //               <div className="col-span-full text-center text-gray-500 text-lg">
