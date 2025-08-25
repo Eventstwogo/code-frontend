@@ -198,8 +198,10 @@ export default function FeaturedCards({
 <Swiper
   modules={[Autoplay]}
   spaceBetween={16}
-  slidesPerView={5} // default for desktop
-  loop={true}
+  slidesPerView={5} 
+  centeredSlides={true}// default for desktop
+  loop={true}        
+  freeMode={true}
   autoplay={{
     delay: 3000,
     disableOnInteraction: false,
