@@ -195,14 +195,36 @@ export default function FeaturedCards({
       </div>
 
       {/* Cards Container */}
-     <Swiper
+<Swiper
   modules={[Autoplay]}
   spaceBetween={16}
-  slidesPerView={5}
+  slidesPerView={5} // default for desktop
   loop={true}
   autoplay={{
-    delay: 3000, // 3 seconds per slide
+    delay: 3000,
     disableOnInteraction: false,
+  }}
+  breakpoints={{
+    320: {
+      slidesPerView: 1,
+      spaceBetween: 12,
+    },
+    640: {
+      slidesPerView: 2,
+      spaceBetween: 12,
+    },
+    768: {
+      slidesPerView: 3,
+      spaceBetween: 16,
+    },
+    1024: {
+      slidesPerView: 4,
+      spaceBetween: 16,
+    },
+    1280: {
+      slidesPerView: 5,
+      spaceBetween: 16,
+    },
   }}
 >
   {events.map((event, index) => (
@@ -211,6 +233,7 @@ export default function FeaturedCards({
     </SwiperSlide>
   ))}
 </Swiper>
+
 
       {/* Mobile View All Button */}
    

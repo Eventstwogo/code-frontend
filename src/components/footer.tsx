@@ -38,7 +38,7 @@ const { categories,fetchCategories } = useCategoryStore();
   categories.map((category) => (
               <li key={category.category_id}>
                 <Link
-                  href={`/categories/${category.category_slug}`}
+                  href={`/${category.category_slug}`}
                   className="hover:underline"
                 >
                   {category.category_name}

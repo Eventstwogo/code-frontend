@@ -190,12 +190,12 @@ const future = allEvents.filter((event: any) => {
       {nowStreamingEvents.length > 0 && (
         <section className="w-full px-10 py-20">
           <h1 className="text-5xl font-bold mb-10 text-gray-900">NOW STREAMING</h1>
-          <section className="mx-auto">
+          <section className="mx-auto ">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-2xl font-bold text-gray-900 capitalize">{slug}</h2>
             </div>
            <div
-  className="
+className="
     flex md:grid 
     md:grid-cols-3 lg:grid-cols-5 2xl:grid-cols-6
     gap-3 md:gap-6
