@@ -34,7 +34,7 @@ export default function Partners() {
         setError(null);
 
         const response = await axiosInstance.get<PartnersApiResponse>(
-          "/api/v1/partners"
+          "/api/v1/partners/active/all"
         );
 
         if (response.data.statusCode === 200) {

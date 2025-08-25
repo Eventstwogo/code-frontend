@@ -1,8 +1,16 @@
+'use client'
+import { useEffect } from "react";
 import { FaFacebookF, FaInstagram } from "react-icons/fa6";
 import Link from "next/link";
 import Image from "next/image";
+import { useCategoryStore } from "@/lib/ZustanStore/categoriesStore";
 
 export default function Footer() {
+
+const { categories,fetchCategories } = useCategoryStore();  
+  useEffect(() => {
+    fetchCategories();
+  }, [fetchCategories]);
   return (
     <footer className="bg-purple-900 text-white py-10 px-6 md:px-20 border-t">
       <div className="grid grid-cols-1 md:grid-cols-5 gap-8 items-start text-sm">
@@ -26,15 +34,18 @@ export default function Footer() {
         <div>
           <h4 className="font-bold mb-2">Explore</h4>
           <ul className="space-y-1">
-            <li>
-              <Link href="/movies" className="hover:underline">
-                Now Showing
-              </Link>
-            </li>
-            <li>Trending Events</li>
-            <li>Workshops</li>
-            <li>Festivals</li>
-            <li>Gift Cards</li>
+           {
+  categories.map((category) => (
+              <li key={category.category_id}>
+                <Link
+                  href={`/categories/${category.category_slug}`}
+                  className="hover:underline"
+                >
+                  {category.category_name}
+                </Link>
+              </li>
+            ))
+           }
           </ul>
         </div>
 

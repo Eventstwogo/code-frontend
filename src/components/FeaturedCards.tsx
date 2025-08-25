@@ -5,7 +5,9 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { FaHeart, FaStar, FaClock, FaMapMarkerAlt, FaCalendarAlt } from 'react-icons/fa';
 import { useRouter } from 'next/navigation';
-
+import { Swiper, SwiperSlide } from "swiper/react"
+import { Autoplay } from "swiper/modules"
+import "swiper/css"
 interface FeaturedEvent {
   event_id?: number;
   event_title?: string;
@@ -193,33 +195,22 @@ export default function FeaturedCards({
       </div>
 
       {/* Cards Container */}
-      <div className="relative">
-        <div
-          ref={scrollRef}
-          className="flex gap-8 overflow-x-auto pb-6 scrollbar-hide"
-          style={{
-            scrollbarWidth: 'none',
-            msOverflowStyle: 'none',
-            WebkitScrollbar: { display: 'none' }
-          }}
-        >
-          {events.map((event, index) => (
-            <div key={event.event_id || index} className="flex-shrink-0">
-              <FeaturedCard event={event} />
-            </div>
-          ))}
-        </div>
-
-        {/* Scroll Progress Bar */}
-        {isOverflowing && (
-          <div className="mt-4 w-full bg-gray-200 rounded-full h-1">
-            <div 
-              className="bg-gradient-to-r from-purple-500 to-purple-700 h-1 rounded-full transition-all duration-300"
-              style={{ width: `${scrollProgress}%` }}
-            />
-          </div>
-        )}
-      </div>
+     <Swiper
+  modules={[Autoplay]}
+  spaceBetween={16}
+  slidesPerView={1}
+  loop={true}
+  autoplay={{
+    delay: 3000, // 3 seconds per slide
+    disableOnInteraction: false,
+  }}
+>
+  {events.map((event, index) => (
+    <SwiperSlide key={event.event_id || index}>
+      <FeaturedCard event={event} />
+    </SwiperSlide>
+  ))}
+</Swiper>
 
       {/* Mobile View All Button */}
    

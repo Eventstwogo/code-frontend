@@ -44,7 +44,7 @@ export default function DynamicAds({
         setLoading(true);
         setError(null);
         
-        const response = await axiosInstance.get<ApiResponse>('/api/v1/advertisements');
+        const response = await axiosInstance.get<ApiResponse>('/api/v1/advertisements/active/all');
         
         if (response.data.statusCode === 200) {
           let ads = response.data.data;
