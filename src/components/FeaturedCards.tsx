@@ -206,7 +206,7 @@ export default function FeaturedCards({
     disableOnInteraction: false,
   }}
   breakpoints={{
-    320: { slidesPerView: 1, spaceBetween: 12, centeredSlides: true },
+    320: { slidesPerView: 1.2, spaceBetween: 5, centeredSlides: false },
     640: { slidesPerView: 2, spaceBetween: 12, centeredSlides: true },
     768: { slidesPerView: 3, spaceBetween: 16, centeredSlides: true },
     1024: { slidesPerView: 4, spaceBetween: 16, centeredSlides: true },
