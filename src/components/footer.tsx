@@ -73,6 +73,10 @@ const { categories,fetchCategories } = useCategoryStore();
            
        Refund Policy </Link>
             </li>
+            <li>  <Link href="/SecurityPolicy" className="hover:underline">
+           
+       Security policy </Link>
+            </li>
           </ul>
         </div>
            <div>
@@ -97,6 +101,10 @@ const { categories,fetchCategories } = useCategoryStore();
             <li>  <Link href="/Refund" className="hover:underline">
            
        Refund Policy </Link>
+            </li>
+             <li>  <Link href="/Refund" className="hover:underline">
+           
+       Security policy </Link>
             </li>
           </ul>
         </div>

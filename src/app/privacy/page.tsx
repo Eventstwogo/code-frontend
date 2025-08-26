@@ -4,198 +4,200 @@ import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
-import { 
-  Shield, 
-  Eye, 
-  Users, 
-  CreditCard, 
-  Settings, 
-  Mail, 
+import {
+  Shield,
+  Eye,
+  Users,
+  CreditCard,
+  Settings,
+  Mail,
   Phone,
   Calendar,
   Lock,
   FileText,
-  AlertCircle
+  AlertCircle,
+  Globe
 } from "lucide-react";
 
 const PrivacyPolicyPage = () => {
-  const lastUpdated = new Date().toLocaleDateString('en-AU', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric'
-  });
-
   return (
     <div className="container mx-auto px-4 py-8 max-w-full">
-      {/* Header */}
       {/* Hero Section */}
-<div className="w-full bg-gradient-to-r from-purple-600 to-purple-600 text-white py-16 shadow-md mb-10">
-  <div className="max-w-5xl mx-auto px-4 text-center">
-    {/* Icon */}
-    <div className="flex justify-center mb-4">
-      <Shield className="h-12 w-12 text-white drop-shadow-md" />
-    </div>
+      <div className="w-full bg-gradient-to-r from-purple-600 to-purple-600 text-white py-16 shadow-md mb-10">
+        <div className="max-w-5xl mx-auto px-4 text-center">
+          <div className="flex justify-center mb-4">
+            <Shield className="h-12 w-12 text-white drop-shadow-md" />
+          </div>
 
-    {/* Title */}
-    <h1 className="text-4xl md:text-5xl font-bold mb-4">
-      Privacy Policy
-    </h1>
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">Privacy Policy</h1>
 
-    {/* Meta info */}
-    <div className="flex flex-wrap justify-center items-center gap-4 text-sm text-white/80 mb-4">
-      <Badge
-        variant="outline"
-        className="bg-white/20 text-white border-white/20 px-3 py-1 rounded-md"
-      >
-        Events 2 Go (Australia)
-      </Badge>
-      <div className="flex items-center gap-1">
-        <Calendar className="h-4 w-4 text-white/80" />
-        Effective Date: {lastUpdated}
+          <div className="flex flex-wrap justify-center items-center gap-4 text-sm text-white/80 mb-4">
+            <Badge
+              variant="outline"
+              className="bg-white/20 text-white border-white/20 px-3 py-1 rounded-md"
+            >
+              Events2Go (Australia)
+            </Badge>
+            <div className="flex items-center gap-1">
+              <Calendar className="h-4 w-4 text-white/80" />
+              Effective Date: 25/08/2025 | Last Updated: 25/08/2025
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="max-w-5xl mx-auto px-4">
+        <Card className="shadow-md border border-slate-200 dark:border-slate-800">
+          <CardHeader>
+            <CardTitle className="text-2xl font-bold flex items-center gap-2">
+              <Shield className="h-6 w-6 text-blue-600" /> Privacy Policy
+            </CardTitle>
+            <p className="text-sm text-muted-foreground">
+              Effective Date: 25/08/2025 | Last Updated: 25/08/2025
+            </p>
+          </CardHeader>
+
+          <CardContent className="space-y-10">
+            <p>
+              At <strong>Events2Go</strong>, we value your privacy and are committed to protecting your personal information. This Privacy Policy complies with the Privacy Act 1988 (Cth) and the Australian Privacy Principles (APPs).
+            </p>
+
+            {/* Section 2.1 */}
+            <section>
+              <h2 className="flex items-center gap-2 text-xl font-semibold mb-4">
+                <Eye className="h-5 w-5 text-green-600" /> 2.1. Information We Collect
+              </h2>
+              <ul className="list-disc list-inside space-y-2 text-muted-foreground">
+                <li><strong>Personal Information:</strong> Name, email, phone number, date of birth.</li>
+                <li><strong>Payment Information:</strong> Credit/debit card details (securely processed via third-party payment gateways).</li>
+                <li><strong>Event Preferences:</strong> Interests, saved events, ticket bookings.</li>
+                <li><strong>Device & Usage Data:</strong> IP address, browser type, app interactions, and cookies.</li>
+              </ul>
+            </section>
+
+            <Separator />
+
+            {/* Section 2.2 */}
+            <section>
+              <h2 className="flex items-center gap-2 text-xl font-semibold mb-4">
+                <FileText className="h-5 w-5 text-blue-600" /> 2.2. How We Use Your Information
+              </h2>
+              <ul className="list-disc list-inside space-y-2 text-muted-foreground">
+                <li>Process ticket bookings and payments.</li>
+                <li>Send booking confirmations and updates.</li>
+                <li>Improve app performance and personalize recommendations.</li>
+                <li>Notify you about upcoming events, promotions, and discounts (if opted in).</li>
+                <li>Detect and prevent fraud or unauthorized access.</li>
+              </ul>
+            </section>
+
+            <Separator />
+
+            {/* Section 2.3 */}
+            <section>
+              <h2 className="flex items-center gap-2 text-xl font-semibold mb-4">
+                <Users className="h-5 w-5 text-purple-600" /> 2.3. Sharing Your Information
+              </h2>
+              <ul className="list-disc list-inside space-y-2 text-muted-foreground">
+                <li><strong>Event Organizers:</strong> to validate ticket purchases.</li>
+                <li><strong>Payment Gateways:</strong> to securely process transactions.</li>
+                <li><strong>Third-Party Service Providers:</strong> analytics, email notifications, and customer support.</li>
+                <li><strong>Law Enforcement:</strong> if required by law.</li>
+              </ul>
+              {/* <div className="bg-green-50 dark:bg-green-900/20 p-4 rounded-lg border border-green-200 dark:border-green-800 mt-4">
+                <div className="flex items-center gap-2">
+                  <Shield className="h-5 w-5 text-green-600" />
+                  <span className="font-semibold text-green-800 dark:text-green-400">
+                    We do not sell your data.
+                  </span>
+                </div>
+              </div> */}
+            </section>
+
+            <Separator />
+
+            {/* Section 2.4 */}
+            <section>
+              <h2 className="flex items-center gap-2 text-xl font-semibold mb-4">
+                <Lock className="h-5 w-5 text-red-600" /> 2.4. Data Security
+              </h2>
+              <p className="text-muted-foreground">
+                We use industry-standard encryption (SSL/TLS) and secure data storage to protect your information. However, no system is 100% secure, so we encourage you to use strong passwords and avoid sharing account details.
+              </p>
+            </section>
+
+            <Separator />
+
+            {/* Section 2.5 */}
+            <section>
+              <h2 className="flex items-center gap-2 text-xl font-semibold mb-4">
+                <AlertCircle className="h-5 w-5 text-yellow-600" /> 2.5. Your Rights Under Australian Law
+              </h2>
+              <ul className="list-disc list-inside space-y-2 text-muted-foreground">
+                <li>Request access to your personal information.</li>
+                <li>Correct or update your details.</li>
+                <li>Opt out of marketing communications.</li>
+                <li>Request deletion of your account and associated data.</li>
+              </ul>
+            </section>
+
+            <Separator />
+
+            {/* Section 2.6 */}
+            <section>
+              <h2 className="flex items-center gap-2 text-xl font-semibold mb-4">
+                <Settings className="h-5 w-5 text-orange-600" /> 2.6. Cookies & Tracking
+              </h2>
+              <ul className="list-disc list-inside space-y-2 text-muted-foreground">
+                <li>Improve user experience.</li>
+                <li>Analyze app traffic.</li>
+                <li>Personalize event recommendations.</li>
+              </ul>
+              <p className="text-muted-foreground mt-2">
+                You can disable cookies via your browser, but certain features may not work.
+              </p>
+            </section>
+
+            <Separator />
+
+            {/* Section 2.7 */}
+            <section>
+              <h2 className="flex items-center gap-2 text-xl font-semibold mb-4">
+                <Globe className="h-5 w-5 text-indigo-600" /> 2.7. International Data Transfers
+              </h2>
+              <p className="text-muted-foreground">
+                As we may use global cloud providers, your data may be stored outside Australia. We ensure strict compliance with Australian privacy standards.
+              </p>
+            </section>
+
+            <Separator />
+
+            {/* Section 2.8 */}
+            <section>
+              <h2 className="flex items-center gap-2 text-xl font-semibold mb-4">
+                <FileText className="h-5 w-5 text-blue-600" /> 2.8. Updates to This Policy
+              </h2>
+              <p className="text-muted-foreground">
+                We may update this Privacy Policy occasionally. Significant changes will be communicated via email or app notifications.
+              </p>
+            </section>
+
+            <Separator />
+
+            {/* Section 2.9 */}
+            <section>
+              <h2 className="flex items-center gap-2 text-xl font-semibold mb-4">
+                <Phone className="h-5 w-5 text-purple-600" /> 2.9. Contact Us
+              </h2>
+              <ul className="list-none space-y-2 text-muted-foreground">
+                <li>📧 <a href="mailto:privacy@events2go.com.au" className="text-purple-600 hover:underline">privacy@events2go.com.au</a></li>
+                <li>📞 +61430194565</li>
+              </ul>
+            </section>
+          </CardContent>
+        </Card>
       </div>
     </div>
-
-    {/* Subtext */}
-    {/* <p className="text-lg text-white/90 leading-relaxed max-w-3xl mx-auto">
-      Events 2 Go ("we", "us", "our") is committed to protecting your privacy as a user of our platform. 
-      This Privacy Policy outlines how we collect, use, disclose, and safeguard your personal information 
-      when you visit or use our platform to browse events or purchase tickets.
-    </p> */}
-  </div>
-</div>
-
-<div className="max-w-5xl mx-auto px-4">
-  <Card className="shadow-md border border-slate-200 dark:border-slate-800">
-    <CardHeader>
-      <CardTitle className="text-2xl font-bold flex items-center gap-2">
-        <Shield className="h-6 w-6 text-blue-600" />
-        Privacy Policy
-      </CardTitle>
-      <p className="text-sm text-muted-foreground">
-        Updated: {lastUpdated}
-      </p>
-    </CardHeader>
-
-    <CardContent className="space-y-10">
-      {/* Section 1 */}
-      <section>
-        <h2 className="flex items-center gap-2 text-xl font-semibold mb-4">
-          <Eye className="h-5 w-5 text-green-600" />
-          1. What We Collect
-        </h2>
-        <p className="text-muted-foreground mb-4">
-          We may collect the following personal data from you:
-        </p>
-        <div className="grid gap-4">
-          <div className="flex items-start gap-3 p-4 bg-muted/30 rounded-lg">
-            <Mail className="h-5 w-5 text-blue-600 mt-0.5" />
-            <div>
-              <h4 className="font-semibold">Contact Information</h4>
-              <p className="text-sm text-muted-foreground">Name, email address, and phone number.</p>
-            </div>
-          </div>
-          <div className="flex items-start gap-3 p-4 bg-muted/30 rounded-lg">
-            <CreditCard className="h-5 w-5 text-green-600 mt-0.5" />
-            <div>
-              <h4 className="font-semibold">Payment Information</h4>
-              <p className="text-sm text-muted-foreground">
-                Payment details (processed securely through third-party payment gateways like Stripe or PayPal).
-              </p>
-            </div>
-          </div>
-          <div className="flex items-start gap-3 p-4 bg-muted/30 rounded-lg">
-            <Calendar className="h-5 w-5 text-purple-600 mt-0.5" />
-            <div>
-              <h4 className="font-semibold">Event Preferences</h4>
-              <p className="text-sm text-muted-foreground">
-                Events you view, attend, or mark as favourites.
-              </p>
-            </div>
-          </div>
-          <div className="flex items-start gap-3 p-4 bg-muted/30 rounded-lg">
-            <Settings className="h-5 w-5 text-orange-600 mt-0.5" />
-            <div>
-              <h4 className="font-semibold">Device and Usage Data</h4>
-              <p className="text-sm text-muted-foreground">
-                IP address, device type, browser, geolocation, and interaction data (via cookies and analytics tools).
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <Separator />
-
-      {/* Section 2 */}
-      <section>
-        <h2 className="flex items-center gap-2 text-xl font-semibold mb-4">
-          <FileText className="h-5 w-5 text-blue-600" />
-          2. Why We Collect It
-        </h2>
-        <p className="text-muted-foreground mb-4">We use your data to:</p>
-        <ul className="space-y-3">
-          {[
-            "Register your account and process ticket purchases.",
-            "Deliver electronic tickets and event updates.",
-            "Communicate with you about your purchases and events.",
-            "Send optional marketing (with your consent).",
-            "Improve our platform and user experience.",
-            "Comply with legal obligations."
-          ].map((item, idx) => (
-            <li key={idx} className="flex items-start gap-3">
-              <div className="w-2 h-2 bg-blue-600 rounded-full mt-2"></div>
-              <span>{item}</span>
-            </li>
-          ))}
-        </ul>
-      </section>
-
-      <Separator />
-
-      {/* Section 3 */}
-      <section>
-        <h2 className="flex items-center gap-2 text-xl font-semibold mb-4">
-          <Users className="h-5 w-5 text-purple-600" />
-          3. Sharing Your Information
-        </h2>
-        <p className="text-muted-foreground mb-4">We may share your data with:</p>
-
-        <div className="space-y-4">
-          <div className="border-l-4 border-purple-500 pl-4">
-            <h4 className="font-semibold">Event Organizers</h4>
-            <p className="text-sm text-muted-foreground">Limited info (e.g. name and email) is shared so they can manage attendees.</p>
-          </div>
-          <div className="border-l-4 border-green-500 pl-4">
-            <h4 className="font-semibold">Payment Providers</h4>
-            <p className="text-sm text-muted-foreground">To securely process transactions.</p>
-          </div>
-          <div className="border-l-4 border-blue-500 pl-4">
-            <h4 className="font-semibold">Service Providers</h4>
-            <p className="text-sm text-muted-foreground">Who help us run the platform (e.g. hosting, analytics).</p>
-          </div>
-          <div className="border-l-4 border-red-500 pl-4">
-            <h4 className="font-semibold">Legal Authorities</h4>
-            <p className="text-sm text-muted-foreground">If required by law or to prevent fraud or harm.</p>
-          </div>
-        </div>
-
-        <div className="bg-green-50 dark:bg-green-900/20 p-4 rounded-lg border border-green-200 dark:border-green-800 mt-4">
-          <div className="flex items-center gap-2">
-            <Shield className="h-5 w-5 text-green-600" />
-            <span className="font-semibold text-green-800 dark:text-green-400">
-              We never sell your personal data.
-            </span>
-          </div>
-        </div>
-      </section>
-
-      <Separator />
-
-      {/* Add Section 4, 5, 6, 7, and Footer Notice in same way... */}
-    </CardContent>
-  </Card>
-</div>
-</div>
   );
 };
 

@@ -21,35 +21,15 @@ const signupSchema = z.object({
     .min(3, "Username must be at least 3 characters")
     .max(32, "Username must be at most 32 characters")
     .refine((username) => {
-      // Reserved usernames (matching backend)
       const RESERVED_USERNAMES = ["admin", "root", "support", "null", "api"];
       const trimmedUsername = username.trim().toLowerCase();
-      
-      if (RESERVED_USERNAMES.includes(trimmedUsername)) {
-        return false;
-      }
-      
-      // Must start with a letter
-      if (!/^[a-zA-Z]/.test(username)) {
-        return false;
-      }
-      
-      // No consecutive special characters like __, .., --
-      if (/[_.-]{2}/.test(username)) {
-        return false;
-      }
-      
-      // Cannot end with special character
-      if (/[_.-]$/.test(username)) {
-        return false;
-      }
-      
-      // Contains only letters, numbers, dots, underscores, and hyphens
-      // Updated regex to match backend: ^(?!.*[_.-]{2})(?!.*[_.-]$)[a-zA-Z][a-zA-Z0-9_.-]{2,31}$
-      if (!/^[a-zA-Z][a-zA-Z0-9_.-]*$/.test(username)) {
-        return false;
-      }
-      
+
+      if (RESERVED_USERNAMES.includes(trimmedUsername)) return false;
+      if (!/^[a-zA-Z]/.test(username)) return false;
+      if (/[_.-]{2}/.test(username)) return false;
+      if (/[_.-]$/.test(username)) return false;
+      if (!/^[a-zA-Z][a-zA-Z0-9_.-]*$/.test(username)) return false;
+
       return true;
     }, {
       message: "Username must start with a letter, contain only letters, numbers, dots, underscores, and hyphens, no consecutive special characters, and cannot end with special characters. Reserved usernames are not allowed."
@@ -63,53 +43,27 @@ const signupSchema = z.object({
 });
 
 type SignupFormData = z.infer<typeof signupSchema>;
+
 const extractUsername = (email: string): string => {
   let username = email.split('@')[0].split('+')[0];
-  
-  // Remove or replace invalid characters, keeping only letters, numbers, dots, underscores, hyphens
   username = username.replace(/[^a-zA-Z0-9._-]/g, '');
-  
-  // Ensure it starts with a letter
-  if (!/^[a-zA-Z]/.test(username)) {
-    username = 'user' + username;
-  }
-  
-  // Remove consecutive special characters
+  if (!/^[a-zA-Z]/.test(username)) username = 'user' + username;
   username = username.replace(/[_.-]{2,}/g, '_');
-  
-  // Remove trailing special characters
   username = username.replace(/[_.-]+$/, '');
-  
-  // Ensure minimum length
-  if (username.length < 3) {
-    username = username + '123';
-  }
-  
-  // Ensure maximum length
-  if (username.length > 32) {
-    username = username.substring(0, 32);
-    // Make sure it doesn't end with special character after truncation
-    username = username.replace(/[_.-]+$/, '');
-  }
-  
-  // Final validation - if still invalid, create a simple fallback
-  if (username.length < 3 || !/^[a-zA-Z]/.test(username)) {
-    username = 'user123';
-  }
-  
+  if (username.length < 3) username += '123';
+  if (username.length > 32) username = username.substring(0, 32).replace(/[_.-]+$/, '');
+  if (username.length < 3 || !/^[a-zA-Z]/.test(username)) username = 'user123';
   return username;
 };
 
 const generateUsernameSuggestions = (baseUsername: string): string[] => {
   const suggestions = [];
   const randomNumbers = Math.floor(Math.random() * 999) + 1;
-  
   suggestions.push(`${baseUsername}${randomNumbers}`);
   suggestions.push(`${baseUsername}_${randomNumbers}`);
   suggestions.push(`${baseUsername}.${randomNumbers}`);
   suggestions.push(`${baseUsername}-${randomNumbers}`);
-  
-  return suggestions.slice(0, 3); // Return top 3 suggestions
+  return suggestions.slice(0, 3);
 };
 
 export function SignupForm({ className, ...props }: React.ComponentProps<"div">) {
@@ -123,23 +77,26 @@ export function SignupForm({ className, ...props }: React.ComponentProps<"div">)
   } = useForm<SignupFormData>({
     resolver: zodResolver(signupSchema),
   });
+
   const [passwordValue, setPasswordValue] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [usernameAvailable, setUsernameAvailable] = useState<boolean | null>(null);
   const [checkingUsername, setCheckingUsername] = useState(false);
   const [usernameSuggestions, setUsernameSuggestions] = useState<string[]>([]);
-  
+  const [acceptedTerms, setAcceptedTerms] = useState(false); // ✅ New state
+
   const emailValue = watch("email");
   const usernameValue = watch("username");
 
   const passwordChecks = [
-  { label: "At least 8 characters", test: /.{8,}/.test(passwordValue) },
-  { label: "At least one lowercase letter", test: /[a-z]/.test(passwordValue) },
-  { label: "At least one uppercase letter", test: /[A-Z]/.test(passwordValue) },
-  { label: "At least one number", test: /\d/.test(passwordValue) },
-  { label: "At least one special character", test: /[^a-zA-Z0-9]/.test(passwordValue) },
-];
-const router = useRouter();
+    { label: "At least 8 characters", test: /.{8,}/.test(passwordValue) },
+    { label: "At least one lowercase letter", test: /[a-z]/.test(passwordValue) },
+    { label: "At least one uppercase letter", test: /[A-Z]/.test(passwordValue) },
+    { label: "At least one number", test: /\d/.test(passwordValue) },
+    { label: "At least one special character", test: /[^a-zA-Z0-9]/.test(passwordValue) },
+  ];
+
+  const router = useRouter();
 
   // Auto-fill username when email changes
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -147,8 +104,8 @@ const router = useRouter();
     if (email && email.includes('@')) {
       const suggestedUsername = extractUsername(email);
       setValue("username", suggestedUsername);
-      setUsernameAvailable(null); // Reset availability status
-      setUsernameSuggestions([]); // Reset suggestions
+      setUsernameAvailable(null);
+      setUsernameSuggestions([]);
     }
     register("email").onChange(e);
   };
@@ -163,31 +120,24 @@ const router = useRouter();
 
     setCheckingUsername(true);
     try {
-      const response = await axiosInstance.post("/api/v1/users/check-username", {
-        username: username
-      });
+      const response = await axiosInstance.post("/api/v1/users/check-username", { username });
       const isAvailable = response.data.data.available;
       setUsernameAvailable(isAvailable);
-      
-      // Generate suggestions if username is not available
+
       if (!isAvailable) {
-        const suggestions = generateUsernameSuggestions(username);
-        setUsernameSuggestions(suggestions);
+        setUsernameSuggestions(generateUsernameSuggestions(username));
       } else {
         setUsernameSuggestions([]);
       }
     } catch (err: any) {
       setUsernameAvailable(false);
       console.error("Username check failed:", err);
-      // Generate suggestions on error as well
-      const suggestions = generateUsernameSuggestions(username);
-      setUsernameSuggestions(suggestions);
+      setUsernameSuggestions(generateUsernameSuggestions(username));
     } finally {
       setCheckingUsername(false);
     }
   };
 
-  // Handle username change with debounced availability check
   useEffect(() => {
     if (usernameValue && usernameValue.length >= 3) {
       const timeoutId = setTimeout(() => {
@@ -201,25 +151,28 @@ const router = useRouter();
   }, [usernameValue]);
 
   const onSubmit = async (data: SignupFormData) => {
-    // Check if username is available before submitting
+    if (!acceptedTerms) {
+      toast.error("You must accept the Terms and Conditions to proceed");
+      return;
+    }
+
     if (usernameAvailable === false) {
       toast.error("Please choose a different username as this one is not available");
       return;
     }
-    
-    // If we haven't checked username availability yet, check it now
+
     if (usernameAvailable === null) {
       toast.error("Please wait while we check username availability");
       await checkUsernameAvailability(data.username);
       return;
     }
-    
+
     const payload = {
       username: data.username,
       email: data.email,
       password: data.password,
     };
-    
+
     try {
       const res = await axiosInstance.post("/api/v1/users/register", payload);
       toast.success(res.data.message);
@@ -310,56 +263,71 @@ const router = useRouter();
                 )}
               </div>
 
-{/* Password */}
-<div className="grid gap-2">
-  <Label htmlFor="password">Password</Label>
-  <div className="relative">
-  <Input
-    id="password"
-    type={showPassword ? "text" : "password"}
-    {...register("password")}
-    value={passwordValue}
-    onChange={(e) => {
-      setPasswordValue(e.target.value);
-      register("password").onChange(e);
-    }}
-    placeholder="••••••••"
-    className="pr-10" // space for icon
-  />
-  <button
-    type="button"
-    onClick={() => setShowPassword((prev) => !prev)}
-    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
-  >
-    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-  </button>
-</div>
+              {/* Password */}
+              <div className="grid gap-2">
+                <Label htmlFor="password">Password</Label>
+                <div className="relative">
+                  <Input
+                    id="password"
+                    type={showPassword ? "text" : "password"}
+                    {...register("password")}
+                    value={passwordValue}
+                    onChange={(e) => {
+                      setPasswordValue(e.target.value);
+                      register("password").onChange(e);
+                    }}
+                    placeholder="••••••••"
+                    className="pr-10"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword((prev) => !prev)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                  >
+                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                  </button>
+                </div>
 
-  {/* {errors.password && (
-    <p className="text-red-500 text-sm">{errors.password.message}</p>
-  )} */}
+                {passwordValue && (
+                  <ul className="text-sm mt-1 space-y-1">
+                    {passwordChecks.map((rule, index) => (
+                      <li
+                        key={index}
+                        className={`flex items-center gap-2 ${rule.test ? "text-green-600" : "text-gray-500"}`}
+                      >
+                        {rule.test ? "✔" : "❌"} {rule.label}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
 
-{passwordValue && (
-  <ul className="text-sm mt-1 space-y-1">
-    {passwordChecks.map((rule, index) => (
-      <li
-        key={index}
-        className={`flex items-center gap-2 ${
-          rule.test ? "text-green-600" : "text-gray-500"
-        }`}
-      >
-        {rule.test ? "✔" : "❌"} {rule.label}
-      </li>
-    ))}
-  </ul>
-)}
-</div>
+              {/* Terms and Conditions Checkbox */}
+              <div className="flex items-center gap-2">
+                <input
+                  id="terms"
+                  type="checkbox"
+                  checked={acceptedTerms}
+                  onChange={(e) => setAcceptedTerms(e.target.checked)}
+                  className="w-4 h-4"
+                />
+                <label htmlFor="terms" className="text-sm">
+                  I accept the{" "}
+                  <a href="#" className="underline text-blue-600">
+                    Terms of Service
+                  </a>{" "}
+                  and{" "}
+                  <a href="#" className="underline text-blue-600">
+                    Privacy Policy
+                  </a>.
+                </label>
+              </div>
 
-
-              <Button 
-                type="submit" 
+              {/* Submit Button */}
+              <Button
+                type="submit"
                 className="w-full bg-purple-500 hover:bg-yellow-500"
-                disabled={usernameAvailable === false || checkingUsername}
+                disabled={usernameAvailable === false || checkingUsername || !acceptedTerms}
               >
                 {checkingUsername ? "Checking username..." : "Create Account"}
               </Button>
@@ -377,8 +345,22 @@ const router = useRouter();
 
       <div className="text-muted-foreground text-center text-xs">
         By continuing, you agree to our{" "}
-        <a href="#" className="underline">Terms of Service</a> and{" "}
-        <a href="#" className="underline">Privacy Policy</a>.
+        <button
+  type="button"
+  onClick={() => window.open("/Terms", "_blank")}
+  className="underline text-blue-600 hover:text-blue-800"
+>
+  Terms of Service
+</button>{" "}
+and{" "}
+<button
+  type="button"
+  onClick={() => window.open("/Privacy", "_blank")}
+  className="underline text-blue-600 hover:text-blue-800"
+>
+  Privacy Policy
+</button>.
+
       </div>
     </div>
   );
