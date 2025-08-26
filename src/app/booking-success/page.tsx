@@ -403,6 +403,7 @@ const BookingSuccessContent = () => {
     tempContainer.style.zIndex = '-1000';
     tempContainer.style.visibility = 'hidden';
     tempContainer.style.pointerEvents = 'none';
+    tempContainer.style.isolation = 'isolate';
 
     tempContainer.innerHTML = `<div class="ticket-wrapper" style="width: 794px; min-height: 1123px; background: white; padding: 0; margin: 0;">${ticketHTML}</div>`;
 
