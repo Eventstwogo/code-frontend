@@ -311,6 +311,7 @@ const BookingSuccessContent = () => {
           .replace(/\$\{categoryName\}/g, category.label || 'General')
           .replace(/\$\{seatCategories\}/g, seatCategorySummary || 'General')
           .replace(/\$\{totalAmount\}/g, bookingDetails.totalAmount.toFixed(2) || '0.00')
+          .replace(/\$\{numberOfTickets\}/g, bookingDetails.numberOfTickets?.toString() || '1')
           .replace(/\$\{eventAddress\}/g, bookingDetails.eventAddress || 'Venue TBD')
           .replace(/\$\{qrCodeUrl\}/g, qrCodeUrl || '/images/qr-placeholder.png')
           .replace(/\$\{custom_category_name\}/g, (matchedTemplate === "Standard" ? category.label : matchedTemplate).toUpperCase());

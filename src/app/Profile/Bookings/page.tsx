@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useEffect, useState } from "react";
@@ -137,7 +138,7 @@ export default function BookingsPage() {
       const booking = await fetchBookingDetails(orderId);
       setSelectedBooking(booking);
       setModalOpen(true);
-      toast.success(`Booking details for ${booking.event.title} loaded!`);
+      toast.success(`Booking details for ${booking?.event.title} loaded!`);
       console.log("Booking details:", booking);
     } catch (err) {
       toast.error("Failed to fetch booking details");
@@ -278,7 +279,7 @@ export default function BookingsPage() {
     if (!booking) return;
 
     try {
-      toast.info("Generating your ticket PDF...");
+      toast.info("Generating your ticket PDF(s)...");
 
       const available_templates_names = [
         "Diamond",
@@ -291,106 +292,192 @@ export default function BookingsPage() {
       ];
       console.log("Available templates:", available_templates_names);
 
-      // Use the first seat category's label for the template, or fallback to 'Standard'
-      const categoryName =
-        booking.seat_categories[0]?.label.toLowerCase() || "standard";
+      if (booking.seat_categories.length === 1) {
+        // Single category: use original logic with updated template selection
+        const category = booking.seat_categories[0];
+        const categoryName = category.label.toLowerCase();
 
-      // Find a matching template name ignoring case
-      let matchedTemplate = available_templates_names.find(
-        (name) => name.toLowerCase() === categoryName
-      );
-
-      console.log("Matched template:", matchedTemplate);
-
-      // If no match is found, use "Standard" as default
-      if (!matchedTemplate) {
-        matchedTemplate = "Standard";
-      }
-      console.log("Using template:", matchedTemplate);
-
-      let templateUrl = `/templates/${matchedTemplate}.html`;
-
-      // Fetch the HTML template
-      let response = await fetch(templateUrl);
-
-      // If the template is not found, use the default Standard.html
-      if (!response.ok) {
-        console.warn(
-          `Template "${matchedTemplate}" not found. Using Standard.html`
-        );
-        templateUrl = `/templates/Standard.html`;
-        response = await fetch(templateUrl);
-      }
-
-      let ticketHTML = await response.text();
-
-      // Generate QR code URL
-      const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(
-        JSON.stringify({
-          orderId: booking.order_id,
-          eventDate: booking.event.event_date,
-          eventTime: booking.event.event_time,
-        })
-      )}&format=png&ecc=M&margin=1`;
-
-      // Replace placeholders dynamically with safe fallbacks
-      ticketHTML = ticketHTML
-        .replace(/\${bookingId}/g, booking.order_id || "Booking ID")
-        .replace(/\${eventTitle}/g, booking.event.title || "Event Title")
-        .replace(
-          /\${businessLogo}/g,
-          booking.event.business_logo || "/images/placeholder.svg"
-        )
-        .replace(
-          /\${eventImage}/g,
-          booking.event.card_image || "/images/event-placeholder.png"
-        )
-        .replace(
-          /\${selectedDate}/g,
-          formatDate(booking.event.event_date) || "TBD"
-        )
-        .replace(/\${startTime}/g, booking.event.event_time || "TBD")
-        .replace(
-          /\${categoryName}/g,
-          booking.seat_categories[0]?.label || "General"
-        )
-        .replace(
-          /\${numberOfTickets}/g,
-          booking.seat_categories
-            .reduce((sum: number, seat: any) => sum + seat.num_seats, 0)
-            .toString() || "1"
-        )
-        .replace(/\${eventAddress}/g, booking.event.address || "Venue TBD")
-        .replace(/\${qrCodeUrl}/g, qrCodeUrl || "/images/qr-placeholder.png")
-        .replace(
-          /\${custom_category_name}/g,
-          booking.seat_categories[0]?.label
-            ? booking.seat_categories[0].label.toUpperCase()
-            : "STANDARD"
+        // Find a matching template name ignoring case
+        let matchedTemplate = available_templates_names.find(
+          (name) => name.toLowerCase() === categoryName
         );
 
-      // Convert OKLCH colors to RGB
-      ticketHTML = convertOklchToRgb(ticketHTML);
+        console.log("Matched template:", matchedTemplate);
 
-      // Try the modern approach first, fallback to simple method if it fails
-      try {
-        await generatePDFWithHtml2Canvas(ticketHTML);
-      } catch (html2canvasError) {
-        console.warn(
-          "html2canvas failed, trying fallback method:",
-          html2canvasError
-        );
-        await generatePDFWithFallback(ticketHTML);
+        // If no match is found, use "Standard" as default
+        if (!matchedTemplate) {
+          matchedTemplate = "Standard";
+        }
+        console.log("Using template:", matchedTemplate);
+
+        let templateUrl = `/templates/${matchedTemplate}.html`;
+
+        // Fetch the HTML template
+        let response = await fetch(templateUrl);
+
+        // If the template is not found, use the default Standard.html
+        if (!response.ok) {
+          console.warn(
+            `Template "${matchedTemplate}" not found. Using Standard.html`
+          );
+          response = await fetch(`/templates/Standard.html`);
+          matchedTemplate = "Standard"; // Update matchedTemplate for category name replacement
+        }
+
+        let ticketHTML = await response.text();
+
+        // Generate QR code URL
+        const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(
+          JSON.stringify({
+            orderId: booking.order_id,
+            eventDate: booking.event.event_date,
+            eventTime: booking.event.event_time,
+          })
+        )}&format=png&ecc=M&margin=1`;
+
+        const seatCategorySummary = `${category.label} (x${category.num_seats}): ${formatAUD(category.price_per_seat * category.num_seats)}`;
+
+        // Replace placeholders dynamically with safe fallbacks
+        ticketHTML = ticketHTML
+          .replace(/\${bookingId}/g, booking.order_id || "Booking ID")
+          .replace(/\${eventTitle}/g, booking.event.title || "Event Title")
+          .replace(
+            /\${businessLogo}/g,
+            booking.event.business_logo || "/images/placeholder.svg"
+          )
+          .replace(
+            /\${eventImage}/g,
+            booking.event.card_image || "/images/event-placeholder.png"
+          )
+          .replace(
+            /\${selectedDate}/g,
+            formatDate(booking.event.event_date) || "TBD"
+          )
+          .replace(/\${startTime}/g, booking.event.event_time || "TBD")
+          .replace(/\${categoryName}/g, category.label || "General")
+          .replace(/\${seatCategories}/g, seatCategorySummary || "General")
+          .replace(
+            /\${numberOfTickets}/g,
+            category.num_seats.toString() || "1"
+          )
+          .replace(/\${eventAddress}/g, booking.event.address || "Venue TBD")
+          .replace(/\${qrCodeUrl}/g, qrCodeUrl || "/images/qr-placeholder.png")
+          .replace(
+            /\${custom_category_name}/g,
+            (matchedTemplate === "Standard" ? category.label : matchedTemplate).toUpperCase()
+          );
+
+        // Convert OKLCH colors to RGB
+        ticketHTML = convertOklchToRgb(ticketHTML);
+
+        try {
+          await generatePDFWithHtml2Canvas(ticketHTML, category.label);
+        } catch (html2canvasError) {
+          console.warn(
+            "html2canvas failed, trying fallback method:",
+            html2canvasError
+          );
+          await generatePDFWithFallback(ticketHTML);
+        }
+      } else {
+        // Multiple categories: generate a PDF for each category
+        for (const category of booking.seat_categories) {
+          const categoryName = category.label.toLowerCase();
+
+          // Find a matching template name ignoring case
+          let matchedTemplate = available_templates_names.find(
+            (name) => name.toLowerCase() === categoryName
+          );
+
+          console.log("Matched template:", matchedTemplate);
+
+          // If no match is found, use "Standard" as default
+          if (!matchedTemplate) {
+            matchedTemplate = "Standard";
+          }
+          console.log("Using template:", matchedTemplate);
+
+          let templateUrl = `/templates/${matchedTemplate}.html`;
+
+          // Fetch the HTML template
+          let response = await fetch(templateUrl);
+
+          // If the template is not found, use the default Standard.html
+          if (!response.ok) {
+            console.warn(
+              `Template "${matchedTemplate}" not found. Using Standard.html`
+            );
+            response = await fetch(`/templates/Standard.html`);
+            matchedTemplate = "Standard"; // Update matchedTemplate for category name replacement
+          }
+
+          let ticketHTML = await response.text();
+
+          // Generate QR code URL
+          const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(
+            JSON.stringify({
+              orderId: booking.order_id,
+              eventDate: booking.event.event_date,
+              eventTime: booking.event.event_time,
+              category: category.label,
+            })
+          )}&format=png&ecc=M&margin=1`;
+
+          const seatCategorySummary = `${category.label} (x${category.num_seats}): ${formatAUD(category.price_per_seat * category.num_seats)}`;
+
+          // Replace placeholders dynamically with safe fallbacks
+          ticketHTML = ticketHTML
+            .replace(/\${bookingId}/g, booking.order_id || "Booking ID")
+            .replace(/\${eventTitle}/g, booking.event.title || "Event Title")
+            .replace(
+              /\${businessLogo}/g,
+              booking.event.business_logo || "/images/placeholder.svg"
+            )
+            .replace(
+              /\${eventImage}/g,
+              booking.event.card_image || "/images/event-placeholder.png"
+            )
+            .replace(
+              /\${selectedDate}/g,
+              formatDate(booking.event.event_date) || "TBD"
+            )
+            .replace(/\${startTime}/g, booking.event.event_time || "TBD")
+            .replace(/\${categoryName}/g, category.label || "General")
+            .replace(/\${seatCategories}/g, seatCategorySummary || "General")
+            .replace(
+              /\${numberOfTickets}/g,
+              category.num_seats.toString() || "1"
+            )
+            .replace(/\${eventAddress}/g, booking.event.address || "Venue TBD")
+            .replace(/\${qrCodeUrl}/g, qrCodeUrl || "/images/qr-placeholder.png")
+            .replace(
+              /\${custom_category_name}/g,
+              (matchedTemplate === "Standard" ? category.label : matchedTemplate).toUpperCase()
+            );
+
+          // Convert OKLCH colors to RGB
+          ticketHTML = convertOklchToRgb(ticketHTML);
+
+          try {
+            await generatePDFWithHtml2Canvas(ticketHTML, category.label);
+          } catch (html2canvasError) {
+            console.warn(
+              `html2canvas failed for ${category.label}, trying fallback:`,
+              html2canvasError
+            );
+            await generatePDFWithFallback(ticketHTML);
+          }
+        }
       }
 
-      toast.success("Ticket downloaded successfully!");
+      toast.success("Ticket(s) downloaded successfully!");
     } catch (error) {
-      console.error("Error generating PDF ticket:", error);
-      toast.error("Failed to download ticket. Please try again.");
+      console.error("Error generating PDF ticket(s):", error);
+      toast.error("Failed to download ticket(s). Please try again.");
     }
   };
 
-  const generatePDFWithHtml2Canvas = async (ticketHTML: string) => {
+  const generatePDFWithHtml2Canvas = async (ticketHTML: string, categoryLabel: string) => {
     const tempContainer = document.createElement("div");
     tempContainer.style.position = "fixed";
     tempContainer.style.left = "-10000px";
@@ -505,9 +592,7 @@ export default function BookingsPage() {
       }
     }
 
-    const fileName = `Events2Go_Ticket_${
-      booking?.seat_categories[0]?.label || "General"
-    }_${booking.order_id}.pdf`;
+    const fileName = `Events2Go_Ticket_${categoryLabel}_${booking.order_id}.pdf`;
     pdf.save(fileName);
   };
 
@@ -528,22 +613,13 @@ export default function BookingsPage() {
         <title>Event Ticket</title>
         <style>
           @page {
- GdkError: The program 'BookingsPage' received an X Window System error.
-This probably reflects a bug in the program.
-The error was 'BadAlloc'.
-  (Details: serial 3764 error_code 11 request_code 130 (MIT-SHM) minor_code 3)
-  (Note to programmers: normally, X errors are reported asynchronously;
-   that is, you will receive the error a while after causing it.
-   To debug your program, run it with the GDK_SYNCHRONIZE environment
-   variable to change this behavior. You can then get a meaningful
-   backtrace from your debugger if you break on the gdk_x_error() function.)
-             size: A4;
+            size: A4;
             margin: 0;
           }
           body {
             margin: 0;
             padding: 0;
-            width: 270mm;
+            width: 210mm;
             height: 297mm;
             font-family: Arial, sans-serif;
           }
@@ -1197,7 +1273,7 @@ The error was 'BadAlloc'.
                     className="flex items-center gap-2 border-slate-200 hover:bg-slate-50 text-sm sm:text-base"
                   >
                     <Download className="w-4 h-4" />
-                    Download Ticket PDF
+                    Download Ticket PDF{selectedBooking.seat_categories.length > 1 ? "s" : ""}
                   </Button>
                   <Button
                     onClick={() => setModalOpen(false)}
