@@ -30,7 +30,7 @@
 <body class="flex justify-center items-center min-h-screen bg-gray-100">
   <div class="relative">
     <div
-      class="flex bg-gradient-to-r from-cyan-400 via-cyan-400 to-amber-300 rounded-xl shadow-xl overflow-hidden max-w-6xl h-80">
+      class="flex bg-gradient-to-r from-cyan-400 via-cyan-400 to-amber-300 rounded-xl shadow-xl overflow-hidden w-fit h-fit">
 
       <!-- Left Rotated Title -->
       <div
@@ -73,10 +73,10 @@
       </div>
 
       <!-- Event Image Section -->
-      <div class="relative h-full bg-cover bg-center" style="background-image: url('${eventImage}');">
+      <div class="relative h-[350px] w-[250px] bg-cover bg-center" style="background-image: url('${eventImage}');">
         <div
-          class="relative z-10 h-full p-5 flex flex-col justify-between bg-black/40 border-l border-r border-dotted border-white/50">
-          <div class="space-y-3 mt-6">
+          class="relative z-10 h-full p-2 pl-2 pr-2 flex flex-col justify-between bg-black/40 border-l border-r border-dotted border-white/50">
+          <div class="space-y-1.5">
             <div>
               <label class="text-white/80 text-xs uppercase tracking-wide">Name</label>
               <div class="border-b border-dotted border-white/60 pb-1 mt-1">
@@ -84,7 +84,7 @@
               </div>
             </div>
 
-            <div class="grid grid-cols-2 gap-4 border-b border-dotted border-white/60 pb-1 mt-1">
+            <div class="grid grid-cols-2 gap-2 border-b-2 border-dotted border-white/60 pb-1 mt-1">
               <div>
                 <label class="text-white/80 text-xs uppercase tracking-wide">Event Date</label>
                 <div><span class="text-white text-sm">${selectedDate}</span></div>
@@ -106,22 +106,26 @@
               </div>
             </div>
 
-            <div class="grid grid-cols-2 gap-6 border-b border-dotted border-white/60 pb-1 mt-1">
-              <div>
-                <label class="text-white/80 text-xs uppercase tracking-wide">Venue</label>
-                <div><span class="text-white text-sm">${eventAddress}</span></div>
-              </div>
+            <div class="grid grid-cols-1 gap-6 border-b border-dotted border-white/60 pb-1 mt-1">
+             
               <div>
                 <label class="text-white/80 text-xs uppercase tracking-wide">Booking ID</label>
                 <div><span class="text-white text-sm">${bookingId}</span></div>
               </div>
+            </div>
+            <div class="grid grid-cols-1 gap-6 border-b border-dotted border-white/60 pb-1 mt-1">
+              <div>
+                <label class="text-white/80 text-xs uppercase tracking-wide">Venue</label>
+                <div><span class="text-white text-sm">${eventAddress}</span></div>
+              </div>
+              
             </div>
           </div>
         </div>
       </div>
 
       <!-- Right Info Section -->
-      <div class="w-64 bg-white flex flex-col justify-between py-6 px-2">
+      <div class="w-64 bg-white flex flex-col justify-between py-6 px-1">
         <div class="text-center mb-4 flex items-center justify-center gap-2">
 
           <!-- Left Coin -->
@@ -171,7 +175,7 @@
 
       <!-- Right Gradient Section -->
       <div
-        class="w-80 bg-gradient-to-r from-cyan-400 to-amber-300 p-6 flex flex-col justify-between rounded-r-lg relative">
+        class="w-80 bg-gradient-to-r from-cyan-400 to-amber-300 p-1 flex flex-col justify-between rounded-r-lg relative">
         <div class="absolute top-4 right-4">
           <img src="${qrCodeUrl}" alt="QR Code" class="w-16 h-16 object-contain rounded border border-white/70" />
         </div>
@@ -184,7 +188,7 @@
             </div>
           </div>
 
-          <div class="grid grid-cols-2 gap-4 border-b border-dotted border-white/60 pb-1 mt-1">
+          <div class="grid grid-cols-3 gap-4 border-b border-dotted border-white/60 pb-1 mt-1">
             <div>
               <label class="text-xs uppercase tracking-wide">Event Date</label>
               <div><span class="text-sm">${selectedDate}</span></div>
@@ -192,6 +196,10 @@
             <div>
               <label class="text-xs uppercase tracking-wide">Event Time</label>
               <div><span class="text-sm">${startTime}</span></div>
+            </div>
+            <div>
+              <label class="text-xs uppercase tracking-wide">Booking ID</label>
+              <div><span class="text-sm">${bookingId}</span></div>
             </div>
           </div>
 
@@ -209,16 +217,14 @@
               <div><span class="text-sm">1</span></div>
             </div>
           </div>
+         
 
-          <div class="grid grid-cols-2 gap-6 border-b border-dotted border-white/60 pb-1 mt-1">
+          <div class="grid grid-cols-1 gap-6 border-b border-dotted border-white/60 pb-1 mt-1">
             <div>
               <label class="text-xs uppercase tracking-wide">Venue</label>
               <div><span class="text-sm">${eventAddress}</span></div>
             </div>
-            <div>
-              <label class="text-xs uppercase tracking-wide">Booking ID</label>
-              <div><span class="text-sm">${bookingId}</span></div>
-            </div>
+           
           </div>
         </div>
       </div>

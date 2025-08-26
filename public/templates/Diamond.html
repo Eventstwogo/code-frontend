@@ -47,7 +47,7 @@
 
 <body class="flex justify-center items-center min-h-screen bg-gradient-to-br from-[#e0f7fa] to-[#ffffff]">
   <div class="relative">
-    <div class="flex bg-diamond-dark rounded-xl shadow-2xl overflow-hidden max-w-6xl h-80">
+    <div class="flex bg-diamond-dark rounded-xl shadow-2xl overflow-hidden w-fit h-fit">
 
       <!-- Left Rotated Diamond Title -->
       <div class="relative w-[55px] bg-[#b3e5fc] flex items-center justify-center rounded-l-xl">
@@ -64,20 +64,21 @@
       <!-- Logo + QR Section -->
       <div class="w-24 bg-white flex flex-col items-center justify-between py-6">
         <div class="relative">
-          <img src="${businessLogo}" alt="organizer logo" class="w-16 h-16 object-contain rounded-full border border-[#81d4fa]" />
+          <img src="${businessLogo}" alt="organizer logo"
+            class="w-16 h-16 object-contain rounded-full border border-[#81d4fa]" />
         </div>
         <div class="relative flex flex-col items-center">
-          <img src="https://events2go.syd1.cdn.digitaloceanspaces.com/events2go.png"
-            alt="Events 2Go Logo" class="w-20 h-24 object-contain transform -rotate-90" />
+          <img src="https://events2go.syd1.cdn.digitaloceanspaces.com/events2go.png" alt="Events 2Go Logo"
+            class="w-20 h-24 object-contain transform -rotate-90" />
         </div>
         <img src="${qrCodeUrl}" alt="QR Code" class="w-16 h-16 object-contain rounded border border-[#81d4fa]" />
       </div>
 
       <!-- Event Image Section -->
-      <div class="relative h-full bg-cover bg-center" style="background-image: url('${eventImage}');">
+      <div class="relative h-[350px] w-[250px] bg-cover bg-center" style="background-image: url('${eventImage}');">
         <div
-          class="relative z-10 h-full p-4 pl-6 pr-6 flex flex-col justify-between bg-black/50 border-l-2 border-r-2 border-dotted border-diamond pb-1">
-          <div class="space-y-3">
+          class="relative z-10 h-full p-2 pl-2 pr-2 flex flex-col justify-between bg-black/50 border-l-2 border-r-2 border-dotted border-diamond ">
+          <div class="space-y-1.5">
             <div>
               <label class="text-white text-sm uppercase">NAME</label>
               <div class="border-b-2 border-dotted border-white pb-1 mt-1">
@@ -85,7 +86,7 @@
               </div>
             </div>
 
-            <div class="grid grid-cols-2 gap-4 border-b-2 border-dotted border-white pb-1 mt-1">
+            <div class="grid grid-cols-2 gap-1 border-b-2 border-dotted border-white pb-1 mt-1">
               <div>
                 <label class="text-white text-sm uppercase">EVENT DATE</label>
                 <div><span class="text-white text-sm">${selectedDate}</span></div>
@@ -96,7 +97,7 @@
               </div>
             </div>
 
-            <div class="grid grid-cols-2 gap-4 border-b-2 border-dotted border-white pb-1 mt-1">
+            <div class="grid grid-cols-2 gap-2 border-b-2 border-dotted border-white pb-1 mt-1">
               <div>
                 <label class="text-white text-sm uppercase">CATEGORY</label>
                 <div><span class="text-white text-sm">${categoryName}</span></div>
@@ -106,17 +107,21 @@
                 <div><span class="text-white text-sm">${numberOfTickets}</span></div>
               </div>
             </div>
-
-            <div class="grid grid-cols-2 gap-6 border-b-2 border-dotted border-white pb-1 mt-1">
-              <div>
-                <label class="text-white text-sm uppercase">VENUE</label>
-                <div><span class="text-white text-sm">${eventAddress}</span></div>
-              </div>
+            <div class="grid grid-cols-1 gap-6 border-b-2 border-dotted border-white pb-1 mt-1">
               <div>
                 <label class="text-white text-sm uppercase">BOOKING ID</label>
                 <div><span class="text-white text-sm">${bookingId}</span></div>
               </div>
             </div>
+
+            <div class="grid grid-cols-1 gap-6 border-b-2 border-dotted border-white pb-1 mt-1">
+              <div>
+                <label class="text-white text-sm uppercase">VENUE</label>
+                <div><span class="text-white text-xs">${eventAddress}</span></div>
+              </div>
+
+            </div>
+
           </div>
         </div>
       </div>
@@ -133,8 +138,8 @@
         </div>
         <div class="flex items-center justify-center relative mb-2">
           <div class="relative">
-            <img src="https://events2go.syd1.cdn.digitaloceanspaces.com/events2go.png"
-              alt="Events 2Go Logo" class="w-44 h-52 object-contain" />
+            <img src="https://events2go.syd1.cdn.digitaloceanspaces.com/events2go.png" alt="Events 2Go Logo"
+              class="w-44 h-52 object-contain" />
             <div class="absolute -top-2 -left-4">
               <img src="${businessLogo}" alt="organizer logo"
                 class="w-16 h-16 object-contain rounded-full border border-[#81d4fa]" />
@@ -142,7 +147,7 @@
           </div>
         </div>
 
-         <div class="text-center space-y-0">
+        <div class="text-center space-y-0">
           <p class="text-black text-xs">Please arrive 15 min before the Event start.</p>
           <p class="text-black text-xs">www.events2go.com.au</p>
         </div>
@@ -159,18 +164,18 @@
       </div>
 
       <!-- Right Gradient Section -->
-      <div class="w-80 bg-diamond-dark p-6 flex flex-col justify-between rounded-r-xl relative">
+      <div class="w-80 bg-diamond-dark p-1 flex flex-col-2 justify-between rounded-r-xl relative">
         <div class="absolute top-4 right-4">
           <img src="${qrCodeUrl}" alt="QR Code" class="w-16 h-16 object-contain rounded border border-[#81d4fa]" />
         </div>
 
-        <div class="space-y-3 mt-8 text-white">
-          <div class="border-b-2 border-dotted border-white pb-1 mt-1">
+        <div class="space-y-3 mt-10 text-white">
+          <div class="border-b-2 border-dotted border-white pb-1">
             <label class="text-sm">NAME</label>
             <div><span class="text-white text-sm">${eventTitle}</span></div>
           </div>
 
-          <div class="grid grid-cols-2 gap-4 border-b-2 border-dotted border-white pb-1 mt-1">
+          <div class="grid grid-cols-3 gap-4 border-b-2 border-dotted border-white pb-1 mt-1">
             <div>
               <label class="text-sm">EVENT DATE</label>
               <div><span class="text-white text-sm">${selectedDate}</span></div>
@@ -178,6 +183,10 @@
             <div>
               <label class="text-sm">EVENT TIME</label>
               <div><span class="text-white text-sm">${startTime}</span></div>
+            </div>
+            <div>
+              <label class="text-sm uppercase">BOOKING ID</label>
+              <div><span class="text-sm text-white">${bookingId}</span></div>
             </div>
           </div>
 
@@ -196,16 +205,14 @@
             </div>
           </div>
 
-          <div class="grid grid-cols-2 gap-6 border-b-2 border-dotted border-white pb-1 mt-1">
+          <div class="grid grid-cols-1 gap-2 border-b-2 border-dotted border-white pb-1 mt-1">
             <div>
               <label class="text-sm uppercase">VENUE</label>
               <div><span class="text-sm text-white">${eventAddress}</span></div>
             </div>
-            <div>
-              <label class="text-sm uppercase">BOOKING ID</label>
-              <div><span class="text-sm text-white">${bookingId}</span></div>
-            </div>
+
           </div>
+
         </div>
       </div>
 

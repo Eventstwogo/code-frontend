@@ -267,14 +267,13 @@ export default function BookingsPage() {
 
   // Format date function
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("en-AU", {
-      weekday: "long",
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
+    const date = new Date(dateString);
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+    return `${day}.${month}.${year}`;
   };
-
+  
   const handleDownloadTicket = async (booking: any) => {
     if (!booking) return;
 
@@ -619,7 +618,7 @@ export default function BookingsPage() {
           body {
             margin: 0;
             padding: 0;
-            width: 210mm;
+            width: 270mm;
             height: 297mm;
             font-family: Arial, sans-serif;
           }
@@ -972,15 +971,17 @@ export default function BookingsPage() {
                           <Eye className="w-3 h-3" />
                           View Details
                         </Button>
-                        <Button
-                          onClick={() => handleDownloadTicket(booking)}
-                          variant="outline"
-                          size="sm"
-                          className="flex items-center gap-1 bg-white hover:bg-slate-50 border-slate-200 text-xs px-3 py-1.5"
-                        >
-                          <Download className="w-3 h-3" />
-                          Download
-                        </Button>
+                        {booking.booking_status.toLowerCase() === "approved" && (
+                          <Button
+                            onClick={() => handleDownloadTicket(booking)}
+                            variant="outline"
+                            size="sm"
+                            className="flex items-center gap-1 bg-white hover:bg-slate-50 border-slate-200 text-xs px-3 py-1.5"
+                          >
+                            <Download className="w-3 h-3" />
+                            Download
+                          </Button>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -1267,14 +1268,16 @@ export default function BookingsPage() {
 
                 {/* Footer Actions */}
                 <div className="flex flex-col sm:flex-row gap-3 justify-end mt-6 sm:mt-8 pt-4 sm:pt-6 border-t border-slate-200">
-                  <Button
-                    onClick={() => handleDownloadTicket(selectedBooking)}
-                    variant="outline"
-                    className="flex items-center gap-2 border-slate-200 hover:bg-slate-50 text-sm sm:text-base"
-                  >
-                    <Download className="w-4 h-4" />
-                    Download Ticket PDF{selectedBooking.seat_categories.length > 1 ? "s" : ""}
-                  </Button>
+                 {selectedBooking.booking_status.toLowerCase() === "approved" && (
+                    <Button
+                      onClick={() => handleDownloadTicket(selectedBooking)}
+                      variant="outline"
+                      className="flex items-center gap-2 border-slate-200 hover:bg-slate-50 text-sm sm:text-base"
+                    >
+                     <Download className="w-4 h-4" />
+                      Download Ticket PDF{selectedBooking.seat_categories.length > 1 ? "s" : ""}
+                    </Button>
+                  )}
                   <Button
                     onClick={() => setModalOpen(false)}
                     className="bg-blue-600 hover:bg-blue-700 text-sm sm:text-base"

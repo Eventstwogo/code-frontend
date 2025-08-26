@@ -8,13 +8,23 @@
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
 
   <!-- Elegant Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Brixton+Sans:wght@400;600;700&family=Cinzel+Decorative:wght@700&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Brixton+Sans:wght@400;600;700&family=Cinzel+Decorative:wght@700&display=swap"
+    rel="stylesheet">
 
   <style>
-    body, div, span, h1, h2, h3, p, label {
+    body,
+    div,
+    span,
+    h1,
+    h2,
+    h3,
+    p,
+    label {
       font-family: 'Brixton Sans', sans-serif;
       font-weight: 600;
     }
+
     .platinum-text {
       font-family: 'Cinzel Decorative', serif;
       background: linear-gradient(to right, #c0c0c0, #2f2f2f);
@@ -27,7 +37,7 @@
 <body class="flex justify-center items-center min-h-screen bg-gray-100">
   <div class="relative">
     <div
-      class="flex bg-gradient-to-r from-purple-500 via-purple-500 to-yellow-400 rounded-lg shadow-2xl overflow-hidden max-w-6xl h-80">
+      class="flex bg-gradient-to-r from-purple-500 via-purple-500 to-yellow-400 rounded-lg shadow-2xl overflow-hidden w-fit h-fit">
 
       <!-- Left Rotated Title -->
       <div
@@ -37,7 +47,7 @@
           <i class="fa-regular fa-gem text-gray-700 text-sm"></i>
 
           <!-- PLATINUM Text -->
-          
+
           <span class="text-black text-xl tracking-widest uppercase font-bold"
             style="font-family: 'Cinzel Decorative', serif;">
             PLATINUM
@@ -61,10 +71,10 @@
       </div>
 
       <!-- Event Image Section -->
-      <div class="relative h-full bg-cover bg-center" style="background-image: url('${eventImage}');">
+      <div class="relative h-[350px] w-[250px] bg-cover bg-center" style="background-image: url('${eventImage}');">
         <div
           class="relative z-10 h-full p-4 pl-6 pr-6 flex flex-col justify-between bg-black/30 border-l-2 border-r-2 border-dotted border-blue pb-1">
-          <div class="space-y-3 mt-6">
+          <div class="space-y-1.5">
             <div>
               <label class="text-white font-bold text-sm uppercase tracking-wide">NAME</label>
               <div class="border-b-2 border-dotted border-white pb-1 mt-1">
@@ -93,17 +103,20 @@
                 <div><span class="text-white text-sm">${numberOfTickets}</span></div>
               </div>
             </div>
+            <div class="grid grid-cols-1 gap-6 border-b-2 border-dotted border-white pb-1 mt-1">
+              <div>
+                <label class="text-white text-sm uppercase">BOOKING ID</label>
+                <div><span class="text-white text-sm">${bookingId}</span></div>
+              </div>
+            </div>
 
-            <div class="grid grid-cols-2 gap-6 border-b-2 border-dotted border-white pb-1 mt-1">
+            <div class="grid grid-cols-1 gap-6 border-b-2 border-dotted border-white pb-1 mt-1">
               <div>
                 <label class="text-white font-bold text-sm uppercase tracking-wide">VENUE</label>
                 <div><span class="text-white text-sm">${eventAddress}</span></div>
               </div>
 
-              <div>
-                <label class="text-white font-bold text-sm uppercase tracking-wide">BOOKING ID</label>
-                <div><span class="text-white text-sm">${bookingId}</span></div>
-              </div>
+
             </div>
           </div>
         </div>
@@ -116,8 +129,8 @@
           <i class="fa-regular fa-gem text-gray-500"></i>
 
           <!-- PLATINUM Text -->
-          
-           <span class="text-black text-xl tracking-widest uppercase font-bold"
+
+          <span class="text-black text-xl tracking-widest uppercase font-bold"
             style="font-family: 'Cinzel Decorative', serif;">
             PLATINUM
           </span>
@@ -136,7 +149,7 @@
           </div>
         </div>
 
-         <div class="text-center space-y-0">
+        <div class="text-center space-y-0">
           <p class="text-black text-xs">Please arrive 15 min before the Event start.</p>
           <p class="text-black text-xs">www.events2go.com.au</p>
         </div>
@@ -167,7 +180,7 @@
             </div>
           </div>
 
-          <div class="grid grid-cols-2 gap-4 border-b-2 border-dotted border-white pb-1 mt-1">
+          <div class="grid grid-cols-3 gap-4 border-b-2 border-dotted border-white pb-1 mt-1">
             <div>
               <label class="text-sm font-bold uppercase tracking-wide">EVENT DATE</label>
               <div>
@@ -179,6 +192,10 @@
               <div>
                 <span class="text-sm">${startTime}</span>
               </div>
+            </div>
+            <div>
+              <label class="text-sm uppercase">BOOKING ID</label>
+              <div><span class="text-sm text-white">${bookingId}</span></div>
             </div>
           </div>
 
@@ -213,12 +230,7 @@
               </div>
             </div>
 
-            <div>
-              <label class="text-sm font-bold uppercase tracking-wide">BOOKING ID</label>
-              <div>
-                <span class="text-sm">${bookingId}</span>
-              </div>
-            </div>
+
           </div>
         </div>
       </div>
