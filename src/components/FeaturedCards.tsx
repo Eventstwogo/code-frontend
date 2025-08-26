@@ -198,41 +198,28 @@ export default function FeaturedCards({
 <Swiper
   modules={[Autoplay]}
   spaceBetween={16}
-  slidesPerView={5} 
-  centeredSlides={true}// default for desktop
-  loop={true}        
-  freeMode={true}
+  slidesPerView={5}
+  centeredSlides={true} // Enable centering for all viewports
+  loop={true}
   autoplay={{
     delay: 3000,
     disableOnInteraction: false,
   }}
   breakpoints={{
-    320: {
-      slidesPerView: 1,
-      spaceBetween: 12,
-    },
-    640: {
-      slidesPerView: 2,
-      spaceBetween: 12,
-    },
-    768: {
-      slidesPerView: 3,
-      spaceBetween: 16,
-    },
-    1024: {
-      slidesPerView: 4,
-      spaceBetween: 16,
-    },
-    1280: {
-      slidesPerView: 5,
-      spaceBetween: 16,
-    },
+    320: { slidesPerView: 1, spaceBetween: 12, centeredSlides: true },
+    640: { slidesPerView: 2, spaceBetween: 12, centeredSlides: true },
+    768: { slidesPerView: 3, spaceBetween: 16, centeredSlides: true },
+    1024: { slidesPerView: 4, spaceBetween: 16, centeredSlides: true },
+    1280: { slidesPerView: 5, spaceBetween: 16, centeredSlides: true },
   }}
 >
   {events.map((event, index) => (
-    <SwiperSlide key={event.event_id || index}>
-      <FeaturedCard event={event} />
-    </SwiperSlide>
+  <SwiperSlide
+  key={event.event_id || index}
+  style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}
+>
+  <FeaturedCard event={event} />
+</SwiperSlide>
   ))}
 </Swiper>
 
