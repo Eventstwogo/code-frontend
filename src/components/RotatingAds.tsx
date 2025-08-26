@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import axiosInstance from '@/lib/axiosInstance';
+import AdImage from './AdImage';
 
 interface Advertisement {
   ad_id: string;
@@ -123,7 +124,8 @@ export default function RotatingAds({
         onClick={() => handleAdClick(currentAd.target_url)}
       >
         {/* Advertisement Image */}
-        <img
+        <AdImage src={currentAd.banner} alt={currentAd.title} />
+        {/* <img
           src={currentAd.banner}
           alt={currentAd.title}
           className="absolute inset-0 w-full h-full object-cover"
@@ -132,7 +134,7 @@ export default function RotatingAds({
             const target = e.target as HTMLImageElement;
             target.src = '/images/ad-placeholder.png'; // You can add a placeholder image
           }}
-        />
+        /> */}
 
         {/* Overlay for better text visibility */}
         <div className="absolute inset-0  bg-opacity-20 group-hover:bg-opacity-30 transition-all duration-300" />
