@@ -10,6 +10,7 @@ import "swiper/css/navigation";
 import { Autoplay, Pagination, Navigation } from "swiper/modules";
 import { useRouter } from "next/navigation";
 import { IoChevronBack, IoChevronForward } from "react-icons/io5";
+import KangarooLoader from "./ui/kangaroo";
 
 interface HeroSectionProps {
   movies: any[];
@@ -46,12 +47,7 @@ export default function HeroSection({ movies }: HeroSectionProps) {
 
   if (!movies || movies.length === 0) {
     return (
-      <div className="w-full h-[60vh] flex items-center justify-center bg-gradient-to-br from-purple-100 to-pink-100">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading events...</p>
-        </div>
-      </div>
+      <KangarooLoader/>
     );
   }
 
