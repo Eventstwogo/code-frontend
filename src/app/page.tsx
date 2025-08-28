@@ -93,12 +93,12 @@ import axiosInstance from '@/lib/axiosInstance'
 import { Category } from '@/types'
 import FeaturedSection from '@/components/FeaturedSection'
 import KangarooLoader from '@/components/ui/kangaroo'
-import HeroSection from '@/components/Herosection'
+
 const Page = () => {
   const [categories, setCategories] = useState<Category[]>([])
   const [heroEvents, setHeroEvents] = useState<any[]>([])
   const [loading, setLoading] = useState(true) // <-- loader state
-const [movies,setMovies]=React.useState([])
+
   const fetchCategories = async () => {
     try {
       const res = await axiosInstance.get(
@@ -120,18 +120,11 @@ const [movies,setMovies]=React.useState([])
       console.error(error)
     }
   }
- const fetchcategoryevents=async()=>{
-        try {
-            const response=await axiosInstance.get('api/v1/new-events/by-category/latest?event_type=upcoming')
-            setMovies(response.data.data.events)
-        }
-        catch(error){
-         console.log("error")}
-    }
+
   useEffect(() => {
     const loadData = async () => {
       setLoading(true)
-      await Promise.all([fetchSpecialevents(), fetchCategories(),fetchcategoryevents])
+      await Promise.all([fetchSpecialevents(), fetchCategories()])
       setLoading(false)
     }
     loadData()
@@ -148,7 +141,7 @@ const [movies,setMovies]=React.useState([])
     <div className="min-h-screen bg-gray-50">
       {/* Hero Section */}
       <div className="mb-8">
-         <HeroSection  movies={movies}/>
+       <Hero/>
       </div>
 
       {/* Categories Carousel */}
