@@ -129,7 +129,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
 import axiosInstance from "@/lib/axiosInstance";
@@ -157,42 +157,46 @@ export function LoginForm({
   });
 
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [loading, setLoading] = useState(false);
   const {login}=useStore()
   const [showPassword, setShowPassword] = useState(false);
   const onSubmit = async (data: LoginFormData) => {
+  setLoading(true);
+  const params = new FormData();
+  params.append("username", data.email);
+  params.append("password", data.password);
 
+  try {
+    const response = await axiosInstance.post("/api/v1/users/login", params, {
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+    });
 
-    setLoading(true);
- const params = new FormData();
-      params.append("username", data.email);
-      params.append("password", data.password);
-    try {
-     
+    const { access_token, refresh_token, session_id } = response.data;
+    console.log(access_token)
+    login(access_token, refresh_token, session_id.toString());
+    localStorage.setItem("access_token", access_token);
 
-      const response = await axiosInstance.post("/api/v1/users/login", params, {
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
-      });
+    toast.success("Login successful! Redirecting...");
 
-      const { access_token, refresh_token, session_id } = response.data;
-      console.log(access_token)
- login(access_token, refresh_token, session_id.toString());
-      localStorage.setItem("access_token", access_token);
+    reset();
 
-      toast.success("Login successful! Redirecting to your profile...");
-      reset();
-      router.push("/");
-    } catch (err: any) {
-      const errorMsg =
-        err?.response?.data?.message || "Login failed. Please try again.";
-      toast.error(errorMsg);
-      return
-    } finally {
-      setLoading(false);
-    }
-  };
+    // Check if redirect URL exists
+    const redirect = searchParams.get("redirect") || "/";
+    router.push(redirect);
+
+  } catch (err: any) {
+    const errorMsg =
+      err?.response?.data?.message || "Login failed. Please try again.";
+    toast.error(errorMsg);
+    return;
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>

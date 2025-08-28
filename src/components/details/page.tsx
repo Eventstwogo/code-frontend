@@ -25,13 +25,17 @@ export default function MovieDetails({event, selectedDate}: MovieDetailsProps) {
     if (userId) {
       console.log(selectedDate)
       // User is authenticated, navigate to book now page with selected date
-     const dateParam = selectedDate
-  ? `?date=${selectedDate}&slug_id=${event?.slot_id || ''}`
-  : '';
+      const dateParam = selectedDate
+        ? `?date=${selectedDate}&slug_id=${event?.slot_id || ''}`
+        : '';
       router.push(`/book/${event?.event_slug || ''}${dateParam}`);
     } else {
-      // User is not authenticated, navigate to login page
-      router.push('/login');
+      // User is not authenticated, navigate to login page with redirect
+      const dateParam = selectedDate
+        ? `?date=${selectedDate}&slug_id=${event?.slot_id || ''}`
+        : '';
+      const redirectUrl = encodeURIComponent(`/book/${event?.event_slug || ''}${dateParam}`);
+      router.push(`/login?redirect=${redirectUrl}`);
     }
   };
 
