@@ -1324,15 +1324,9 @@ export default function BookingsPage() {
 
                       <div className="mb-4">
                         <QRCodeDisplay
-                          value={JSON.stringify({
-                            orderId: selectedBooking.order_id,
-                            eventTitle: selectedBooking.event.title,
-                            eventDate: selectedBooking.event.event_date,
-                            totalAmount: selectedBooking.total_amount,
-                            status: selectedBooking.booking_status,
-                          })}
-                          size={150}
-                        />
+  value={`https://www.events2go.com.au/confirmation?orderId=${selectedBooking.order_id}`}
+  size={150}
+/>
                       </div>
 
                       <div className="space-y-3 text-sm">
