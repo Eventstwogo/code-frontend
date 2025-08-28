@@ -39,73 +39,6 @@ import Link from "next/link";
 import useStore from "@/lib/Zustand";
 import QRCodeDisplay from "@/components/QRCodeDisplay";
 
-// // QR Code redirect component
-// const QRCodeDisplay = ({
-//   value,
-// }: {
-//   value: string;
-// }) => {
-//   const router = useRouter();
-
-//   const handleRedirect = () => {
-//     window.location.href = value; // Redirect to the provided URL
-//   };
-
-//   return (
-//     <div className="flex flex-col items-center p-4 bg-white rounded-lg border-2 border-dashed border-slate-300">
-//       <Button
-//         onClick={handleRedirect}
-//         className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg"
-//       >
-//         <QrCode className="w-5 h-5 mr-2" />
-
-//       </Button>
-//       <p className="text-xs text-slate-500 mt-2 text-center">
-//         Click to view ticket verification details
-//       </p>
-//     </div>
-//   );
-// };
-
-// // QR Code generator component
-// // const QRCodeDisplay = ({
-// //   value,
-// //   size = 200,
-// // }: {
-// //   value: string;
-// //   size?: number;
-// // }) => {
-// //   const [qrCodeUrl, setQrCodeUrl] = useState("");
-
-// //   useEffect(() => {
-// //     // Generate QR code using a simple library approach
-// //     const generateQR = async () => {
-// //       try {
-// //         // Using QR Server API for QR code generation
-// //         const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=${size}x${size}&data=${encodeURIComponent(
-// //           value
-// //         )}&format=png&ecc=M&margin=1`;
-// //         setQrCodeUrl(qrUrl);
-// //       } catch (error) {
-// //         console.error("Error generating QR code:", error);
-// //       }
-// //     };
-// //     generateQR();
-// //   }, [value, size]);
-
-// //   return qrCodeUrl ? (
-// //     <div className="flex flex-col items-center p-4 bg-white rounded-lg border-2 border-dashed border-slate-300">
-// //       <img src={qrCodeUrl} alt="QR Code" className="rounded-lg" />
-// //       <p className="text-xs text-slate-500 mt-2 text-center">
-// //         Scan for ticket verification
-// //       </p>
-// //     </div>
-// //   ) : (
-// //     <div className="flex items-center justify-center w-48 h-48 bg-slate-100 rounded-lg">
-// //       <QrCode className="w-12 h-12 text-slate-400" />
-// //     </div>
-// //   );
-// // };
 
 export default function BookingsPage() {
   const complexColorRegex =
@@ -826,125 +759,7 @@ export default function BookingsPage() {
     pdf.save(fileName);
   };
 
-  // const generatePDFWithHtml2Canvas = async (ticketHTML: string, categoryLabel: string) => {
-  //   const tempContainer = document.createElement("div");
-  //   tempContainer.style.position = "fixed";
-  //   tempContainer.style.left = "-10000px";
-  //   tempContainer.style.top = "0px";
-  //   tempContainer.style.width = "794px"; // A4 width in pixels
-  //   tempContainer.style.height = "auto";
-  //   tempContainer.style.zIndex = "-1000";
-  //   tempContainer.style.visibility = "hidden";
-  //   tempContainer.style.pointerEvents = "none";
-  //   tempContainer.style.isolation = 'isolate';
-
-  //   tempContainer.innerHTML = `<div class="ticket-wrapper" style="width: 794px; min-height: 1123px; background: white; padding: 0; margin: 0;">${ticketHTML}</div>`;
-  //   document.body.appendChild(tempContainer);
-
-  //   await new Promise((resolve) => setTimeout(resolve, 100));
-
-  //   const images = tempContainer.querySelectorAll("img");
-  //   await Promise.all(
-  //     Array.from(images).map(
-  //       (img) =>
-  //         new Promise((resolve) => {
-  //           if (img.complete) resolve(true);
-  //           else {
-  //             img.onload = () => resolve(true);
-  //             img.onerror = () => resolve(true);
-  //             setTimeout(() => resolve(true), 3000);
-  //           }
-  //         })
-  //     )
-  //   );
-
-  //   await new Promise((resolve) => setTimeout(resolve, 500));
-
-  //   const html2canvas = (await import("html2canvas")).default;
-  //   const targetElement = tempContainer.querySelector(
-  //     ".ticket-wrapper"
-  //   ) as HTMLElement;
-  //   const canvas = await html2canvas(targetElement, {
-  //     scale: 1.5,
-  //     useCORS: true,
-  //     allowTaint: true,
-  //     backgroundColor: "#ffffff",
-  //     scrollX: 0,
-  //     scrollY: 0,
-  //     windowWidth: 794,
-  //     windowHeight: 1123,
-  //     logging: false,
-  //     removeContainer: false,
-  //     foreignObjectRendering: false,
-  //     onclone: (clonedDoc, element) => {
-  //       const clonedBody = clonedDoc.body;
-  //       if (clonedBody) {
-  //         clonedBody.style.margin = "0";
-  //         clonedBody.style.padding = "0";
-  //         clonedBody.style.width = "794px";
-  //         clonedBody.style.height = "auto";
-  //       }
-  //       const allElements = element.querySelectorAll("*");
-  //       allElements.forEach((el: any) => {
-  //         if (el.style) {
-  //           if (el.style.color && el.style.color.includes("oklch")) {
-  //             el.style.color = convertOklchToRgb(el.style.color);
-  //           }
-  //           if (
-  //             el.style.backgroundColor &&
-  //             el.style.backgroundColor.includes("oklch")
-  //           ) {
-  //             el.style.backgroundColor = convertOklchToRgb(
-  //               el.style.backgroundColor
-  //             );
-  //           }
-  //           if (
-  //             el.style.borderColor &&
-  //             el.style.borderColor.includes("oklch")
-  //           ) {
-  //             el.style.borderColor = convertOklchToRgb(el.style.borderColor);
-  //           }
-  //         }
-  //       });
-  //     },
-  //   });
-
-  //   try {
-  //     document.body.removeChild(tempContainer);
-  //   } catch (cleanupError) {
-  //     console.warn("Error cleaning up temp container:", cleanupError);
-  //   }
-
-  //   const jsPDF = (await import("jspdf")).jsPDF;
-  //   const pdf = new jsPDF("portrait", "mm", "a4");
-  //   const pdfWidth = pdf.internal.pageSize.getWidth();
-  //   const pdfHeight = pdf.internal.pageSize.getHeight();
-  //   const imgWidth = 210; // A4 width in mm
-  //   const imgHeight = (canvas.height * imgWidth) / canvas.width;
-  //   let heightLeft = imgHeight;
-  //   let position = 0;
-
-  //   const imgData = canvas.toDataURL("image/jpeg", 0.95);
-
-  //   while (heightLeft > 0) {
-  //     pdf.addImage(
-  //       imgData,
-  //       "JPEG",
-  //       0,
-  //       position,
-  //       imgWidth,
-  //       Math.min(imgHeight, pdfHeight)
-  //     );
-  //     heightLeft -= pdfHeight;
-  //     position -= 297; // A4 height in mm
-  //     if (heightLeft > 0) {
-  //       pdf.addPage();
-  //     }
-  //   }
-
-  //   const fileName = `Events2Go_Ticket_${categoryLabel}_${booking.order_id}.pdf`;
-  //   pdf.save(fileName);
-  // };
+  
 
   const generatePDFWithFallback = async (ticketHTML: string) => {
     // Fallback method: Create a new window and use browser's print functionality
@@ -1558,6 +1373,7 @@ export default function BookingsPage() {
                   {/* Right Section - QR Code */}
                   <div className="lg:col-span-1">
                     <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-4 sm:p-6 text-center sticky top-6">
+                      
                       {selectedBooking.booking_status.toLowerCase() ===
                         "approved" && (
                         <h3 className="text-base sm:text-lg font-semibold text-slate-900 mb-3 sm:mb-4 flex items-center justify-center gap-2">

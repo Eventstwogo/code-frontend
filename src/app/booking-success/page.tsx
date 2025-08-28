@@ -1,4 +1,753 @@
-'use client'
+// 'use client'
+// import React, { useEffect, useState, Suspense } from 'react';
+// import { useRouter, useSearchParams } from 'next/navigation';
+// import { FaCheckCircle, FaCalendarAlt, FaClock, FaMapMarkerAlt, FaTicketAlt, FaDownload } from 'react-icons/fa';
+// import { BsCalendar2EventFill } from 'react-icons/bs';
+// import { MdEmail } from 'react-icons/md';
+// import axiosInstance from '@/lib/axiosInstance';
+// import { toast } from 'sonner';
+// import KangarooJump from '../../components/ui/kangaroo';
+
+// interface SeatCategory {
+//   seat_category_id: string;
+//   label: string;
+//   num_seats: number;
+//   price_per_seat: number;
+//   total_price: number;
+// }
+
+// interface BookingDetails {
+//   bookingId: string;
+//   eventTitle: string;
+//   eventImage: string;
+//   eventAddress: string;
+//   selectedDate: string;
+//   slotName: string;
+//   startTime: string;
+//   endTime: string;
+//   seatCategories: SeatCategory[];
+//   totalAmount: number;
+//   bookingDate: string;
+//   userEmail?: string;
+//   bookingStatus?: string;
+//   eventId?: string;
+//   slotId?: string;
+//   businessLogo?: string;
+//   categoryName?: string;
+//   numberOfTickets?: string;
+// }
+
+// const BookingSuccessContent = () => {
+//   const router = useRouter();
+//   const searchParams = useSearchParams();
+//   const [bookingDetails, setBookingDetails] = useState<BookingDetails | null>(null);
+//   const [loading, setLoading] = useState(true);
+//   const [error, setError] = useState<string | null>(null);
+//   const [qrCodeUrl, setQrCodeUrl] = useState<string | null>(null);
+
+//   function calculateEndTime(start: string, duration: string): string {
+//     if (!start || !duration) return '';
+//     const [time, meridian] = start.split(' ');
+//     let [hours, minutes] = time.split(':').map(Number);
+//     if (meridian === 'PM' && hours !== 12) hours += 12;
+//     if (meridian === 'AM' && hours === 12) hours = 0;
+
+//     const durationMins = parseInt(duration);
+//     const startDate = new Date();
+//     startDate.setHours(hours, minutes);
+//     startDate.setMinutes(startDate.getMinutes() + durationMins);
+
+//     let endHours = startDate.getHours();
+//     let endMinutes = startDate.getMinutes();
+//     const endMeridian = endHours >= 12 ? 'PM' : 'AM';
+//     endHours = endHours % 12 || 12;
+//     const formattedMinutes = endMinutes.toString().padStart(2, '0');
+//     return `${endHours}:${formattedMinutes} ${endMeridian}`;
+//   }
+
+//   useEffect(() => {
+//     const fetchBookingDetails = async () => {
+//       try {
+//         setLoading(true);
+//         setError(null);
+
+//         const bookingId = searchParams.get('order_id') || searchParams.get('orderId');
+
+//         if (!bookingId) {
+//           const savedBookingDetails = localStorage.getItem('lastBookingDetails');
+//           if (savedBookingDetails) {
+//             setBookingDetails(JSON.parse(savedBookingDetails));
+//           } else {
+//             setError('No booking ID provided');
+//           }
+//           return;
+//         }
+
+//         const response = await axiosInstance.get(`/api/v1/new-bookings/${bookingId}`);
+
+//         if (response.status === 200 && response.data) {
+//           const booking = response.data.data;
+//           const bookingDetails: BookingDetails = {
+//             bookingId: booking.booking_id?.toString() || bookingId,
+//             eventTitle: booking.event?.title || 'Event',
+//             eventImage: booking.event?.card_image || '/images/placeholder.svg',
+//             eventAddress: booking.event?.address || 'Address not available',
+//             selectedDate: booking.event?.event_date || '',
+//             slotName: booking.slot || 'Standard Slot',
+//             startTime: booking.event?.event_time || '',
+//             endTime: booking.slot_time?.split(" - ")[1]
+//               || calculateEndTime(booking.event?.event_time, booking.event?.event_duration)
+//               || '',
+//             seatCategories: booking.seat_categories?.map((category: any) => ({
+//               seat_category_id: category.seat_category_id,
+//               label: category.label || 'General',
+//               num_seats: category.num_seats || 0,
+//               price_per_seat: category.price_per_seat || 0,
+//               total_price: category.total_price || (category.num_seats * category.price_per_seat) || 0,
+//             })) || [],
+//             totalAmount: booking.total_amount || booking.seat_categories.reduce((sum: number, category: any) => sum + (category.total_price || category.num_seats * category.price_per_seat), 0),
+//             bookingDate: booking.created_at || new Date().toISOString(),
+//             userEmail: booking.user?.email,
+//             bookingStatus: booking.booking_status || 'confirmed',
+//             eventId: booking.event?.event_id,
+//             slotId: booking.slot,
+//             businessLogo: booking.event?.business_logo,
+//           };
+
+//           setBookingDetails(bookingDetails);
+//           localStorage.setItem('lastBookingDetails', JSON.stringify(bookingDetails));
+//         } else {
+//           setError('Booking not found');
+//         }
+//       } catch (error: any) {
+//         console.error('Error fetching booking details:', error);
+//         const savedBookingDetails = localStorage.getItem('lastBookingDetails');
+//         if (savedBookingDetails) {
+//           setBookingDetails(JSON.parse(savedBookingDetails));
+//         } else {
+//           setError(error.response?.data?.message || 'Failed to load booking details');
+//         }
+//       } finally {
+//         setLoading(false);
+//       }
+//     };
+
+//     fetchBookingDetails();
+//   }, [searchParams]);
+
+//   useEffect(() => {
+//     const fetchQrCode = async () => {
+//       try {
+//         if (!bookingDetails?.bookingId) return;
+
+//         const response = await axiosInstance.get(`/api/v1/new-bookings/qrcode/${bookingDetails.bookingId}`);
+//         if (response.data && response.data.qr_code_image) {
+//           setQrCodeUrl(response.data.qr_code_image);
+//         } else {
+//           throw new Error('No QR code image in response');
+//         }
+//       } catch (error: any) {
+//         console.error('Error fetching QR code:', error);
+//         toast.error('Failed to load QR code. Using default placeholder.');
+//         setQrCodeUrl('/images/qr-placeholder.png');
+//       }
+//     };
+
+//     if (bookingDetails?.bookingId) {
+//       fetchQrCode();
+//     }
+//   }, [bookingDetails?.bookingId]);
+
+//   const convertOklchToRgb = (html: string): string => {
+//     return html.replace(/oklch\([^)]+\)/g, (match) => {
+//       try {
+//         const values = match.match(/oklch\(\s*([^)]+)\s*\)/);
+//         if (!values || !values[1]) return 'rgb(100, 100, 100)';
+
+//         const parts = values[1].split(/[\/\s]+/);
+//         const L = parseFloat(parts[0]) * 100;
+//         const C = parseFloat(parts[1]) * 100;
+//         const H = parseFloat(parts[2]);
+
+//         const commonConversions: { [key: string]: string } = {
+//           'oklch(1 0 0)': 'rgb(255, 255, 255)',
+//           'oklch(0 0 0)': 'rgb(0, 0, 0)',
+//           'oklch(0.1 0 0)': 'rgb(26, 26, 26)',
+//           'oklch(0.2 0 0)': 'rgb(51, 51, 51)',
+//           'oklch(0.3 0 0)': 'rgb(77, 77, 77)',
+//           'oklch(0.4 0 0)': 'rgb(102, 102, 102)',
+//           'oklch(0.5 0 0)': 'rgb(128, 128, 128)',
+//           'oklch(0.6 0 0)': 'rgb(153, 153, 153)',
+//           'oklch(0.7 0 0)': 'rgb(179, 179, 179)',
+//           'oklch(0.8 0 0)': 'rgb(204, 204, 204)',
+//           'oklch(0.9 0 0)': 'rgb(230, 230, 230)',
+//           'oklch(0.278 0.029 256.848)': 'rgb(59, 64, 75)',
+//           'oklch(0.631 0.066 256.848)': 'rgb(139, 153, 177)',
+//           'oklch(0.859 0.023 256.848)': 'rgb(212, 218, 227)',
+//           'oklch(0.967 0.007 256.848)': 'rgb(245, 246, 248)',
+//           'oklch(0.986 0.003 256.848)': 'rgb(250, 251, 252)',
+//           'oklch(0.659 0.216 29.233)': 'rgb(218, 165, 32)',
+//           'oklch(0.804 0.171 83.096)': 'rgb(255, 215, 0)',
+//           'oklch(0.647 0.248 258.338)': 'rgb(99, 102, 241)',
+//           'oklch(0.569 0.193 259.944)': 'rgb(139, 92, 246)',
+//           'oklch(0.573 0.214 220.38)': 'rgb(59, 130, 246)',
+//           'oklch(0.627 0.204 231.321)': 'rgb(96, 165, 250)',
+//           'oklch(0.750 0.197 164.25)': 'rgb(34, 197, 94)',
+//           'oklch(0.696 0.143 142.495)': 'rgb(74, 222, 128)',
+//           'oklch(0.627 0.257 29.234)': 'rgb(239, 68, 68)',
+//           'oklch(0.686 0.205 40.853)': 'rgb(248, 113, 113)',
+//         };
+
+//         const normalized = match.toLowerCase().replace(/\s+/g, ' ').trim();
+//         for (const [oklch, rgb] of Object.entries(commonConversions)) {
+//           if (normalized === oklch.toLowerCase()) {
+//             return rgb;
+//           }
+//         }
+
+//         if (C < 0.05) {
+//           const gray = Math.round(L * 255 / 100);
+//           return `rgb(${gray}, ${gray}, ${gray})`;
+//         }
+
+//         let r, g, b;
+//         if (H >= 0 && H < 60) {
+//           r = Math.round((L + C * 0.5) * 255 / 100);
+//           g = Math.round((L + C * 0.3) * 255 / 100);
+//           b = Math.round((L - C * 0.2) * 255 / 100);
+//         } else if (H >= 60 && H < 120) {
+//           r = Math.round((L + C * 0.3) * 255 / 100);
+//           g = Math.round((L + C * 0.5) * 255 / 100);
+//           b = Math.round((L - C * 0.2) * 255 / 100);
+//         } else if (H >= 120 && H < 180) {
+//           r = Math.round((L - C * 0.2) * 255 / 100);
+//           g = Math.round((L + C * 0.5) * 255 / 100);
+//           b = Math.round((L + C * 0.3) * 255 / 100);
+//         } else if (H >= 180 && H < 240) {
+//           r = Math.round((L - C * 0.2) * 255 / 100);
+//           g = Math.round((L + C * 0.3) * 255 / 100);
+//           b = Math.round((L + C * 0.5) * 255 / 100);
+//         } else if (H >= 240 && H < 300) {
+//           r = Math.round((L + C * 0.3) * 255 / 100);
+//           g = Math.round((L - C * 0.2) * 255 / 100);
+//           b = Math.round((L + C * 0.5) * 255 / 100);
+//         } else {
+//           r = Math.round((L + C * 0.5) * 255 / 100);
+//           g = Math.round((L - C * 0.2) * 255 / 100);
+//           b = Math.round((L + C * 0.3) * 255 / 100);
+//         }
+
+//         r = Math.max(0, Math.min(255, r));
+//         g = Math.max(0, Math.min(255, g));
+//         b = Math.max(0, Math.min(255, b));
+
+//         return `rgb(${r}, ${g}, ${b})`;
+//       } catch (error) {
+//         console.warn('Failed to parse OKLCH color:', match);
+//         return 'rgb(128, 128, 128)';
+//       }
+//     });
+//   };
+
+//   const formatDate = (dateString: string) => {
+//     const date = new Date(dateString);
+//     const day = String(date.getDate()).padStart(2, '0');
+//     const month = String(date.getMonth() + 1).padStart(2, '0');
+//     const year = date.getFullYear();
+//     return `${day}.${month}.${year}`;
+//   };
+
+//   const handleDownloadTicket = async () => {
+//     if (!bookingDetails) return;
+
+//     try {
+//       toast.info("Generating your ticket PDFs...");
+
+//       const available_templates_names = ["Diamond", "Gold", "Platinum", "Silver", "Standard", "VIP", "VVIP"];
+
+//       if (bookingDetails.seatCategories.length === 1) {
+//         // Single category: use original logic with updated template selection
+//         const category = bookingDetails.seatCategories[0];
+//         console.log('Available templates:', available_templates_names);
+
+//         // Convert the category label to lower case for comparison
+//         const categoryName = category.label.toLowerCase();
+
+//         // Find a matching template name ignoring case
+//         let matchedTemplate = available_templates_names.find(
+//           name => name.toLowerCase() === categoryName
+//         );
+
+//         console.log('Matched template:', matchedTemplate);
+
+//         // If no match is found, use "Standard" as default
+//         if (!matchedTemplate) {
+//           matchedTemplate = "Standard";
+//         }
+//         console.log('Using template:', matchedTemplate);
+
+//         const templateUrl = `/templates/${matchedTemplate}.html`;
+
+//         // Fetch the HTML template
+//         let response = await fetch(templateUrl);
+
+//         if (!response.ok) {
+//           console.warn(`Template "${matchedTemplate}" not found. Using Standard.html`);
+//           response = await fetch(`/templates/Standard.html`);
+//           matchedTemplate = "Standard"; // Update matchedTemplate for category name replacement
+//         }
+
+//         let ticketHTML = await response.text();
+
+//         const seatCategorySummary = `${category.label} (x${category.num_seats}): $${category.total_price.toFixed(2)}`;
+
+//         ticketHTML = ticketHTML
+//           .replace(/\$\{bookingId\}/g, bookingDetails.bookingId || 'Booking ID')
+//           .replace(/\$\{eventTitle\}/g, bookingDetails.eventTitle || 'Event Title')
+//           .replace(/\$\{businessLogo\}/g, bookingDetails.businessLogo || '/images/placeholder.svg')
+//           .replace(/\$\{eventImage\}/g, bookingDetails.eventImage || '/images/event-placeholder.png')
+//           .replace(/\$\{selectedDate\}/g, formatDate(bookingDetails.selectedDate))
+//           .replace(/\$\{startTime\}/g, bookingDetails.startTime || 'TBD')
+//           .replace(/\$\{categoryName\}/g, category.label || 'General')
+//           .replace(/\$\{seatCategories\}/g, seatCategorySummary || 'General')
+//           .replace(/\$\{totalAmount\}/g, bookingDetails.totalAmount.toFixed(2) || '0.00')
+//           .replace(/\$\{numberOfTickets\}/g, bookingDetails.numberOfTickets?.toString() || '1')
+//           .replace(/\$\{eventAddress\}/g, bookingDetails.eventAddress || 'Venue TBD')
+//           .replace(/\$\{qrCodeUrl\}/g, qrCodeUrl || '/images/qr-placeholder.png')
+//           .replace(/\$\{custom_category_name\}/g, (matchedTemplate === "Standard" ? category.label : matchedTemplate).toUpperCase());
+
+//         ticketHTML = convertOklchToRgb(ticketHTML);
+
+//         try {
+//           await generatePDFWithHtml2Canvas(ticketHTML, category.label);
+//         } catch (html2canvasError) {
+//           console.warn('html2canvas failed, trying fallback method:', html2canvasError);
+//           await generatePDFWithFallback(ticketHTML);
+//         }
+//       } else {
+//         // Multiple categories: generate a PDF for each category
+//         for (const category of bookingDetails.seatCategories) {
+//           console.log('Available templates:', available_templates_names);
+
+//           // Convert the category label to lower case for comparison
+//           const categoryName = category.label.toLowerCase();
+
+//           // Find a matching template name ignoring case
+//           let matchedTemplate = available_templates_names.find(
+//             name => name.toLowerCase() === categoryName
+//           );
+
+//           console.log('Matched template:', matchedTemplate);
+
+//           // If no match is found, use "Standard" as default
+//           if (!matchedTemplate) {
+//             matchedTemplate = "Standard";
+//           }
+//           console.log('Using template:', matchedTemplate);
+
+//           const templateUrl = `/templates/${matchedTemplate}.html`;
+
+//           // Fetch the HTML template
+//           let response = await fetch(templateUrl);
+
+//           if (!response.ok) {
+//             console.warn(`Template "${matchedTemplate}" not found. Using Standard.html`);
+//             response = await fetch(`/templates/Standard.html`);
+//             matchedTemplate = "Standard"; // Update matchedTemplate for category name replacement
+//           }
+
+//           let ticketHTML = await response.text();
+
+//           const seatCategorySummary = `${category.label} (x${category.num_seats}): $${category.total_price.toFixed(2)}`;
+
+//           ticketHTML = ticketHTML
+//             .replace(/\$\{bookingId\}/g, bookingDetails.bookingId || 'Booking ID')
+//             .replace(/\$\{eventTitle\}/g, bookingDetails.eventTitle || 'Event Title')
+//             .replace(/\$\{businessLogo\}/g, bookingDetails.businessLogo || '/images/placeholder.svg')
+//             .replace(/\$\{eventImage\}/g, bookingDetails.eventImage || '/images/event-placeholder.png')
+//             .replace(/\$\{selectedDate\}/g, formatDate(bookingDetails.selectedDate))
+//             .replace(/\$\{startTime\}/g, bookingDetails.startTime || 'TBD')
+//             .replace(/\$\{categoryName\}/g, category.label || 'General')
+//             .replace(/\$\{seatCategories\}/g, seatCategorySummary || 'General')
+//             .replace(/\$\{totalAmount\}/g, category.total_price.toFixed(2))
+//             .replace(/\$\{eventAddress\}/g, bookingDetails.eventAddress || 'Venue TBD')
+//             .replace(/\$\{qrCodeUrl\}/g, qrCodeUrl || '/images/qr-placeholder.png')
+//             .replace(/\$\{numberOfTickets\}/g, bookingDetails.numberOfTickets?.toString() || '1')
+//             .replace(/\$\{custom_category_name\}/g, (matchedTemplate === "Standard" ? category.label : matchedTemplate).toUpperCase());
+
+//           ticketHTML = convertOklchToRgb(ticketHTML);
+
+//           try {
+//             await generatePDFWithHtml2Canvas(ticketHTML, category.label);
+//           } catch (html2canvasError) {
+//             console.warn(`html2canvas failed for ${category.label}, trying fallback:`, html2canvasError);
+//             await generatePDFWithFallback(ticketHTML);
+//           }
+//         }
+//       }
+
+//       toast.success("Ticket(s) downloaded successfully!");
+//     } catch (error) {
+//       console.error("Error generating PDF tickets:", error);
+//       toast.error("Failed to download tickets. Please try again.");
+//     }
+//   };
+
+//   const generatePDFWithHtml2Canvas = async (ticketHTML: string, categoryLabel: string) => {
+//     const tempContainer = document.createElement('div');
+//     tempContainer.style.position = 'fixed';
+//     tempContainer.style.left = '-10000px';
+//     tempContainer.style.top = '0px';
+//     tempContainer.style.width = '794px';
+//     tempContainer.style.height = 'auto';
+//     tempContainer.style.zIndex = '-1000';
+//     tempContainer.style.visibility = 'hidden';
+//     tempContainer.style.pointerEvents = 'none';
+//     tempContainer.style.isolation = 'isolate';
+
+//     tempContainer.innerHTML = `<div class="ticket-wrapper" style="width: 794px; min-height: 1123px; background: white; padding: 0; margin: 0;">${ticketHTML}</div>`;
+
+//     document.body.appendChild(tempContainer);
+
+//     await new Promise(resolve => setTimeout(resolve, 100));
+
+//     const images = tempContainer.querySelectorAll('img');
+//     const imagePromises = Array.from(images).map((img) => {
+//       return new Promise((resolve) => {
+//         if (img.complete) {
+//           resolve(true);
+//         } else {
+//           img.onload = () => resolve(true);
+//           img.onerror = () => {
+//             console.warn('Image failed to load:', img.src);
+//             resolve(true);
+//           };
+//           setTimeout(() => resolve(true), 3000);
+//         }
+//       });
+//     });
+
+//     await Promise.all(imagePromises);
+//     await new Promise(resolve => setTimeout(resolve, 500));
+
+//     const html2canvas = (await import('html2canvas')).default;
+//     const targetElement = tempContainer.querySelector('.ticket-wrapper') as HTMLElement || tempContainer;
+
+//     const canvas = await html2canvas(targetElement, {
+//       scale: 1.5,
+//       useCORS: true,
+//       allowTaint: true,
+//       backgroundColor: '#ffffff',
+//       scrollX: 0,
+//       scrollY: 0,
+//       logging: false,
+//       foreignObjectRendering: false,
+//       onclone: (clonedDoc, element) => {
+//         try {
+//           const clonedBody = clonedDoc.body;
+//           if (clonedBody) {
+//             clonedBody.style.margin = '0';
+//             clonedBody.style.padding = '0';
+//             clonedBody.style.width = '794px';
+//             clonedBody.style.height = 'auto';
+//           }
+
+//           const allElements = element.querySelectorAll('*');
+//           allElements.forEach((el: any) => {
+//             try {
+//               if (el.style) {
+//                 const style = el.style;
+//                 if (style.color && style.color.includes('oklch')) {
+//                   style.color = convertOklchToRgb(style.color);
+//                 }
+//                 if (style.backgroundColor && style.backgroundColor.includes('oklch')) {
+//                   style.backgroundColor = convertOklchToRgb(style.backgroundColor);
+//                 }
+//                 if (style.borderColor && style.borderColor.includes('oklch')) {
+//                   style.borderColor = convertOklchToRgb(style.borderColor);
+//                 }
+//               }
+//             } catch (styleError) {
+//               console.warn('Error fixing styles on element:', styleError);
+//             }
+//           });
+//         } catch (cloneError) {
+//           console.warn('Error in onclone callback:', cloneError);
+//         }
+//       },
+//     });
+
+//     try {
+//       if (tempContainer && tempContainer.parentNode) {
+//         document.body.removeChild(tempContainer);
+//       }
+//     } catch (cleanupError) {
+//       console.warn('Error cleaning up temp container:', cleanupError);
+//     }
+
+//     const jsPDF = (await import('jspdf')).jsPDF;
+//     const pdf = new jsPDF('portrait', 'mm', 'a4');
+
+//     const imgData = canvas.toDataURL('image/jpeg', 0.95);
+//     const pdfWidth = pdf.internal.pageSize.getWidth();
+//     const pdfHeight = pdf.internal.pageSize.getHeight();
+
+//     pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight);
+
+//     const fileName = `Events2Go_Ticket_${categoryLabel}_${bookingDetails?.bookingId}.pdf`;
+//     pdf.save(fileName);
+//   };
+
+//   const generatePDFWithFallback = async (ticketHTML: string) => {
+//     const printWindow = window.open('', '_blank', 'width=794,height=1123');
+//     if (!printWindow) {
+//       throw new Error('Could not open print window. Please check popup blockers.');
+//     }
+
+//     const fullHTML = `
+//       <!DOCTYPE html>
+//       <html>
+//       <head>
+//         <meta charset="UTF-8">
+//         <title>Event Ticket</title>
+//         <style>
+//           @page {
+//             size: A4;
+//             margin: 0;
+//           }
+//           body {
+//             margin: 0;
+//             padding: 0;
+//             width: 270mm;
+//             height: 290mm;
+//             font-family: Arial, sans-serif;
+//           }
+//           @media print {
+//             body {
+//               -webkit-print-color-adjust: exact;
+//               color-adjust: exact;
+//             }
+//           }
+//         </style>
+//       </head>
+//       <body>
+//         ${ticketHTML}
+//         <script>
+//           window.onload = function() {
+//             setTimeout(function() {
+//               window.print();
+//               setTimeout(function() {
+//                 window.close();
+//               }, 1000);
+//             }, 500);
+//           };
+//         </script>
+//       </body>
+//       </html>
+//     `;
+
+//     printWindow.document.write(fullHTML);
+//     printWindow.document.close();
+//   };
+
+//   const handleBackToHome = () => {
+//     router.push('/');
+//   };
+
+//   const handleViewMyBookings = () => {
+//     router.push('/Profile/Bookings');
+//   };
+
+//   if (loading || !bookingDetails?.bookingId || !qrCodeUrl) {
+//     return <KangarooJump />;
+//   }
+
+//   if (error || !bookingDetails) {
+//     return (
+//       <div className="min-h-screen flex items-center justify-center bg-gray-50">
+//         <div className="text-center max-w-md mx-auto px-6">
+//           <div className="inline-flex items-center justify-center w-16 h-16 bg-red-100 rounded-full mb-4">
+//             <FaTicketAlt className="text-2xl text-red-600" />
+//           </div>
+//           <h1 className="text-2xl font-bold text-gray-800 mb-4">
+//             {error ? 'Error Loading Booking' : 'Booking Details Not Found'}
+//           </h1>
+//           <p className="text-gray-600 mb-6">
+//             {error || "We couldn't find your booking details. Please check your booking ID or try again."}
+//           </p>
+//           <div className="space-y-3">
+//             <button
+//               onClick={() => window.location.reload()}
+//               className="w-full bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 transition-colors"
+//             >
+//               Try Again
+//             </button>
+//             <button
+//               onClick={handleBackToHome}
+//               className="w-full bg-gray-600 text-white px-6 py-3 rounded-lg hover:bg-gray-700 transition-colors"
+//             >
+//               Back to Home
+//             </button>
+//           </div>
+//         </div>
+//       </div>
+//     );
+//   }
+
+//   return (
+//     <div className="min-h-screen bg-gray-50 py-8">
+//       <div className="max-w-4xl mx-auto px-6">
+//         <div className="text-center mb-8">
+//           <div className="inline-flex items-center justify-center w-20 h-20 bg-green-100 rounded-full mb-4">
+//             <FaCheckCircle className="text-4xl text-green-600" />
+//           </div>
+//           <h1 className="text-3xl font-bold text-gray-800 mb-2">Booking Confirmed!</h1>
+//           <p className="text-gray-600">Your tickets have been successfully booked</p>
+//         </div>
+
+//         <div className="bg-white rounded-lg shadow-md p-6 mb-6">
+//           <div className="flex items-start gap-6 mb-6">
+//             <img
+//               src={bookingDetails.eventImage}
+//               alt={bookingDetails.eventTitle}
+//               className="w-32 h-48 object-cover rounded-lg"
+//             />
+//             <div className="flex-1">
+//               <h2 className="text-2xl font-bold mb-2">{bookingDetails.eventTitle}</h2>
+//               <div className="space-y-3">
+//                 <div className="flex items-center gap-2 text-gray-600">
+//                   <FaMapMarkerAlt className="text-purple-500" />
+//                   <span>{bookingDetails.eventAddress}</span>
+//                 </div>
+//                 <div className="flex items-center gap-2 text-gray-600">
+//                   <BsCalendar2EventFill className="text-purple-500" />
+//                   <span>{formatDate(bookingDetails.selectedDate)}</span>
+//                 </div>
+//                 <div className="flex items-center gap-2 text-gray-600">
+//                   <FaClock className="text-purple-500" />
+//                   <span>{bookingDetails.startTime} - {bookingDetails.endTime}</span>
+//                 </div>
+//               </div>
+//             </div>
+//           </div>
+
+//           <div className="border-t pt-6">
+//             <h3 className="text-lg font-semibold mb-4">Booking Summary</h3>
+//             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+//               <div className="space-y-3">
+//                 <div className="flex justify-between">
+//                   <span className="text-gray-600">Booking ID:</span>
+//                   <span className="font-semibold">{bookingDetails.bookingId}</span>
+//                 </div>
+//                 {/* <div className="flex justify-between">
+//                   <span className="text-gray-600">Slot:</span>
+//                   <span className="font-semibold">{bookingDetails.slotName}</span>
+//                 </div> */}
+//                 {bookingDetails.seatCategories.map((category) => (
+//                   <div key={category.seat_category_id} className="flex justify-between">
+//                     <span className="text-gray-600">{category.label} (x{category.num_seats}):</span>
+//                     <span className="font-semibold">${category.total_price.toFixed(2)}</span>
+//                   </div>
+//                 ))}
+//               </div>
+//               <div className="space-y-3">
+//                 <div className="flex justify-between">
+//                   <span className="text-gray-600">Booking Date:</span>
+//                   <span className="font-semibold">{formatDate(bookingDetails.bookingDate)}</span>
+//                 </div>
+//                 {bookingDetails.seatCategories.map((category) => (
+//                   <div key={category.seat_category_id} className="flex justify-between">
+//                     <span className="text-gray-600">Price per {category.label} Ticket:</span>
+//                     <span className="font-semibold">${category.price_per_seat.toFixed(2)}</span>
+//                   </div>
+//                 ))}
+                
+//                 <div className="flex justify-between text-lg font-bold border-t pt-2">
+//                   <span>Total Amount:</span>
+//                   <span className="text-purple-600">${bookingDetails.totalAmount.toFixed(2)}</span>
+//                 </div>
+//               </div>
+//             </div>
+//           </div>
+//         </div>
+
+//         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+//           <button
+//             onClick={handleDownloadTicket}
+//             className="flex items-center justify-center gap-2 bg-purple-600 text-white px-4 py-3 rounded-lg hover:bg-purple-700 transition-colors"
+//           >
+//             <FaDownload />
+//             Download PDF Ticket{bookingDetails.seatCategories.length > 1 ? 's' : ''}
+//           </button>
+//           <button
+//             onClick={handleViewMyBookings}
+//             className="flex items-center justify-center gap-2 bg-gray-600 text-white px-4 py-3 rounded-lg hover:bg-gray-700 transition-colors"
+//           >
+//             <FaTicketAlt />
+//             My Bookings
+//           </button>
+//           <button
+//             onClick={handleBackToHome}
+//             className="flex items-center justify-center gap-2 bg-green-600 text-white px-4 py-3 rounded-lg hover:bg-green-700 transition-colors"
+//           >
+//             Back to Home
+//           </button>
+//         </div>
+
+//         {bookingDetails.userEmail && (
+//           <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+//             <div className="flex items-center gap-2 text-blue-800">
+//               <MdEmail className="text-xl" />
+//               <span className="font-semibold">Email Confirmation Sent</span>
+//             </div>
+//             <p className="text-blue-700 mt-1">
+//               A confirmation email with your ticket details has been sent to {bookingDetails.userEmail}
+//             </p>
+//           </div>
+//         )}
+
+//         <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mt-6">
+//           <h4 className="font-semibold text-yellow-800 mb-2">Important Information:</h4>
+//           <ul className="text-yellow-700 space-y-1 text-sm">
+//             <li>• Please arrive at the venue at least 15 minutes before the event starts</li>
+//             <li>• Carry a valid ID proof along with your ticket</li>
+//             <li>• Screenshots of tickets are not valid for entry</li>
+//             <li>• For any queries, contact our support team</li>
+//           </ul>
+//         </div>
+//       </div>
+//     </div>
+//   );
+// };
+
+// const BookingSuccessPage = () => {
+//   return (
+//     <Suspense fallback={
+//       <div className="min-h-screen flex items-center justify-center bg-gray-50">
+//         <div className="text-center">
+//           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
+//           <p className="text-gray-600">Loading booking details...</p>
+//         </div>
+//       </div>
+//     }>
+//       <BookingSuccessContent />
+//     </Suspense>
+//   );
+// };
+
+// export default BookingSuccessPage;
+
+
+
+
+
+
+
+
+
+
+'use client';
+
 import React, { useEffect, useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { FaCheckCircle, FaCalendarAlt, FaClock, FaMapMarkerAlt, FaTicketAlt, FaDownload } from 'react-icons/fa';
@@ -7,6 +756,8 @@ import { MdEmail } from 'react-icons/md';
 import axiosInstance from '@/lib/axiosInstance';
 import { toast } from 'sonner';
 import KangarooJump from '../../components/ui/kangaroo';
+import QRCodeDisplay from '@/components/QRCodeDisplay';
+import QRCode from 'qrcode';
 
 interface SeatCategory {
   seat_category_id: string;
@@ -95,9 +846,9 @@ const BookingSuccessContent = () => {
             selectedDate: booking.event?.event_date || '',
             slotName: booking.slot || 'Standard Slot',
             startTime: booking.event?.event_time || '',
-            endTime: booking.slot_time?.split(" - ")[1]
-              || calculateEndTime(booking.event?.event_time, booking.event?.event_duration)
-              || '',
+            endTime: booking.slot_time?.split(' - ')[1] ||
+              calculateEndTime(booking.event?.event_time, booking.event?.event_duration) ||
+              '',
             seatCategories: booking.seat_categories?.map((category: any) => ({
               seat_category_id: category.seat_category_id,
               label: category.label || 'General',
@@ -136,26 +887,20 @@ const BookingSuccessContent = () => {
   }, [searchParams]);
 
   useEffect(() => {
-    const fetchQrCode = async () => {
+    const generateQrCode = async () => {
+      if (!bookingDetails?.bookingId) return;
       try {
-        if (!bookingDetails?.bookingId) return;
-
-        const response = await axiosInstance.get(`/api/v1/new-bookings/qrcode/${bookingDetails.bookingId}`);
-        if (response.data && response.data.qr_code_image) {
-          setQrCodeUrl(response.data.qr_code_image);
-        } else {
-          throw new Error('No QR code image in response');
-        }
-      } catch (error: any) {
-        console.error('Error fetching QR code:', error);
-        toast.error('Failed to load QR code. Using default placeholder.');
+        const qrUrl = await QRCode.toDataURL(
+          `https://www.events2go.com.au/confirmation?orderId=${bookingDetails.bookingId}`,
+          { width: 150, margin: 1, errorCorrectionLevel: 'M' }
+        );
+        setQrCodeUrl(qrUrl);
+      } catch (error) {
+        console.error('Error generating QR code:', error);
         setQrCodeUrl('/images/qr-placeholder.png');
       }
     };
-
-    if (bookingDetails?.bookingId) {
-      fetchQrCode();
-    }
+    generateQrCode();
   }, [bookingDetails?.bookingId]);
 
   const convertOklchToRgb = (html: string): string => {
@@ -266,38 +1011,31 @@ const BookingSuccessContent = () => {
       const available_templates_names = ["Diamond", "Gold", "Platinum", "Silver", "Standard", "VIP", "VVIP"];
 
       if (bookingDetails.seatCategories.length === 1) {
-        // Single category: use original logic with updated template selection
+        // Single category
         const category = bookingDetails.seatCategories[0];
-        console.log('Available templates:', available_templates_names);
-
-        // Convert the category label to lower case for comparison
         const categoryName = category.label.toLowerCase();
 
-        // Find a matching template name ignoring case
         let matchedTemplate = available_templates_names.find(
           name => name.toLowerCase() === categoryName
-        );
-
-        console.log('Matched template:', matchedTemplate);
-
-        // If no match is found, use "Standard" as default
-        if (!matchedTemplate) {
-          matchedTemplate = "Standard";
-        }
+        ) || "Standard";
         console.log('Using template:', matchedTemplate);
 
         const templateUrl = `/templates/${matchedTemplate}.html`;
-
-        // Fetch the HTML template
         let response = await fetch(templateUrl);
 
         if (!response.ok) {
           console.warn(`Template "${matchedTemplate}" not found. Using Standard.html`);
           response = await fetch(`/templates/Standard.html`);
-          matchedTemplate = "Standard"; // Update matchedTemplate for category name replacement
+          matchedTemplate = "Standard";
         }
 
         let ticketHTML = await response.text();
+
+        // Generate QR code for single category
+        const qrCodeUrl = await QRCode.toDataURL(
+          `https://www.events2go.com.au/confirmation?orderId=${bookingDetails.bookingId}`,
+          { width: 150, margin: 1, errorCorrectionLevel: 'M' }
+        );
 
         const seatCategorySummary = `${category.label} (x${category.num_seats}): $${category.total_price.toFixed(2)}`;
 
@@ -310,8 +1048,8 @@ const BookingSuccessContent = () => {
           .replace(/\$\{startTime\}/g, bookingDetails.startTime || 'TBD')
           .replace(/\$\{categoryName\}/g, category.label || 'General')
           .replace(/\$\{seatCategories\}/g, seatCategorySummary || 'General')
-          .replace(/\$\{totalAmount\}/g, bookingDetails.totalAmount.toFixed(2) || '0.00')
-          .replace(/\$\{numberOfTickets\}/g, bookingDetails.numberOfTickets?.toString() || '1')
+          .replace(/\$\{totalAmount\}/g, category.total_price.toFixed(2))
+          .replace(/\$\{numberOfTickets\}/g, category.num_seats.toString() || '1')
           .replace(/\$\{eventAddress\}/g, bookingDetails.eventAddress || 'Venue TBD')
           .replace(/\$\{qrCodeUrl\}/g, qrCodeUrl || '/images/qr-placeholder.png')
           .replace(/\$\{custom_category_name\}/g, (matchedTemplate === "Standard" ? category.label : matchedTemplate).toUpperCase());
@@ -325,38 +1063,30 @@ const BookingSuccessContent = () => {
           await generatePDFWithFallback(ticketHTML);
         }
       } else {
-        // Multiple categories: generate a PDF for each category
+        // Multiple categories
         for (const category of bookingDetails.seatCategories) {
-          console.log('Available templates:', available_templates_names);
-
-          // Convert the category label to lower case for comparison
           const categoryName = category.label.toLowerCase();
-
-          // Find a matching template name ignoring case
           let matchedTemplate = available_templates_names.find(
             name => name.toLowerCase() === categoryName
-          );
-
-          console.log('Matched template:', matchedTemplate);
-
-          // If no match is found, use "Standard" as default
-          if (!matchedTemplate) {
-            matchedTemplate = "Standard";
-          }
+          ) || "Standard";
           console.log('Using template:', matchedTemplate);
 
           const templateUrl = `/templates/${matchedTemplate}.html`;
-
-          // Fetch the HTML template
           let response = await fetch(templateUrl);
 
           if (!response.ok) {
             console.warn(`Template "${matchedTemplate}" not found. Using Standard.html`);
             response = await fetch(`/templates/Standard.html`);
-            matchedTemplate = "Standard"; // Update matchedTemplate for category name replacement
+            matchedTemplate = "Standard";
           }
 
           let ticketHTML = await response.text();
+
+          // Generate category-specific QR code
+          const qrCodeUrl = await QRCode.toDataURL(
+            `https://www.events2go.com.au/confirmation?orderId=${bookingDetails.bookingId}&category=${category.label}`,
+            { width: 150, margin: 1, errorCorrectionLevel: 'M' }
+          );
 
           const seatCategorySummary = `${category.label} (x${category.num_seats}): $${category.total_price.toFixed(2)}`;
 
@@ -370,9 +1100,9 @@ const BookingSuccessContent = () => {
             .replace(/\$\{categoryName\}/g, category.label || 'General')
             .replace(/\$\{seatCategories\}/g, seatCategorySummary || 'General')
             .replace(/\$\{totalAmount\}/g, category.total_price.toFixed(2))
+            .replace(/\$\{numberOfTickets\}/g, category.num_seats.toString() || '1')
             .replace(/\$\{eventAddress\}/g, bookingDetails.eventAddress || 'Venue TBD')
             .replace(/\$\{qrCodeUrl\}/g, qrCodeUrl || '/images/qr-placeholder.png')
-            .replace(/\$\{numberOfTickets\}/g, bookingDetails.numberOfTickets?.toString() || '1')
             .replace(/\$\{custom_category_name\}/g, (matchedTemplate === "Standard" ? category.label : matchedTemplate).toUpperCase());
 
           ticketHTML = convertOklchToRgb(ticketHTML);
@@ -407,28 +1137,31 @@ const BookingSuccessContent = () => {
 
     tempContainer.innerHTML = `<div class="ticket-wrapper" style="width: 794px; min-height: 1123px; background: white; padding: 0; margin: 0;">${ticketHTML}</div>`;
 
-    document.body.appendChild(tempContainer);
+    // Use Shadow DOM for better isolation
+    const shadowHost = document.createElement('div');
+    const shadowRoot = shadowHost.attachShadow({ mode: 'closed' });
+    shadowRoot.appendChild(tempContainer);
+    document.body.appendChild(shadowHost);
 
-    await new Promise(resolve => setTimeout(resolve, 100));
-
-    const images = tempContainer.querySelectorAll('img');
-    const imagePromises = Array.from(images).map((img) => {
-      return new Promise((resolve) => {
-        if (img.complete) {
-          resolve(true);
-        } else {
-          img.onload = () => resolve(true);
-          img.onerror = () => {
-            console.warn('Image failed to load:', img.src);
+    const waitForImages = async (container: HTMLElement) => {
+      const images = container.querySelectorAll('img');
+      const imagePromises = Array.from(images).map((img) => {
+        return new Promise((resolve) => {
+          if (img.complete && img.naturalHeight !== 0) {
             resolve(true);
-          };
-          setTimeout(() => resolve(true), 3000);
-        }
+          } else {
+            img.onload = () => resolve(true);
+            img.onerror = () => {
+              console.warn('Image failed to load:', img.src);
+              resolve(true);
+            };
+          }
+        });
       });
-    });
+      await Promise.all(imagePromises);
+    };
 
-    await Promise.all(imagePromises);
-    await new Promise(resolve => setTimeout(resolve, 500));
+    await waitForImages(tempContainer);
 
     const html2canvas = (await import('html2canvas')).default;
     const targetElement = tempContainer.querySelector('.ticket-wrapper') as HTMLElement || tempContainer;
@@ -444,33 +1177,28 @@ const BookingSuccessContent = () => {
       foreignObjectRendering: false,
       onclone: (clonedDoc, element) => {
         try {
-          const clonedBody = clonedDoc.body;
-          if (clonedBody) {
-            clonedBody.style.margin = '0';
-            clonedBody.style.padding = '0';
-            clonedBody.style.width = '794px';
-            clonedBody.style.height = 'auto';
-          }
-
-          const allElements = element.querySelectorAll('*');
-          allElements.forEach((el: any) => {
-            try {
-              if (el.style) {
-                const style = el.style;
-                if (style.color && style.color.includes('oklch')) {
-                  style.color = convertOklchToRgb(style.color);
+          const ticketWrapper = clonedDoc.querySelector('.ticket-wrapper');
+          if (ticketWrapper) {
+            const allElements = ticketWrapper.querySelectorAll('*');
+            allElements.forEach((el: any) => {
+              try {
+                if (el.style) {
+                  const style = el.style;
+                  if (style.color && style.color.includes('oklch')) {
+                    style.color = convertOklchToRgb(style.color);
+                  }
+                  if (style.backgroundColor && style.backgroundColor.includes('oklch')) {
+                    style.backgroundColor = convertOklchToRgb(style.backgroundColor);
+                  }
+                  if (style.borderColor && style.borderColor.includes('oklch')) {
+                    style.borderColor = convertOklchToRgb(style.borderColor);
+                  }
                 }
-                if (style.backgroundColor && style.backgroundColor.includes('oklch')) {
-                  style.backgroundColor = convertOklchToRgb(style.backgroundColor);
-                }
-                if (style.borderColor && style.borderColor.includes('oklch')) {
-                  style.borderColor = convertOklchToRgb(style.borderColor);
-                }
+              } catch (styleError) {
+                console.warn('Error fixing styles on element:', styleError);
               }
-            } catch (styleError) {
-              console.warn('Error fixing styles on element:', styleError);
-            }
-          });
+            });
+          }
         } catch (cloneError) {
           console.warn('Error in onclone callback:', cloneError);
         }
@@ -478,11 +1206,11 @@ const BookingSuccessContent = () => {
     });
 
     try {
-      if (tempContainer && tempContainer.parentNode) {
-        document.body.removeChild(tempContainer);
+      if (shadowHost && shadowHost.parentNode) {
+        document.body.removeChild(shadowHost);
       }
     } catch (cleanupError) {
-      console.warn('Error cleaning up temp container:', cleanupError);
+      console.warn('Error cleaning up shadow host:', cleanupError);
     }
 
     const jsPDF = (await import('jspdf')).jsPDF;
@@ -558,11 +1286,11 @@ const BookingSuccessContent = () => {
     router.push('/Profile/Bookings');
   };
 
-  if (loading || !bookingDetails?.bookingId || !qrCodeUrl) {
+  if (loading || !bookingDetails?.bookingId) {
     return <KangarooJump />;
   }
 
-  if (error || !bookingDetails) {
+  if (error) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center max-w-md mx-auto px-6">
@@ -606,11 +1334,11 @@ const BookingSuccessContent = () => {
         </div>
 
         <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-          <div className="flex items-start gap-6 mb-6">
+          <div className="flex flex-col md:flex-row items-start gap-6 mb-6">
             <img
               src={bookingDetails.eventImage}
               alt={bookingDetails.eventTitle}
-              className="w-32 h-48 object-cover rounded-lg"
+              className="w-full md:w-32 h-48 object-cover rounded-lg"
             />
             <div className="flex-1">
               <h2 className="text-2xl font-bold mb-2">{bookingDetails.eventTitle}</h2>
@@ -629,6 +1357,9 @@ const BookingSuccessContent = () => {
                 </div>
               </div>
             </div>
+            {/* <div className="mt-6 md:mt-0">
+              <QRCodeDisplay value={`https://www.events2go.com.au/confirmation?orderId=${bookingDetails.bookingId}`} />
+            </div> */}
           </div>
 
           <div className="border-t pt-6">
@@ -639,10 +1370,6 @@ const BookingSuccessContent = () => {
                   <span className="text-gray-600">Booking ID:</span>
                   <span className="font-semibold">{bookingDetails.bookingId}</span>
                 </div>
-                {/* <div className="flex justify-between">
-                  <span className="text-gray-600">Slot:</span>
-                  <span className="font-semibold">{bookingDetails.slotName}</span>
-                </div> */}
                 {bookingDetails.seatCategories.map((category) => (
                   <div key={category.seat_category_id} className="flex justify-between">
                     <span className="text-gray-600">{category.label} (x{category.num_seats}):</span>
@@ -661,7 +1388,6 @@ const BookingSuccessContent = () => {
                     <span className="font-semibold">${category.price_per_seat.toFixed(2)}</span>
                   </div>
                 ))}
-                
                 <div className="flex justify-between text-lg font-bold border-t pt-2">
                   <span>Total Amount:</span>
                   <span className="text-purple-600">${bookingDetails.totalAmount.toFixed(2)}</span>
@@ -736,3 +1462,4 @@ const BookingSuccessPage = () => {
 };
 
 export default BookingSuccessPage;
+
