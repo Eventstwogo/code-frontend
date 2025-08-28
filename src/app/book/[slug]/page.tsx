@@ -731,6 +731,7 @@ import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import KangarooLoader from '@/components/ui/kangaroo';
 
 interface SeatCategory {
   seat_category_id: string;
@@ -993,8 +994,17 @@ const BookingPageContent = () => {
         toast.error("Unexpected booking response. Please try again.");
       }
     } catch (error: any) {
+
       const errorMessage = error.response?.data?.message || "Booking failed. Please try again.";
-      toast.error(`Booking Failed: ${errorMessage}`);
+      if(errorMessage.includes("You already have a pending/approved booking for this seat category")) {
+        toast.error(<div>You already have a pending/approved booking for one of the selected seat categories.<strong>
+          Please contact the Admin for further assistance</strong></div>, {
+    duration: 10000, // 5 seconds
+  });
+      }
+      else {
+        toast.error(`Booking Failed: ${errorMessage}`);
+      }
     } finally {
       setBookingLoading(false);
     }
@@ -1077,9 +1087,7 @@ const BookingPageContent = () => {
 
   if (!event) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-xl">Loading event details...</div>
-      </div>
+      <KangarooLoader/>
     );
   }
 
@@ -1361,8 +1369,11 @@ const BookingPageContent = () => {
               {bookingLoading ? 'Booking...' : 'Confirm Booking'}
             </button>
           </div>
+          
         )}
-
+<p className='mt-4 text-sm font-semibold'>
+  Note: For payment, you’ll be redirected to PayPal’s secure website. If it’s your first time, please log in with your email to continue.
+</p>
         {showBookingDetails && bookingDetails && (
           <div className="mt-8 bg-white rounded-lg shadow-md p-6">
             <div className="flex items-center justify-between mb-4">

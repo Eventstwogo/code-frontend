@@ -38,6 +38,7 @@ import {
 import Link from "next/link";
 import useStore from "@/lib/Zustand";
 import QRCodeDisplay from "@/components/QRCodeDisplay";
+import KangarooLoader from "../../../components/ui/kangaroo";
 
 
 export default function BookingsPage() {
@@ -936,16 +937,9 @@ export default function BookingsPage() {
         </Card>
 
         {bookingsLoading ? (
-          <Card className="shadow-sm border-slate-200/60 bg-white/90 backdrop-blur-sm">
-            <CardContent className="p-16">
-              <div className="flex flex-col items-center justify-center space-y-4">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-                <p className="text-slate-600 font-medium">
-                  Loading your bookings...
-                </p>
-              </div>
-            </CardContent>
-          </Card>
+        <div>
+          <KangarooLoader/>
+          </div>
         ) : bookingsError ? (
           <Card className="shadow-sm border-red-200/60 bg-white/90 backdrop-blur-sm">
             <CardContent className="p-16">

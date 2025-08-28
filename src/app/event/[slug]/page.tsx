@@ -7,6 +7,7 @@ import Details from '@/components/details/page';
 import Trailer from '@/components/trailer';
 import axiosInstance from '@/lib/axiosInstance';
 import { useParams } from 'next/navigation';
+import KangarooLoader from '@/components/ui/kangaroo';
 
 interface EventDetailPageProps {
   params: {
@@ -87,7 +88,7 @@ console.log(dates)
     }
   }, [slug]);
 
-  if (!event) return <p>Loading...</p>;
+  if (!event) return <p><KangarooLoader/></p>;
 
 
   return (

@@ -535,7 +535,7 @@ function BookingConfirmationContent() {
             {/* Movie/Event Details */}
             <div className="bg-purple-100 border border-purple-200 p-4 rounded-lg mb-6 text-center">
               <h1 className="text-xl font-bold mb-1">
-                {bookingDetails.event.title} (U)
+                {bookingDetails.event.title} 
               </h1>
               <p className="text-sm text-gray-700">
                 {bookingDetails.event.language || "English"}
