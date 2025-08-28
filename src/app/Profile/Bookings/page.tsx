@@ -37,46 +37,76 @@ import {
 } from "@/components/ui/select";
 import Link from "next/link";
 import useStore from "@/lib/Zustand";
+import QRCodeDisplay from "@/components/QRCodeDisplay";
 
-// QR Code generator component
-const QRCodeDisplay = ({
-  value,
-  size = 200,
-}: {
-  value: string;
-  size?: number;
-}) => {
-  const [qrCodeUrl, setQrCodeUrl] = useState("");
 
-  useEffect(() => {
-    // Generate QR code using a simple library approach
-    const generateQR = async () => {
-      try {
-        // Using QR Server API for QR code generation
-        const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=${size}x${size}&data=${encodeURIComponent(
-          value
-        )}&format=png&ecc=M&margin=1`;
-        setQrCodeUrl(qrUrl);
-      } catch (error) {
-        console.error("Error generating QR code:", error);
-      }
-    };
-    generateQR();
-  }, [value, size]);
+// // QR Code redirect component
+// const QRCodeDisplay = ({
+//   value,
+// }: {
+//   value: string;
+// }) => {
+//   const router = useRouter();
 
-  return qrCodeUrl ? (
-    <div className="flex flex-col items-center p-4 bg-white rounded-lg border-2 border-dashed border-slate-300">
-      <img src={qrCodeUrl} alt="QR Code" className="rounded-lg" />
-      <p className="text-xs text-slate-500 mt-2 text-center">
-        Scan for ticket verification
-      </p>
-    </div>
-  ) : (
-    <div className="flex items-center justify-center w-48 h-48 bg-slate-100 rounded-lg">
-      <QrCode className="w-12 h-12 text-slate-400" />
-    </div>
-  );
-};
+//   const handleRedirect = () => {
+//     window.location.href = value; // Redirect to the provided URL
+//   };
+
+//   return (
+//     <div className="flex flex-col items-center p-4 bg-white rounded-lg border-2 border-dashed border-slate-300">
+//       <Button
+//         onClick={handleRedirect}
+//         className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg"
+//       >
+//         <QrCode className="w-5 h-5 mr-2" />
+        
+//       </Button>
+//       <p className="text-xs text-slate-500 mt-2 text-center">
+//         Click to view ticket verification details
+//       </p>
+//     </div>
+//   );
+// };
+
+// // QR Code generator component
+// // const QRCodeDisplay = ({
+// //   value,
+// //   size = 200,
+// // }: {
+// //   value: string;
+// //   size?: number;
+// // }) => {
+// //   const [qrCodeUrl, setQrCodeUrl] = useState("");
+
+// //   useEffect(() => {
+// //     // Generate QR code using a simple library approach
+// //     const generateQR = async () => {
+// //       try {
+// //         // Using QR Server API for QR code generation
+// //         const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=${size}x${size}&data=${encodeURIComponent(
+// //           value
+// //         )}&format=png&ecc=M&margin=1`;
+// //         setQrCodeUrl(qrUrl);
+// //       } catch (error) {
+// //         console.error("Error generating QR code:", error);
+// //       }
+// //     };
+// //     generateQR();
+// //   }, [value, size]);
+
+// //   return qrCodeUrl ? (
+// //     <div className="flex flex-col items-center p-4 bg-white rounded-lg border-2 border-dashed border-slate-300">
+// //       <img src={qrCodeUrl} alt="QR Code" className="rounded-lg" />
+// //       <p className="text-xs text-slate-500 mt-2 text-center">
+// //         Scan for ticket verification
+// //       </p>
+// //     </div>
+// //   ) : (
+// //     <div className="flex items-center justify-center w-48 h-48 bg-slate-100 rounded-lg">
+// //       <QrCode className="w-12 h-12 text-slate-400" />
+// //     </div>
+// //   );
+// // };
 
 export default function BookingsPage() {
   const complexColorRegex =
@@ -1342,17 +1372,20 @@ export default function BookingsPage() {
                   {/* Right Section - QR Code */}
                   <div className="lg:col-span-1">
                     <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-4 sm:p-6 text-center sticky top-6">
+                      {selectedBooking.booking_status.toLowerCase() ===
+                          "approved" && (
                       <h3 className="text-base sm:text-lg font-semibold text-slate-900 mb-3 sm:mb-4 flex items-center justify-center gap-2">
                         <QrCode className="w-5 h-5 text-blue-600" />
                         Digital Ticket
                       </h3>
+                          )}
 
-                      <div className="mb-4">
+                     <div className="mb-4">
                         <QRCodeDisplay
                           value={`https://www.events2go.com.au/confirmation?orderId=${selectedBooking.order_id}`}
-                          size={150}
                         />
                       </div>
+
 
                       <div className="space-y-3 text-sm">
                         <div className="bg-white p-3 rounded-lg">

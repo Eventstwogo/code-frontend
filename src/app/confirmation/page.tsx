@@ -456,7 +456,7 @@ function BookingConfirmationContent() {
 
   const formatTime = (timeString: string) => {
     const [hours, minutes] = timeString.split(":");
-    return `${hours}:${minutes} PM`;
+    return `${hours}:${minutes}`;
   };
 
   const formatINR = (amount: number) => {
