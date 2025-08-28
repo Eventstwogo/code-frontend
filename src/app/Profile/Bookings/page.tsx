@@ -39,7 +39,6 @@ import Link from "next/link";
 import useStore from "@/lib/Zustand";
 import QRCodeDisplay from "@/components/QRCodeDisplay";
 
-
 // // QR Code redirect component
 // const QRCodeDisplay = ({
 //   value,
@@ -59,7 +58,7 @@ import QRCodeDisplay from "@/components/QRCodeDisplay";
 //         className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg"
 //       >
 //         <QrCode className="w-5 h-5 mr-2" />
-        
+
 //       </Button>
 //       <p className="text-xs text-slate-500 mt-2 text-center">
 //         Click to view ticket verification details
@@ -321,53 +320,41 @@ export default function BookingsPage() {
       console.log("Available templates:", available_templates_names);
 
       if (booking.seat_categories.length === 1) {
-        // Single category: use original logic with updated template selection
+        // Single category
         const category = booking.seat_categories[0];
         const categoryName = category.label.toLowerCase();
 
         // Find a matching template name ignoring case
-        let matchedTemplate = available_templates_names.find(
-          (name) => name.toLowerCase() === categoryName
-        );
-
-        console.log("Matched template:", matchedTemplate);
-
-        // If no match is found, use "Standard" as default
-        if (!matchedTemplate) {
-          matchedTemplate = "Standard";
-        }
+        let matchedTemplate =
+          available_templates_names.find(
+            (name) => name.toLowerCase() === categoryName
+          ) || "Standard";
         console.log("Using template:", matchedTemplate);
 
         let templateUrl = `/templates/${matchedTemplate}.html`;
-
-        // Fetch the HTML template
         let response = await fetch(templateUrl);
 
-        // If the template is not found, use the default Standard.html
+        // Fallback to Standard.html if template not found
         if (!response.ok) {
           console.warn(
             `Template "${matchedTemplate}" not found. Using Standard.html`
           );
           response = await fetch(`/templates/Standard.html`);
-          matchedTemplate = "Standard"; // Update matchedTemplate for category name replacement
+          matchedTemplate = "Standard";
         }
 
         let ticketHTML = await response.text();
 
-        // Generate QR code URL
+        // Generate QR code URL consistent with QRCodeDisplay
         const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(
-          JSON.stringify({
-            orderId: booking.order_id,
-            eventDate: booking.event.event_date,
-            eventTime: booking.event.event_time,
-          })
+          `https://www.events2go.com.au/confirmation?orderId=${booking.order_id}`
         )}&format=png&ecc=M&margin=1`;
 
         const seatCategorySummary = `${category.label} (x${
           category.num_seats
         }): ${formatAUD(category.price_per_seat * category.num_seats)}`;
 
-        // Replace placeholders dynamically with safe fallbacks
+        // Replace placeholders
         ticketHTML = ticketHTML
           .replace(/\${bookingId}/g, booking.order_id || "Booking ID")
           .replace(/\${eventTitle}/g, booking.event.title || "Event Title")
@@ -410,54 +397,41 @@ export default function BookingsPage() {
           await generatePDFWithFallback(ticketHTML);
         }
       } else {
-        // Multiple categories: generate a PDF for each category
+        // Multiple categories
         for (const category of booking.seat_categories) {
           const categoryName = category.label.toLowerCase();
 
           // Find a matching template name ignoring case
-          let matchedTemplate = available_templates_names.find(
-            (name) => name.toLowerCase() === categoryName
-          );
-
-          console.log("Matched template:", matchedTemplate);
-
-          // If no match is found, use "Standard" as default
-          if (!matchedTemplate) {
-            matchedTemplate = "Standard";
-          }
+          let matchedTemplate =
+            available_templates_names.find(
+              (name) => name.toLowerCase() === categoryName
+            ) || "Standard";
           console.log("Using template:", matchedTemplate);
 
           let templateUrl = `/templates/${matchedTemplate}.html`;
-
-          // Fetch the HTML template
           let response = await fetch(templateUrl);
 
-          // If the template is not found, use the default Standard.html
+          // Fallback to Standard.html if template not found
           if (!response.ok) {
             console.warn(
               `Template "${matchedTemplate}" not found. Using Standard.html`
             );
             response = await fetch(`/templates/Standard.html`);
-            matchedTemplate = "Standard"; // Update matchedTemplate for category name replacement
+            matchedTemplate = "Standard";
           }
 
           let ticketHTML = await response.text();
 
-          // Generate QR code URL
+          // Generate QR code URL consistent with QRCodeDisplay
           const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(
-            JSON.stringify({
-              orderId: booking.order_id,
-              eventDate: booking.event.event_date,
-              eventTime: booking.event.event_time,
-              category: category.label,
-            })
+            `https://www.events2go.com.au/confirmation?orderId=${booking.order_id}&category=${category.label}`
           )}&format=png&ecc=M&margin=1`;
 
           const seatCategorySummary = `${category.label} (x${
             category.num_seats
           }): ${formatAUD(category.price_per_seat * category.num_seats)}`;
 
-          // Replace placeholders dynamically with safe fallbacks
+          // Replace placeholders
           ticketHTML = ticketHTML
             .replace(/\${bookingId}/g, booking.order_id || "Booking ID")
             .replace(/\${eventTitle}/g, booking.event.title || "Event Title")
@@ -514,6 +488,218 @@ export default function BookingsPage() {
       toast.error("Failed to download ticket(s). Please try again.");
     }
   };
+
+  // const handleDownloadTicket = async (booking: any) => {
+  //   if (!booking) return;
+
+  //   try {
+  //     toast.info("Generating your ticket PDF(s)...");
+
+  //     const available_templates_names = [
+  //       "Diamond",
+  //       "Gold",
+  //       "Platinum",
+  //       "Silver",
+  //       "Standard",
+  //       "VIP",
+  //       "VVIP",
+  //     ];
+  //     console.log("Available templates:", available_templates_names);
+
+  //     if (booking.seat_categories.length === 1) {
+  //       // Single category: use original logic with updated template selection
+  //       const category = booking.seat_categories[0];
+  //       const categoryName = category.label.toLowerCase();
+
+  //       // Find a matching template name ignoring case
+  //       let matchedTemplate = available_templates_names.find(
+  //         (name) => name.toLowerCase() === categoryName
+  //       );
+
+  //       console.log("Matched template:", matchedTemplate);
+
+  //       // If no match is found, use "Standard" as default
+  //       if (!matchedTemplate) {
+  //         matchedTemplate = "Standard";
+  //       }
+  //       console.log("Using template:", matchedTemplate);
+
+  //       let templateUrl = `/templates/${matchedTemplate}.html`;
+
+  //       // Fetch the HTML template
+  //       let response = await fetch(templateUrl);
+
+  //       // If the template is not found, use the default Standard.html
+  //       if (!response.ok) {
+  //         console.warn(
+  //           `Template "${matchedTemplate}" not found. Using Standard.html`
+  //         );
+  //         response = await fetch(`/templates/Standard.html`);
+  //         matchedTemplate = "Standard"; // Update matchedTemplate for category name replacement
+  //       }
+
+  //       let ticketHTML = await response.text();
+
+  //       // Generate QR code URL
+  //       const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(
+  //         JSON.stringify({
+  //           orderId: booking.order_id,
+  //           eventDate: booking.event.event_date,
+  //           eventTime: booking.event.event_time,
+  //         })
+  //       )}&format=png&ecc=M&margin=1`;
+
+  //       const seatCategorySummary = `${category.label} (x${
+  //         category.num_seats
+  //       }): ${formatAUD(category.price_per_seat * category.num_seats)}`;
+
+  //       // Replace placeholders dynamically with safe fallbacks
+  //       ticketHTML = ticketHTML
+  //         .replace(/\${bookingId}/g, booking.order_id || "Booking ID")
+  //         .replace(/\${eventTitle}/g, booking.event.title || "Event Title")
+  //         .replace(
+  //           /\${businessLogo}/g,
+  //           booking.event.business_logo || "/images/placeholder.svg"
+  //         )
+  //         .replace(
+  //           /\${eventImage}/g,
+  //           booking.event.card_image || "/images/event-placeholder.png"
+  //         )
+  //         .replace(
+  //           /\${selectedDate}/g,
+  //           formatDate(booking.event.event_date) || "TBD"
+  //         )
+  //         .replace(/\${startTime}/g, booking.event.event_time || "TBD")
+  //         .replace(/\${categoryName}/g, category.label || "General")
+  //         .replace(/\${seatCategories}/g, seatCategorySummary || "General")
+  //         .replace(/\${numberOfTickets}/g, category.num_seats.toString() || "1")
+  //         .replace(/\${eventAddress}/g, booking.event.address || "Venue TBD")
+  //         .replace(/\${qrCodeUrl}/g, qrCodeUrl || "/images/qr-placeholder.png")
+  //         .replace(
+  //           /\${custom_category_name}/g,
+  //           (matchedTemplate === "Standard"
+  //             ? category.label
+  //             : matchedTemplate
+  //           ).toUpperCase()
+  //         );
+
+  //       // Convert OKLCH colors to RGB
+  //       ticketHTML = convertOklchToRgb(ticketHTML);
+
+  //       try {
+  //         await generatePDFWithHtml2Canvas(ticketHTML, category.label);
+  //       } catch (html2canvasError) {
+  //         console.warn(
+  //           "html2canvas failed, trying fallback method:",
+  //           html2canvasError
+  //         );
+  //         await generatePDFWithFallback(ticketHTML);
+  //       }
+  //     } else {
+  //       // Multiple categories: generate a PDF for each category
+  //       for (const category of booking.seat_categories) {
+  //         const categoryName = category.label.toLowerCase();
+
+  //         // Find a matching template name ignoring case
+  //         let matchedTemplate = available_templates_names.find(
+  //           (name) => name.toLowerCase() === categoryName
+  //         );
+
+  //         console.log("Matched template:", matchedTemplate);
+
+  //         // If no match is found, use "Standard" as default
+  //         if (!matchedTemplate) {
+  //           matchedTemplate = "Standard";
+  //         }
+  //         console.log("Using template:", matchedTemplate);
+
+  //         let templateUrl = `/templates/${matchedTemplate}.html`;
+
+  //         // Fetch the HTML template
+  //         let response = await fetch(templateUrl);
+
+  //         // If the template is not found, use the default Standard.html
+  //         if (!response.ok) {
+  //           console.warn(
+  //             `Template "${matchedTemplate}" not found. Using Standard.html`
+  //           );
+  //           response = await fetch(`/templates/Standard.html`);
+  //           matchedTemplate = "Standard"; // Update matchedTemplate for category name replacement
+  //         }
+
+  //         let ticketHTML = await response.text();
+
+  //         // Generate QR code URL
+  //         const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(
+  //           JSON.stringify({
+  //             orderId: booking.order_id,
+  //             eventDate: booking.event.event_date,
+  //             eventTime: booking.event.event_time,
+  //             category: category.label,
+  //           })
+  //         )}&format=png&ecc=M&margin=1`;
+
+  //         const seatCategorySummary = `${category.label} (x${
+  //           category.num_seats
+  //         }): ${formatAUD(category.price_per_seat * category.num_seats)}`;
+
+  //         // Replace placeholders dynamically with safe fallbacks
+  //         ticketHTML = ticketHTML
+  //           .replace(/\${bookingId}/g, booking.order_id || "Booking ID")
+  //           .replace(/\${eventTitle}/g, booking.event.title || "Event Title")
+  //           .replace(
+  //             /\${businessLogo}/g,
+  //             booking.event.business_logo || "/images/placeholder.svg"
+  //           )
+  //           .replace(
+  //             /\${eventImage}/g,
+  //             booking.event.card_image || "/images/event-placeholder.png"
+  //           )
+  //           .replace(
+  //             /\${selectedDate}/g,
+  //             formatDate(booking.event.event_date) || "TBD"
+  //           )
+  //           .replace(/\${startTime}/g, booking.event.event_time || "TBD")
+  //           .replace(/\${categoryName}/g, category.label || "General")
+  //           .replace(/\${seatCategories}/g, seatCategorySummary || "General")
+  //           .replace(
+  //             /\${numberOfTickets}/g,
+  //             category.num_seats.toString() || "1"
+  //           )
+  //           .replace(/\${eventAddress}/g, booking.event.address || "Venue TBD")
+  //           .replace(
+  //             /\${qrCodeUrl}/g,
+  //             qrCodeUrl || "/images/qr-placeholder.png"
+  //           )
+  //           .replace(
+  //             /\${custom_category_name}/g,
+  //             (matchedTemplate === "Standard"
+  //               ? category.label
+  //               : matchedTemplate
+  //             ).toUpperCase()
+  //           );
+
+  //         // Convert OKLCH colors to RGB
+  //         ticketHTML = convertOklchToRgb(ticketHTML);
+
+  //         try {
+  //           await generatePDFWithHtml2Canvas(ticketHTML, category.label);
+  //         } catch (html2canvasError) {
+  //           console.warn(
+  //             `html2canvas failed for ${category.label}, trying fallback:`,
+  //             html2canvasError
+  //           );
+  //           await generatePDFWithFallback(ticketHTML);
+  //         }
+  //       }
+  //     }
+
+  //     toast.success("Ticket(s) downloaded successfully!");
+  //   } catch (error) {
+  //     console.error("Error generating PDF ticket(s):", error);
+  //     toast.error("Failed to download ticket(s). Please try again.");
+  //   }
+  // };
 
   const generatePDFWithHtml2Canvas = async (
     ticketHTML: string,
@@ -1373,19 +1559,18 @@ export default function BookingsPage() {
                   <div className="lg:col-span-1">
                     <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-4 sm:p-6 text-center sticky top-6">
                       {selectedBooking.booking_status.toLowerCase() ===
-                          "approved" && (
-                      <h3 className="text-base sm:text-lg font-semibold text-slate-900 mb-3 sm:mb-4 flex items-center justify-center gap-2">
-                        <QrCode className="w-5 h-5 text-blue-600" />
-                        Digital Ticket
-                      </h3>
-                          )}
+                        "approved" && (
+                        <h3 className="text-base sm:text-lg font-semibold text-slate-900 mb-3 sm:mb-4 flex items-center justify-center gap-2">
+                          <QrCode className="w-5 h-5 text-blue-600" />
+                          Digital Ticket
+                        </h3>
+                      )}
 
-                     <div className="mb-4">
+                      <div className="mb-4">
                         <QRCodeDisplay
                           value={`https://www.events2go.com.au/confirmation?orderId=${selectedBooking.order_id}`}
                         />
                       </div>
-
 
                       <div className="space-y-3 text-sm">
                         <div className="bg-white p-3 rounded-lg">

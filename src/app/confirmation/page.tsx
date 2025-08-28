@@ -459,10 +459,10 @@ function BookingConfirmationContent() {
     return `${hours}:${minutes}`;
   };
 
-  const formatINR = (amount: number) => {
+  const formatAUD = (amount: number) => {
     return new Intl.NumberFormat("en-IN", {
       style: "currency",
-      currency: "INR",
+      currency: "AUD",
       minimumFractionDigits: 2,
     }).format(amount);
   };
@@ -569,14 +569,14 @@ function BookingConfirmationContent() {
                   )}{" "}
                   Ticket(s)
                 </p>
-                <p className="text-sm font-semibold">
+                <p className="text-sm">
                   {bookingDetails.seat_categories
                     .map((seat: any) => seat.label)
                     .join(", ")}
                 </p>
-                <p className="text-xs text-gray-500 mt-1">
+                <p className="text-sm mt-1">
                   Booking ID:{" "}
-                  <span className="font-medium">{bookingDetails.order_id}</span>
+                  <span className="text-sm font-semibold ">{bookingDetails.order_id}</span>
                 </p>
               </div>
             </div>
@@ -585,7 +585,7 @@ function BookingConfirmationContent() {
             <div className="bg-purple-100 border border-purple-200 p-4 rounded-lg text-center">
               <p className="text-sm text-gray-600">Total Amount</p>
               <p className="text-xl font-bold text-gray-900">
-                {formatINR(bookingDetails.total_amount)}
+                {formatAUD(bookingDetails.total_amount)}
               </p>
             </div>
           </CardContent>
