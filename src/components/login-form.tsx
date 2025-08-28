@@ -205,10 +205,8 @@ export function LoginForm({
           <form onSubmit={handleSubmit(onSubmit)} className="p-6 md:p-8">
             <div className="flex flex-col gap-6">
               <div className="flex flex-col items-center text-center">
-                <h1 className="text-2xl font-bold">Welcome back</h1>
-                <p className="text-muted-foreground text-balance">
-                  Login to your Events2go account
-                </p>
+                <h1 className="text-2xl font-bold">Login to your Events2go account</h1>
+            
               </div>
 
               <div className="grid gap-3">
