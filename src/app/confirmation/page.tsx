@@ -397,9 +397,10 @@
 //   );
 // }
 
+
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Card, CardContent } from "@/components/ui/card";
@@ -410,10 +411,12 @@ import { useBookingStore } from "@/lib/ZustanStore/bookingStore";
 import { useProfileStore } from "@/lib/ZustanStore/usermanagement";
 import { Skeleton } from "@/components/ui/skeleton";
 
-export default function BookingConfirmationPage() {
+// 🔹 Wrap search params logic inside a child
+function BookingConfirmationContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const orderId = searchParams.get("orderId");
+
   const [bookingDetails, setBookingDetails] = useState<any>(null);
   const { fetchBookingDetails, error: bookingsError } = useBookingStore();
   const { fetchProfile } = useProfileStore();
@@ -464,6 +467,7 @@ export default function BookingConfirmationPage() {
     }).format(amount);
   };
 
+  // 🔹 Error state
   if (bookingsError) {
     return (
       <div className="min-h-screen bg-gray-100 flex items-center justify-center px-4">
@@ -485,6 +489,7 @@ export default function BookingConfirmationPage() {
     );
   }
 
+  // 🔹 Loading state
   if (!bookingDetails) {
     return (
       <div className="min-h-screen bg-gray-100 flex items-center justify-center px-4">
@@ -502,6 +507,7 @@ export default function BookingConfirmationPage() {
     );
   }
 
+  // 🔹 Success UI
   return (
     <div className="min-h-screen bg-gray-100 py-8 px-4">
       <div className="max-w-md mx-auto">
@@ -586,5 +592,20 @@ export default function BookingConfirmationPage() {
         </Card>
       </div>
     </div>
+  );
+}
+
+// 🔹 Export with Suspense wrapper
+export default function BookingConfirmationPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen flex items-center justify-center">
+          <p className="text-gray-500">Loading booking confirmation...</p>
+        </div>
+      }
+    >
+      <BookingConfirmationContent />
+    </Suspense>
   );
 }

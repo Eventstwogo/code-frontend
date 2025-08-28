@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useEffect, useState } from "react";
@@ -268,12 +267,12 @@ export default function BookingsPage() {
   // Format date function
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    const day = String(date.getDate()).padStart(2, '0');
-    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, "0");
+    const month = String(date.getMonth() + 1).padStart(2, "0");
     const year = date.getFullYear();
     return `${day}.${month}.${year}`;
   };
-  
+
   const handleDownloadTicket = async (booking: any) => {
     if (!booking) return;
 
@@ -334,7 +333,9 @@ export default function BookingsPage() {
           })
         )}&format=png&ecc=M&margin=1`;
 
-        const seatCategorySummary = `${category.label} (x${category.num_seats}): ${formatAUD(category.price_per_seat * category.num_seats)}`;
+        const seatCategorySummary = `${category.label} (x${
+          category.num_seats
+        }): ${formatAUD(category.price_per_seat * category.num_seats)}`;
 
         // Replace placeholders dynamically with safe fallbacks
         ticketHTML = ticketHTML
@@ -355,15 +356,15 @@ export default function BookingsPage() {
           .replace(/\${startTime}/g, booking.event.event_time || "TBD")
           .replace(/\${categoryName}/g, category.label || "General")
           .replace(/\${seatCategories}/g, seatCategorySummary || "General")
-          .replace(
-            /\${numberOfTickets}/g,
-            category.num_seats.toString() || "1"
-          )
+          .replace(/\${numberOfTickets}/g, category.num_seats.toString() || "1")
           .replace(/\${eventAddress}/g, booking.event.address || "Venue TBD")
           .replace(/\${qrCodeUrl}/g, qrCodeUrl || "/images/qr-placeholder.png")
           .replace(
             /\${custom_category_name}/g,
-            (matchedTemplate === "Standard" ? category.label : matchedTemplate).toUpperCase()
+            (matchedTemplate === "Standard"
+              ? category.label
+              : matchedTemplate
+            ).toUpperCase()
           );
 
         // Convert OKLCH colors to RGB
@@ -422,7 +423,9 @@ export default function BookingsPage() {
             })
           )}&format=png&ecc=M&margin=1`;
 
-          const seatCategorySummary = `${category.label} (x${category.num_seats}): ${formatAUD(category.price_per_seat * category.num_seats)}`;
+          const seatCategorySummary = `${category.label} (x${
+            category.num_seats
+          }): ${formatAUD(category.price_per_seat * category.num_seats)}`;
 
           // Replace placeholders dynamically with safe fallbacks
           ticketHTML = ticketHTML
@@ -448,10 +451,16 @@ export default function BookingsPage() {
               category.num_seats.toString() || "1"
             )
             .replace(/\${eventAddress}/g, booking.event.address || "Venue TBD")
-            .replace(/\${qrCodeUrl}/g, qrCodeUrl || "/images/qr-placeholder.png")
+            .replace(
+              /\${qrCodeUrl}/g,
+              qrCodeUrl || "/images/qr-placeholder.png"
+            )
             .replace(
               /\${custom_category_name}/g,
-              (matchedTemplate === "Standard" ? category.label : matchedTemplate).toUpperCase()
+              (matchedTemplate === "Standard"
+                ? category.label
+                : matchedTemplate
+              ).toUpperCase()
             );
 
           // Convert OKLCH colors to RGB
@@ -476,115 +485,130 @@ export default function BookingsPage() {
     }
   };
 
-  const generatePDFWithHtml2Canvas = async (ticketHTML: string, categoryLabel: string) => {
-  const tempContainer = document.createElement('div');
-  tempContainer.id = `temp-ticket-container-${bookingDetails?.bookingId || 'unknown'}`;
-  tempContainer.style.position = 'fixed';
-  tempContainer.style.left = '-10000px';
-  tempContainer.style.top = '-10000px';
-  tempContainer.style.width = '794px';
-  tempContainer.style.height = 'auto';
-  tempContainer.style.zIndex = '-1000';
-  tempContainer.style.visibility = 'hidden';
-  tempContainer.style.pointerEvents = 'none';
-  tempContainer.style.isolation = 'isolate';
-  tempContainer.style.contain = 'strict';
+  const generatePDFWithHtml2Canvas = async (
+    ticketHTML: string,
+    categoryLabel: string
+  ) => {
+    const tempContainer = document.createElement("div");
+    tempContainer.id = `temp-ticket-container-${
+      bookingDetails?.bookingId || "unknown"
+    }`;
+    tempContainer.style.position = "fixed";
+    tempContainer.style.left = "-10000px";
+    tempContainer.style.top = "-10000px";
+    tempContainer.style.width = "794px";
+    tempContainer.style.height = "auto";
+    tempContainer.style.zIndex = "-1000";
+    tempContainer.style.visibility = "hidden";
+    tempContainer.style.pointerEvents = "none";
+    tempContainer.style.isolation = "isolate";
+    tempContainer.style.contain = "strict";
 
-  tempContainer.innerHTML = `<div class="ticket-wrapper" style="width: 794px; min-height: 1123px; background: white; padding: 0; margin: 0; font-weight: normal;">${ticketHTML}</div>`;
+    tempContainer.innerHTML = `<div class="ticket-wrapper" style="width: 794px; min-height: 1123px; background: white; padding: 0; margin: 0; font-weight: normal;">${ticketHTML}</div>`;
 
-  // Use Shadow DOM for isolation
-  const shadowHost = document.createElement('div');
-  const shadowRoot = shadowHost.attachShadow({ mode: 'closed' });
-  shadowRoot.appendChild(tempContainer);
-  document.body.appendChild(shadowHost);
+    // Use Shadow DOM for isolation
+    const shadowHost = document.createElement("div");
+    const shadowRoot = shadowHost.attachShadow({ mode: "closed" });
+    shadowRoot.appendChild(tempContainer);
+    document.body.appendChild(shadowHost);
 
-  const waitForImages = async (container: HTMLElement) => {
-    const images = container.querySelectorAll('img');
-    const imagePromises = Array.from(images).map((img) => {
-      return new Promise((resolve) => {
-        if (img.complete && img.naturalHeight !== 0) {
-          resolve(true);
-        } else {
-          img.onload = () => resolve(true);
-          img.onerror = () => {
-            console.warn('Image failed to load:', img.src);
+    const waitForImages = async (container: HTMLElement) => {
+      const images = container.querySelectorAll("img");
+      const imagePromises = Array.from(images).map((img) => {
+        return new Promise((resolve) => {
+          if (img.complete && img.naturalHeight !== 0) {
             resolve(true);
-          };
-        }
+          } else {
+            img.onload = () => resolve(true);
+            img.onerror = () => {
+              console.warn("Image failed to load:", img.src);
+              resolve(true);
+            };
+          }
+        });
       });
-    });
-    await Promise.all(imagePromises);
-  };
+      await Promise.all(imagePromises);
+    };
 
-  await waitForImages(tempContainer);
+    await waitForImages(tempContainer);
 
-  const html2canvas = (await import('html2canvas')).default;
-  const targetElement = tempContainer.querySelector('.ticket-wrapper') as HTMLElement || tempContainer;
+    const html2canvas = (await import("html2canvas")).default;
+    const targetElement =
+      (tempContainer.querySelector(".ticket-wrapper") as HTMLElement) ||
+      tempContainer;
 
-  const canvas = await html2canvas(targetElement, {
-    scale: 1.5,
-    useCORS: true,
-    allowTaint: true,
-    backgroundColor: '#ffffff',
-    scrollX: 0,
-    scrollY: 0,
-    logging: false,
-    foreignObjectRendering: false,
-    onclone: (clonedDoc, element) => {
-      try {
-        const ticketWrapper = clonedDoc.querySelector('.ticket-wrapper');
-        if (ticketWrapper) {
-          const allElements = ticketWrapper.querySelectorAll('*');
-          allElements.forEach((el: any) => {
-            try {
-              if (el.style) {
-                const style = el.style;
-                if (style.color && style.color.includes('oklch')) {
-                  style.color = convertOklchToRgb(style.color);
+    const canvas = await html2canvas(targetElement, {
+      scale: 1.5,
+      useCORS: true,
+      allowTaint: true,
+      backgroundColor: "#ffffff",
+      scrollX: 0,
+      scrollY: 0,
+      logging: false,
+      foreignObjectRendering: false,
+      onclone: (clonedDoc, element) => {
+        try {
+          const ticketWrapper = clonedDoc.querySelector(".ticket-wrapper");
+          if (ticketWrapper) {
+            const allElements = ticketWrapper.querySelectorAll("*");
+            allElements.forEach((el: any) => {
+              try {
+                if (el.style) {
+                  const style = el.style;
+                  if (style.color && style.color.includes("oklch")) {
+                    style.color = convertOklchToRgb(style.color);
+                  }
+                  if (
+                    style.backgroundColor &&
+                    style.backgroundColor.includes("oklch")
+                  ) {
+                    style.backgroundColor = convertOklchToRgb(
+                      style.backgroundColor
+                    );
+                  }
+                  if (
+                    style.borderColor &&
+                    style.borderColor.includes("oklch")
+                  ) {
+                    style.borderColor = convertOklchToRgb(style.borderColor);
+                  }
+                  // Prevent bold styles
+                  if (style.fontWeight === "bold" || style.fontWeight > 400) {
+                    style.fontWeight = "normal";
+                  }
                 }
-                if (style.backgroundColor && style.backgroundColor.includes('oklch')) {
-                  style.backgroundColor = convertOklchToRgb(style.backgroundColor);
-                }
-                if (style.borderColor && style.borderColor.includes('oklch')) {
-                  style.borderColor = convertOklchToRgb(style.borderColor);
-                }
-                // Prevent bold styles
-                if (style.fontWeight === 'bold' || style.fontWeight > 400) {
-                  style.fontWeight = 'normal';
-                }
+              } catch (styleError) {
+                console.warn("Error fixing styles on element:", styleError);
               }
-            } catch (styleError) {
-              console.warn('Error fixing styles on element:', styleError);
-            }
-          });
+            });
+          }
+        } catch (cloneError) {
+          console.warn("Error in onclone callback:", cloneError);
         }
-      } catch (cloneError) {
-        console.warn('Error in onclone callback:', cloneError);
+      },
+    });
+
+    try {
+      if (shadowHost && shadowHost.parentNode) {
+        document.body.removeChild(shadowHost);
       }
-    },
-  });
-
-  try {
-    if (shadowHost && shadowHost.parentNode) {
-      document.body.removeChild(shadowHost);
+    } catch (cleanupError) {
+      console.warn("Error cleaning up shadow host:", cleanupError);
+      shadowHost.remove();
     }
-  } catch (cleanupError) {
-    console.warn('Error cleaning up shadow host:', cleanupError);
-    shadowHost.remove();
-  }
 
-  const jsPDF = (await import('jspdf')).jsPDF;
-  const pdf = new jsPDF('portrait', 'mm', 'a4');
+    const jsPDF = (await import("jspdf")).jsPDF;
+    const pdf = new jsPDF("portrait", "mm", "a4");
 
-  const imgData = canvas.toDataURL('image/jpeg', 0.95);
-  const pdfWidth = pdf.internal.pageSize.getWidth();
-  const pdfHeight = pdf.internal.pageSize.getHeight();
+    const imgData = canvas.toDataURL("image/jpeg", 0.95);
+    const pdfWidth = pdf.internal.pageSize.getWidth();
+    const pdfHeight = pdf.internal.pageSize.getHeight();
 
-  pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight);
+    pdf.addImage(imgData, "JPEG", 0, 0, pdfWidth, pdfHeight);
 
-  const fileName = `Events2Go_Ticket_${categoryLabel}_${bookingDetails?.bookingId}.pdf`;
-  pdf.save(fileName);
-};
+    const fileName = `Events2Go_Ticket_${categoryLabel}_${bookingDetails?.bookingId}.pdf`;
+    pdf.save(fileName);
+  };
 
   // const generatePDFWithHtml2Canvas = async (ticketHTML: string, categoryLabel: string) => {
   //   const tempContainer = document.createElement("div");
@@ -1082,7 +1106,8 @@ export default function BookingsPage() {
                           <Eye className="w-3 h-3" />
                           View Details
                         </Button>
-                        {booking.booking_status.toLowerCase() === "approved" && (
+                        {booking.booking_status.toLowerCase() ===
+                          "approved" && (
                           <Button
                             onClick={() => handleDownloadTicket(booking)}
                             variant="outline"
@@ -1324,9 +1349,9 @@ export default function BookingsPage() {
 
                       <div className="mb-4">
                         <QRCodeDisplay
-  value={`https://www.events2go.com.au/confirmation?orderId=${selectedBooking.order_id}`}
-  size={150}
-/>
+                          value={`https://www.events2go.com.au/confirmation?orderId=${selectedBooking.order_id}`}
+                          size={150}
+                        />
                       </div>
 
                       <div className="space-y-3 text-sm">
@@ -1373,14 +1398,16 @@ export default function BookingsPage() {
 
                 {/* Footer Actions */}
                 <div className="flex flex-col sm:flex-row gap-3 justify-end mt-6 sm:mt-8 pt-4 sm:pt-6 border-t border-slate-200">
-                 {selectedBooking.booking_status.toLowerCase() === "approved" && (
+                  {selectedBooking.booking_status.toLowerCase() ===
+                    "approved" && (
                     <Button
                       onClick={() => handleDownloadTicket(selectedBooking)}
                       variant="outline"
                       className="flex items-center gap-2 border-slate-200 hover:bg-slate-50 text-sm sm:text-base"
                     >
-                     <Download className="w-4 h-4" />
-                      Download Ticket PDF{selectedBooking.seat_categories.length > 1 ? "s" : ""}
+                      <Download className="w-4 h-4" />
+                      Download Ticket PDF
+                      {selectedBooking.seat_categories.length > 1 ? "s" : ""}
                     </Button>
                   )}
                   <Button
