@@ -191,7 +191,7 @@ export default function ProfilePage() {
 
   const handleDeleteAccount = async () => {
     try {
-      await axiosInstance.delete("/api/v1/users/profile/")
+      await axiosInstance.delete("/api/v1/users/profile")
       toast.success("Account deleted successfully!")
       logout()
       localStorage.removeItem("auth_token")
