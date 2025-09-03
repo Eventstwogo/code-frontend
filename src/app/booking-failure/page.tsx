@@ -40,6 +40,7 @@ interface FailureDetails {
   couponCode?: string
   couponPercentage?: number
   totalTickets?: number
+  originalTotal?: number
 }
 
 const BookingFailureContent = () => {
@@ -64,6 +65,10 @@ const BookingFailureContent = () => {
               const totalTickets = Array.isArray(booking.seat_categories)
                 ? booking.seat_categories.reduce((sum: number, c: any) => sum + (c?.num_seats || 0), 0)
                 : 0
+
+              const originalTotal = Array.isArray(booking.seat_categories)
+                ? booking.seat_categories.reduce((sum: number, c: any) => sum + (c?.subtotal || 0), 0)
+                : 0;
 
               const firstCoupon = Array.isArray(booking.seat_categories)
                 ? booking.seat_categories.find((c: any) => c?.coupon)?.coupon
@@ -116,6 +121,7 @@ const BookingFailureContent = () => {
                 couponCode: firstCoupon?.coupon_code,
                 couponPercentage: firstCoupon?.coupon_percentage,
                 totalTickets,
+                originalTotal,
               })
               setLoading(false)
               return
@@ -180,6 +186,7 @@ const BookingFailureContent = () => {
             couponCode: searchParams.get("couponCode"),
             couponPercentage: Number.parseFloat(searchParams.get("couponPercentage") || "0"),
             totalTickets: Number.parseInt(searchParams.get("totalTickets") || "0"),
+            originalTotal: Number.parseFloat(searchParams.get("originalTotal") || "0"),
           })
         } else {
           const savedFailureDetails = localStorage.getItem("lastBookingFailure")
@@ -412,17 +419,13 @@ const BookingFailureContent = () => {
             <h4 className="text-lg font-semibold mb-4">Attempted Booking Summary</h4>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-3">
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Slot:</span>
-                  <span className="font-semibold">{failureDetails.slotName}</span>
-                </div>
                 {failureDetails.seatCategories.map((category) => {
                   const lineTotal = category.line_total ?? category.total_price ?? 0
                   return (
                     <div key={category.seat_category_id} className="flex flex-col gap-1 py-2 border-b last:border-b-0">
                       <div className="flex justify-between">
-                        <span className="text-gray-600">
-                          {category.label} (x{category.num_seats}):
+                        <span className="text-gray-800 font-bold">
+                          {category.label} ({category.num_seats} {category.num_seats > 1 ? 'seats' : 'seat'}):
                         </span>
                         <span className="font-semibold">${lineTotal.toFixed(2)}</span>
                       </div>
@@ -455,6 +458,10 @@ const BookingFailureContent = () => {
                     <span className="font-semibold">${category.price_per_seat.toFixed(2)}</span>
                   </div>
                 ))}
+                <div className="flex justify-between">
+                 <span className="text-gray-600">Original Total Amount:</span>
+                 <span className="font-bold text-gray-800">{failureDetails.originalTotal}</span>
+               </div>
                 {typeof failureDetails.totalDiscount === "number" && (
                   <div className="flex justify-between">
                     <span className="text-gray-600">Total Discount:</span>

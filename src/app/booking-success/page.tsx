@@ -750,21 +750,33 @@
 
 import React, { useEffect, useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { FaCheckCircle, FaCalendarAlt, FaClock, FaMapMarkerAlt, FaTicketAlt, FaDownload } from 'react-icons/fa';
+import { FaCheckCircle, FaCalendarAlt, FaClock, FaMapMarkerAlt, FaTicketAlt, FaDownload, FaTag, FaPercent } from 'react-icons/fa';
 import { BsCalendar2EventFill } from 'react-icons/bs';
-import { MdEmail } from 'react-icons/md';
+import { MdEmail, MdDiscount } from 'react-icons/md';
 import axiosInstance from '@/lib/axiosInstance';
 import { toast } from 'sonner';
 import KangarooJump from '../../components/ui/kangaroo';
 import QRCodeDisplay from '@/components/QRCodeDisplay';
 import QRCode from 'qrcode';
 
+interface Coupon {
+  coupon_id: string;
+  coupon_code: string;
+  coupon_percentage: number;
+  applied_at: string;
+  redeemed: boolean;
+}
+
 interface SeatCategory {
   seat_category_id: string;
   label: string;
   num_seats: number;
   price_per_seat: number;
+  subtotal: number;
+  discount_amount: number;
+  total_amount: number;
   total_price: number;
+  coupon?: Coupon;
 }
 
 interface BookingDetails {
@@ -778,9 +790,12 @@ interface BookingDetails {
   endTime: string;
   seatCategories: SeatCategory[];
   totalAmount: number;
+  totalDiscount: number;
+  couponStatus: boolean;
   bookingDate: string;
   userEmail?: string;
   bookingStatus?: string;
+  paymentStatus?: string;
   eventId?: string;
   slotId?: string;
   businessLogo?: string;
@@ -839,27 +854,38 @@ const BookingSuccessContent = () => {
         if (response.status === 200 && response.data) {
           const booking = response.data.data;
           const bookingDetails: BookingDetails = {
-            bookingId: booking.booking_id?.toString() || bookingId,
+            bookingId: booking.order_id || bookingId,
             eventTitle: booking.event?.title || 'Event',
             eventImage: booking.event?.card_image || '/images/placeholder.svg',
             eventAddress: booking.event?.address || 'Address not available',
             selectedDate: booking.event?.event_date || '',
-            slotName: booking.slot || 'Standard Slot',
+            slotName: 'Standard Slot',
             startTime: booking.event?.event_time || '',
-            endTime: booking.slot_time?.split(' - ')[1] ||
-              calculateEndTime(booking.event?.event_time, booking.event?.event_duration) ||
-              '',
+            endTime: calculateEndTime(booking.event?.event_time, booking.event?.event_duration) || '',
             seatCategories: booking.seat_categories?.map((category: any) => ({
               seat_category_id: category.seat_category_id,
               label: category.label || 'General',
               num_seats: category.num_seats || 0,
               price_per_seat: category.price_per_seat || 0,
-              total_price: category.total_price || (category.num_seats * category.price_per_seat) || 0,
+              subtotal: category.subtotal || 0,
+              discount_amount: category.discount_amount || 0,
+              total_amount: category.total_amount || 0,
+              total_price: category.total_price || category.subtotal || (category.num_seats * category.price_per_seat) || 0,
+              coupon: category.coupon ? {
+                coupon_id: category.coupon.coupon_id,
+                coupon_code: category.coupon.coupon_code,
+                coupon_percentage: category.coupon.coupon_percentage,
+                applied_at: category.coupon.applied_at,
+                redeemed: category.coupon.redeemed
+              } : undefined
             })) || [],
-            totalAmount: booking.total_amount || booking.seat_categories.reduce((sum: number, category: any) => sum + (category.total_price || category.num_seats * category.price_per_seat), 0),
+            totalAmount: booking.total_amount || 0,
+            totalDiscount: booking.total_discount || 0,
+            couponStatus: booking.coupon_status || false,
             bookingDate: booking.created_at || new Date().toISOString(),
             userEmail: booking.user?.email,
             bookingStatus: booking.booking_status || 'confirmed',
+            paymentStatus: booking.payment_status || 'completed',
             eventId: booking.event?.event_id,
             slotId: booking.slot,
             businessLogo: booking.event?.business_logo,
@@ -902,6 +928,8 @@ const BookingSuccessContent = () => {
     };
     generateQrCode();
   }, [bookingDetails?.bookingId]);
+
+  // ... (keeping all existing helper functions like convertOklchToRgb, handleDownloadTicket, etc.)
 
   const convertOklchToRgb = (html: string): string => {
     return html.replace(/oklch\([^)]+\)/g, (match) => {
@@ -1011,27 +1039,23 @@ const BookingSuccessContent = () => {
       const available_templates_names = ["Diamond", "Gold", "Platinum", "Silver", "Standard", "VIP", "VVIP"];
 
       if (bookingDetails.seatCategories.length === 1) {
-        // Single category
         const category = bookingDetails.seatCategories[0];
         const categoryName = category.label.toLowerCase();
 
         let matchedTemplate = available_templates_names.find(
           name => name.toLowerCase() === categoryName
         ) || "Standard";
-        console.log('Using template:', matchedTemplate);
 
         const templateUrl = `/templates/${matchedTemplate}.html`;
         let response = await fetch(templateUrl);
 
         if (!response.ok) {
-          console.warn(`Template "${matchedTemplate}" not found. Using Standard.html`);
           response = await fetch(`/templates/Standard.html`);
           matchedTemplate = "Standard";
         }
 
         let ticketHTML = await response.text();
 
-        // Generate QR code for single category
         const qrCodeUrl = await QRCode.toDataURL(
           `https://www.events2go.com.au/confirmation?orderId=${bookingDetails.bookingId}`,
           { width: 150, margin: 1, errorCorrectionLevel: 'M' }
@@ -1059,30 +1083,25 @@ const BookingSuccessContent = () => {
         try {
           await generatePDFWithHtml2Canvas(ticketHTML, category.label);
         } catch (html2canvasError) {
-          console.warn('html2canvas failed, trying fallback method:', html2canvasError);
           await generatePDFWithFallback(ticketHTML);
         }
       } else {
-        // Multiple categories
         for (const category of bookingDetails.seatCategories) {
           const categoryName = category.label.toLowerCase();
           let matchedTemplate = available_templates_names.find(
             name => name.toLowerCase() === categoryName
           ) || "Standard";
-          console.log('Using template:', matchedTemplate);
 
           const templateUrl = `/templates/${matchedTemplate}.html`;
           let response = await fetch(templateUrl);
 
           if (!response.ok) {
-            console.warn(`Template "${matchedTemplate}" not found. Using Standard.html`);
             response = await fetch(`/templates/Standard.html`);
             matchedTemplate = "Standard";
           }
 
           let ticketHTML = await response.text();
 
-          // Generate category-specific QR code
           const qrCodeUrl = await QRCode.toDataURL(
             `https://www.events2go.com.au/confirmation?orderId=${bookingDetails.bookingId}&category=${category.label}`,
             { width: 150, margin: 1, errorCorrectionLevel: 'M' }
@@ -1110,7 +1129,6 @@ const BookingSuccessContent = () => {
           try {
             await generatePDFWithHtml2Canvas(ticketHTML, category.label);
           } catch (html2canvasError) {
-            console.warn(`html2canvas failed for ${category.label}, trying fallback:`, html2canvasError);
             await generatePDFWithFallback(ticketHTML);
           }
         }
@@ -1123,6 +1141,7 @@ const BookingSuccessContent = () => {
     }
   };
 
+  // ... (keeping all existing PDF generation functions)
   const generatePDFWithHtml2Canvas = async (ticketHTML: string, categoryLabel: string) => {
     const tempContainer = document.createElement('div');
     tempContainer.style.position = 'fixed';
@@ -1137,7 +1156,6 @@ const BookingSuccessContent = () => {
 
     tempContainer.innerHTML = `<div class="ticket-wrapper" style="width: 794px; min-height: 1123px; background: white; padding: 0; margin: 0;">${ticketHTML}</div>`;
 
-    // Use Shadow DOM for better isolation
     const shadowHost = document.createElement('div');
     const shadowRoot = shadowHost.attachShadow({ mode: 'closed' });
     shadowRoot.appendChild(tempContainer);
@@ -1322,6 +1340,12 @@ const BookingSuccessContent = () => {
     );
   }
 
+  // Calculate totals
+  const totalTickets = bookingDetails.seatCategories.reduce((sum, category) => sum + category.num_seats, 0);
+  const originalTotal = bookingDetails.seatCategories.reduce((sum, category) => sum + category.subtotal, 0);
+  const appliedCoupons = bookingDetails.seatCategories.filter(cat => cat.coupon);
+  const mainCoupon = appliedCoupons[0]?.coupon; // Get first coupon for main display
+
   return (
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-4xl mx-auto px-6">
@@ -1357,109 +1381,195 @@ const BookingSuccessContent = () => {
                 </div>
               </div>
             </div>
-            {/* <div className="mt-6 md:mt-0">
-              <QRCodeDisplay value={`https://www.events2go.com.au/confirmation?orderId=${bookingDetails.bookingId}`} />
-            </div> */}
           </div>
 
+          {/* New Booking Summary Design */}
           <div className="border-t pt-6">
-            <h3 className="text-lg font-semibold mb-4">Booking Summary</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-3">
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Booking ID:</span>
-                  <span className="font-semibold">{bookingDetails.bookingId}</span>
-                </div>
-                {bookingDetails.seatCategories.map((category) => (
-                  <div key={category.seat_category_id} className="flex justify-between">
-                    <span className="text-gray-600">{category.label} (x{category.num_seats}):</span>
-                    <span className="font-semibold">${category.total_price.toFixed(2)}</span>
-                  </div>
-                ))}
-              </div>
-              <div className="space-y-3">
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Booking Date:</span>
-                  <span className="font-semibold">{formatDate(bookingDetails.bookingDate)}</span>
-                </div>
-                {bookingDetails.seatCategories.map((category) => (
-                  <div key={category.seat_category_id} className="flex justify-between">
-                    <span className="text-gray-600">Price per {category.label} Ticket:</span>
-                    <span className="font-semibold">${category.price_per_seat.toFixed(2)}</span>
-                  </div>
-                ))}
-                <div className="flex justify-between text-lg font-bold border-t pt-2">
-                  <span>Total Amount:</span>
-                  <span className="text-purple-600">${bookingDetails.totalAmount.toFixed(2)}</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+            <h3 className="text-xl font-bold text-gray-800 mb-6">Booking Summary</h3>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+              {/* Left Column */}
+              <div className="space-y-4">
+               <div className="flex justify-between">
+                 <span className="text-gray-600">Booking ID:</span>
+                 <span className="font-bold text-gray-800">{bookingDetails.bookingId}</span>
+               </div>
+               <div className="flex justify-between">
+                 <span className="text-gray-600">Total Tickets:</span>
+                 <span className="font-bold text-gray-800">{totalTickets}</span>
+               </div>
+               
+               {/* Ticket Categories */}
+               {bookingDetails.seatCategories.map((category) => (
+                 <div key={category.seat_category_id}>
+                   <div className="flex justify-between">
+                     <span className="text-gray-800 font-bold">{category.label} ({category.num_seats} {category.num_seats > 1 ? 'seats' : 'seat'}):</span>
+                     <span className="font-bold text-gray-800">${category.total_amount.toFixed(2)}</span>
+                   </div>
+                   <div className="flex justify-between text-sm text-gray-500 ml-4">
+                     <span>Subtotal: ${category.subtotal.toFixed(2)}</span>
+                     <span>Discount: -${category.discount_amount.toFixed(2)}</span>
+                   </div>
+                 </div>
+               ))}
+             </div>
+             
+             {/* Right Column */}
+             <div className="space-y-4">
+               <div className="flex justify-between">
+                 <span className="text-gray-600">Booking Date:</span>
+                 <span className="font-bold text-gray-800">{formatDate(bookingDetails.bookingDate)}</span>
+               </div>
+               <div className="flex justify-between">
+                 <span className="text-gray-600">Booking Status:</span>
+                 <span className="font-bold text-gray-800">{bookingDetails.bookingStatus}</span>
+               </div>
+               <div className="flex justify-between">
+                 <span className="text-gray-600">Original Total Amount:</span>
+                 <span className="font-bold text-gray-800">{originalTotal}</span>
+               </div>
+               <div className="flex justify-between">
+                 <span className="text-gray-600">Total Discount:</span>
+                 <span className="font-bold text-green-600">-${bookingDetails.totalDiscount.toFixed(2)}</span>
+               </div>
+               
+               {/* Total Amount - Large and prominent */}
+               <div className="border-t pt-4">
+                 <div className="flex justify-between items-center">
+                   <span className="text-lg font-bold text-gray-800">Total Amount:</span>
+                   <span className="text-2xl font-bold text-purple-600">${bookingDetails.totalAmount.toFixed(2)}</span>
+                 </div>
+               </div>
+               
+               {/* Coupon Applied */}
+               {mainCoupon && (
+                 <div className="flex justify-between">
+                   <span className="text-gray-600">Coupon Applied:</span>
+                   <span className="font-bold text-gray-800">{mainCoupon.coupon_code} ({mainCoupon.coupon_percentage}% off)</span>
+                 </div>
+               )}
+             </div>
+           </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-          <button
-            onClick={handleDownloadTicket}
-            className="flex items-center justify-center gap-2 bg-purple-600 text-white px-4 py-3 rounded-lg hover:bg-purple-700 transition-colors"
-          >
-            <FaDownload />
-            Download PDF Ticket{bookingDetails.seatCategories.length > 1 ? 's' : ''}
-          </button>
-          <button
-            onClick={handleViewMyBookings}
-            className="flex items-center justify-center gap-2 bg-gray-600 text-white px-4 py-3 rounded-lg hover:bg-gray-700 transition-colors"
-          >
-            <FaTicketAlt />
-            My Bookings
-          </button>
-          <button
-            onClick={handleBackToHome}
-            className="flex items-center justify-center gap-2 bg-green-600 text-white px-4 py-3 rounded-lg hover:bg-green-700 transition-colors"
-          >
-            Back to Home
-          </button>
-        </div>
+           {/* Payment Status Badge */}
+           <div className="mb-6">
+             <div className="inline-flex items-center px-4 py-2 bg-green-100 text-green-800 rounded-lg">
+               <span className="font-semibold">Payment: {bookingDetails.paymentStatus}</span>
+             </div>
+           </div>
 
-        {bookingDetails.userEmail && (
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-            <div className="flex items-center gap-2 text-blue-800">
-              <MdEmail className="text-xl" />
-              <span className="font-semibold">Email Confirmation Sent</span>
-            </div>
-            <p className="text-blue-700 mt-1">
-              A confirmation email with your ticket details has been sent to {bookingDetails.userEmail}
-            </p>
-          </div>
-        )}
+           {/* Coupon Applied Section */}
+           {bookingDetails.couponStatus && mainCoupon && (
+             <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
+               <div className="flex items-center gap-2 text-yellow-800">
+                 <FaTag className="text-lg" />
+                 <span className="font-bold">Coupon Applied: {mainCoupon.coupon_code}</span>
+               </div>
+               <p className="text-yellow-700 mt-1">
+                 Discount: {mainCoupon.coupon_percentage}% off
+               </p>
+             </div>
+           )}
 
-        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mt-6">
-          <h4 className="font-semibold text-yellow-800 mb-2">Important Information:</h4>
-          <ul className="text-yellow-700 space-y-1 text-sm">
-            <li>• Please arrive at the venue at least 15 minutes before the event starts</li>
-            <li>• Carry a valid ID proof along with your ticket</li>
-            <li>• Screenshots of tickets are not valid for entry</li>
-            <li>• For any queries, contact our support team</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  );
+           {/* Total Discount Section */}
+           {bookingDetails.totalDiscount > 0 && (
+             <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+               <div className="flex items-center gap-2 text-red-800">
+                 <MdDiscount className="text-lg" />
+                 <span className="font-bold">Total Discount:</span>
+               </div>
+               <p className="text-red-700 text-lg font-bold">
+                 ${bookingDetails.totalDiscount.toFixed(2)}
+               </p>
+             </div>
+           )}
+         </div>
+       </div>
+
+       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+         <button
+           onClick={handleDownloadTicket}
+           className="flex items-center justify-center gap-2 bg-purple-600 text-white px-4 py-3 rounded-lg hover:bg-purple-700 transition-colors"
+         >
+           <FaDownload />
+           Download PDF Ticket{bookingDetails.seatCategories.length > 1 ? 's' : ''}
+         </button>
+         <button
+           onClick={handleViewMyBookings}
+           className="flex items-center justify-center gap-2 bg-gray-600 text-white px-4 py-3 rounded-lg hover:bg-gray-700 transition-colors"
+         >
+           <FaTicketAlt />
+           My Bookings
+         </button>
+         <button
+           onClick={handleBackToHome}
+           className="flex items-center justify-center gap-2 bg-green-600 text-white px-4 py-3 rounded-lg hover:bg-green-700 transition-colors"
+         >
+           Back to Home
+         </button>
+       </div>
+
+       {bookingDetails.userEmail && (
+         <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+           <div className="flex items-center gap-2 text-blue-800">
+             <MdEmail className="text-xl" />
+             <span className="font-semibold">Email Confirmation Sent</span>
+           </div>
+           <p className="text-blue-700 mt-1">
+             A confirmation email with your ticket details has been sent to {bookingDetails.userEmail}
+           </p>
+         </div>
+       )}
+
+       {/* Show savings highlight if there are discounts */}
+       {bookingDetails.totalDiscount > 0 && (
+         <div className="bg-green-50 border border-green-200 rounded-lg p-4 mt-6">
+           <div className="flex items-center gap-2 text-green-800 mb-2">
+             <FaPercent className="text-xl" />
+             <span className="font-semibold">Great Savings!</span>
+           </div>
+           <p className="text-green-700">
+             You saved <span className="font-bold">${bookingDetails.totalDiscount.toFixed(2)}</span> on this booking
+             {bookingDetails.couponStatus && " with coupon discounts"}!
+           </p>
+           {appliedCoupons.length > 0 && (
+             <div className="mt-2 text-sm text-green-600">
+               Applied coupons: {appliedCoupons.map(cat => cat.coupon!.coupon_code).join(', ')}
+             </div>
+           )}
+         </div>
+       )}
+
+       <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mt-6">
+         <h4 className="font-semibold text-yellow-800 mb-2">Important Information:</h4>
+         <ul className="text-yellow-700 space-y-1 text-sm">
+           <li>• Please arrive at the venue at least 15 minutes before the event starts</li>
+           <li>• Carry a valid ID proof along with your ticket</li>
+           <li>• Screenshots of tickets are not valid for entry</li>
+           <li>• For any queries, contact our support team</li>
+           {bookingDetails.totalAmount === 0 && (
+             <li>• Even though your ticket is free, you must present the PDF ticket for entry</li>
+           )}
+         </ul>
+       </div>
+     </div>
+   </div>
+ );
 };
 
 const BookingSuccessPage = () => {
-  return (
-    <Suspense fallback={
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading booking details...</p>
-        </div>
-      </div>
-    }>
-      <BookingSuccessContent />
-    </Suspense>
-  );
+ return (
+   <Suspense fallback={
+     <div className="min-h-screen flex items-center justify-center bg-gray-50">
+       <div className="text-center">
+         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
+         <p className="text-gray-600">Loading booking details...</p>
+       </div>
+     </div>
+   }>
+     <BookingSuccessContent />
+   </Suspense>
+ );
 };
 
 export default BookingSuccessPage;
-
