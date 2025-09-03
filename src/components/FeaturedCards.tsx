@@ -60,7 +60,7 @@ const FeaturedCard = ({ event }: { event: FeaturedEvent }) => {
 
   return (
     <div 
-      className="group bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100 cursor-pointer hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 flex flex-col relative"
+      className="group bg-white rounded-xl shadow-lg overflow-hidden  cursor-pointer  transition-all duration-500 transform  flex flex-col relative"
       style={{ width: '230px', height: '400px' }}
       onClick={handleCardClick}
     >
@@ -215,18 +215,13 @@ export default function FeaturedCards({
   {events.map((event, index) => (
     <SwiperSlide
       key={event.event_id || index}
-      className="flex justify-center items-center "
+      className="flex justify-center py-10 "
     >
       <FeaturedCard event={event} />
     </SwiperSlide>
   ))}
 </Swiper>
 
-
-
-
-      {/* Mobile View All Button */}
-   
     </section>
   );
 }

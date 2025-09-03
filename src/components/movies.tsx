@@ -53,7 +53,7 @@ export default function MovieCard({
 
   return (
     <div 
-      className="bg-white rounded-xl shadow-md overflow-hidden border cursor-pointer hover:shadow-lg hover:scale-105 transition-all duration-300 flex flex-col"
+      className="bg-white rounded-xl shadow-md overflow-hidden border cursor-pointer hover:scale-105 transition-all duration-300 flex flex-col"
       style={{ width: '230px', height: '370px' }}
       onClick={handleCardClick}
     >
