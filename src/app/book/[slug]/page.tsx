@@ -787,6 +787,7 @@ interface Slot {
 interface SelectedTicket {
   seat_category_id: string;
   num_seats: number;
+  coupon_id?: string;
 }
 
 const BookingPageContent = () => {
@@ -836,11 +837,12 @@ const BookingPageContent = () => {
   }, [selectedSlot, selectedTickets, slots, discountPercentage, couponStatus, isCouponApplied]);
 
   useEffect(() => {
+    // Reset coupon only when slot changes
     setCouponCode('');
     setDiscountPercentage(0);
     setCouponStatus(false);
     setIsCouponApplied(false);
-  }, [selectedSlot, selectedTickets]);
+  }, [selectedSlot]);
 
   useEffect(() => {
     const dateParam = searchParams.get('date');
@@ -992,21 +994,31 @@ const BookingPageContent = () => {
       if (!category) {
         throw new Error(`Invalid seat category: ${ticket.seat_category_id}`);
       }
+
+      const subtotal = category.price * ticket.num_seats;
+      const discount_amount =
+        couponStatus && isCouponApplied ? (discountPercentage / 100) * subtotal : 0;
+      const total_amount = subtotal - discount_amount;
+
       return {
         seat_category_ref_id: ticket.seat_category_id,
         price_per_seat: category.price,
         num_seats: ticket.num_seats,
+        coupon_id: ticket.coupon_id || null,
+        subtotal,
+        discount_amount,
+        total_amount,
       };
     });
 
     const apiPayload = {
       user_ref_id: userId,
       event_ref_id: event.event_id,
-      total_price: totalPrice,
       slot_ref_id: selectedSlot,
       event_date: selectedDate,
       coupon_status: couponStatus,
       seatCategories: seatCategoriesPayload,
+      total_price: seatCategoriesPayload.reduce((sum, sc) => sum + sc.total_amount, 0),
     };
 
     try {
@@ -1061,11 +1073,19 @@ const BookingPageContent = () => {
     };
     try {
       const response = await axiosInstance.post('/api/v1/coupons/coupons/validate', payload);
-      const discountPercentage = response.data.data.discount;
-      setDiscountPercentage(discountPercentage);
+      const couponData = response.data?.data;
+      if (!couponData) throw new Error('No coupon data returned');
+      const { coupon_id, discount } = couponData;
+      setDiscountPercentage(discount);
       setCouponStatus(true);
       setIsCouponApplied(true);
-      toast.success(`Coupon applied! You get a ${discountPercentage}% discount`);
+      toast.success(`Coupon applied! You get a ${discount}% discount`);
+      console.log("coupon_status: ", couponStatus)
+
+      // Store coupon_id for later booking
+      setSelectedTickets((prev) =>
+        prev.map((t) => ({ ...t, coupon_id }))
+      );
     } catch (error: any) {
       setCouponStatus(false);
       setDiscountPercentage(0);
