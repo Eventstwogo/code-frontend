@@ -9,6 +9,7 @@ import useStore from '@/lib/Zustand';
 import { useSearch } from '@/hooks/useSearch';
 import SearchDropdown from '@/components/SearchDropdown';
 import CategoriesDropdown from '@/components/CategoriesDropdown';
+import LogoWithText from '@/components/logowithtext'
 type HeaderProps = {
   categories: { category_id: number; category_name: string;category_slug: string }[];
 };
@@ -148,14 +149,7 @@ console.log(profile)
           {/* Logo */}
           <div className="flex-shrink-0">
             <Link href="/">
-              <Image
-                src="/images/logo1.png"
-                alt="Events2go Logo"
-                width={60}
-                height={60}
-                className="w-10 h-10 sm:w-12 sm:h-12 md:w-16 md:h-16 lg:w-20 lg:h-20"
-                priority
-              />
+           <LogoWithText/>
             </Link>
           </div>
 
