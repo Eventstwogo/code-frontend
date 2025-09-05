@@ -2,14 +2,22 @@ import React from 'react';
 
 const LogoWithText: React.FC = () => {
   return (
-    <div className="flex items-center justify-center gap-4 p-4">
+    <div className="flex items-center justify-center gap-1 ">
       <img
-        src="/images/logo1.png"
+        src="/images/logo.png"
         alt="Logo"
-        className="w-16 h-16 object-contain"
+        className="w-14 h-14 object-contain"
       />
-      <div className="flex flex-col">
-        <h1 className="text-2xl font-bold text-gray-800">Events2go</h1>
+      <div className="flex mt-4">
+<h1
+  className="text-2xl font-bold   text-[#55a4b4]"
+  
+>
+  Events<span className='text-[#7f4ba2] '>2go</span>
+</h1>
+
+
+
       
       </div>
     </div>
